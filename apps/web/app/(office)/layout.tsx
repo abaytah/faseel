@@ -1,6 +1,7 @@
 'use client';
 
 import { AppShell } from '@/components/layout/app-shell';
+import { AuthGuard } from '@/components/auth-guard';
 import { usePathname } from 'next/navigation';
 
 const pageTitles: Record<string, { title: string; subtitle?: string }> = {
@@ -10,21 +11,20 @@ const pageTitles: Record<string, { title: string; subtitle?: string }> = {
   '/office/providers': { title: 'مقدمي الخدمات', subtitle: 'شركات الصيانة المعتمدة' },
 };
 
-export default function OfficeLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OfficeLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // Find matching title - exact match or starts with
   const pageInfo = (pathname ? pageTitles[pathname] : undefined) ||
-    Object.entries(pageTitles).find(([key]) => pathname?.startsWith(key))?.[1] ||
-    { title: 'مكتب الجزيرة العقاري' };
+    Object.entries(pageTitles).find(([key]) => pathname?.startsWith(key))?.[1] || {
+      title: 'مكتب الجزيرة العقاري',
+    };
 
   return (
-    <AppShell role="office" title={pageInfo.title} subtitle={pageInfo.subtitle}>
-      {children}
-    </AppShell>
+    <AuthGuard allowedRole="office">
+      <AppShell role="office" title={pageInfo.title} subtitle={pageInfo.subtitle}>
+        {children}
+      </AppShell>
+    </AuthGuard>
   );
 }

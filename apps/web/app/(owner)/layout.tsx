@@ -1,15 +1,14 @@
 'use client';
 
 import { AppShell } from '@/components/layout/app-shell';
+import { AuthGuard } from '@/components/auth-guard';
 
-export default function OwnerLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OwnerLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppShell role="owner" title="لوحة المالك" subtitle="أحمد بن محمد العتيبي">
-      {children}
-    </AppShell>
+    <AuthGuard allowedRole="owner">
+      <AppShell role="owner" title="لوحة المالك">
+        {children}
+      </AppShell>
+    </AuthGuard>
   );
 }
