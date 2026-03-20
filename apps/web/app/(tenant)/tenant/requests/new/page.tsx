@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef, Suspense } from 'react';
+import { useState, useCallback, useRef, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -33,15 +33,7 @@ import {
   CloudRain,
   Droplet,
 } from 'lucide-react';
-import {
-  getCostRouterResult,
-  getSelfHelpTip,
-  costColors,
-  type CostRouterResult,
-  office,
-} from '@/lib/mock-data';
 import { trpc } from '@/lib/trpc';
-import { WhatsAppButton } from '@/components/ui/whatsapp-button';
 import { useToast } from '@/components/ui/toast-provider';
 
 // ----- Categories (8 image-based cards) -----
@@ -53,7 +45,6 @@ const categories = [
     icon: Wind,
     color: 'text-sky-500',
     bg: 'bg-sky-50 dark:bg-sky-900/20',
-    emoji: '',
   },
   {
     id: 'plumbing',
@@ -62,7 +53,6 @@ const categories = [
     icon: Droplets,
     color: 'text-blue-500',
     bg: 'bg-blue-50 dark:bg-blue-900/20',
-    emoji: '',
   },
   {
     id: 'electrical',
@@ -71,7 +61,6 @@ const categories = [
     icon: Zap,
     color: 'text-amber-500',
     bg: 'bg-amber-50 dark:bg-amber-900/20',
-    emoji: '',
   },
   {
     id: 'structural',
@@ -80,7 +69,6 @@ const categories = [
     icon: Hammer,
     color: 'text-orange-500',
     bg: 'bg-orange-50 dark:bg-orange-900/20',
-    emoji: '',
   },
   {
     id: 'fire_safety',
@@ -89,7 +77,6 @@ const categories = [
     icon: ShieldAlert,
     color: 'text-red-500',
     bg: 'bg-red-50 dark:bg-red-900/20',
-    emoji: '',
   },
   {
     id: 'elevator',
@@ -98,7 +85,6 @@ const categories = [
     icon: ArrowUpDown,
     color: 'text-violet-500',
     bg: 'bg-violet-50 dark:bg-violet-900/20',
-    emoji: '',
   },
   {
     id: 'cosmetic',
@@ -107,7 +93,6 @@ const categories = [
     icon: Paintbrush,
     color: 'text-pink-500',
     bg: 'bg-pink-50 dark:bg-pink-900/20',
-    emoji: '',
   },
   {
     id: 'general',
@@ -116,7 +101,6 @@ const categories = [
     icon: Wrench,
     color: 'text-slate-500',
     bg: 'bg-slate-50 dark:bg-slate-900/20',
-    emoji: '',
   },
 ];
 
@@ -225,8 +209,18 @@ function NewRequestPage() {
   const urlCategory = searchParams?.get('category') ?? null;
   const urlPriority = searchParams?.get('priority') ?? null;
 
-  const [step, setStep] = useState(0);
-  const [category, setCategory] = useState('');
+  const [step, setStep] = useState(() => {
+    if (urlCategory && categories.some((c) => c.id === urlCategory)) {
+      return 1;
+    }
+    return 0;
+  });
+  const [category, setCategory] = useState(() => {
+    if (urlCategory && categories.some((c) => c.id === urlCategory)) {
+      return urlCategory;
+    }
+    return '';
+  });
   const [subcategory, setSubcategory] = useState('');
   const [priority] = useState<string>(urlPriority || 'medium');
   const [locationType, setLocationType] = useState('');
@@ -234,22 +228,10 @@ function NewRequestPage() {
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [submitted, setSubmitted] = useState(false);
-  const [showSelfHelp, setShowSelfHelp] = useState(true);
   const [ticketNumber, setTicketNumber] = useState('');
   const router = useRouter();
   const toast = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const initializedRef = useRef(false);
-
-  // Handle URL params for emergency shortcuts — pre-fill category and skip to step 1
-  useEffect(() => {
-    if (initializedRef.current) return;
-    if (urlCategory && categories.some((c) => c.id === urlCategory)) {
-      setCategory(urlCategory);
-      setStep(1); // Skip to subcategory selection
-      initializedRef.current = true;
-    }
-  }, [urlCategory]);
 
   const canNext = useCallback(() => {
     if (step === 0) return !!category;
@@ -258,23 +240,6 @@ function NewRequestPage() {
     if (step === 3) return description.length >= 10;
     return true;
   }, [step, category, subcategory, locationType, specificLocation, description]);
-
-  const costResult: CostRouterResult | null =
-    category && subcategory && locationType
-      ? getCostRouterResult(
-          category,
-          subcategories[category]?.find((s) => s.id === subcategory)?.label || '',
-          locationType,
-        )
-      : null;
-
-  const selfHelpTip =
-    category && subcategory
-      ? getSelfHelpTip(
-          category,
-          subcategories[category]?.find((s) => s.id === subcategory)?.label || '',
-        )
-      : null;
 
   const selectedCategory = categories.find((c) => c.id === category);
   const selectedSubcategory = subcategories[category]?.find((s) => s.id === subcategory);
@@ -303,7 +268,6 @@ function NewRequestPage() {
       reader.readAsDataURL(file);
     });
 
-    // Reset input so the same file can be selected again
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -325,7 +289,6 @@ function NewRequestPage() {
   });
 
   const handleSubmit = () => {
-    // Map the UI category to the API category enum
     const categoryMap: Record<string, string> = {
       hvac: 'HVAC',
       plumbing: 'PLUMBING',
@@ -346,10 +309,7 @@ function NewRequestPage() {
       urgent: 'URGENT',
     };
 
-    // For now, use a placeholder unitId. In production the tenant's unit is known from auth context.
-    // The API requires a valid unitId; if the user is authenticated, the backend resolves this.
     createMutation.mutate({
-      // TODO: replace with actual unitId from tenant's auth session
       unitId: '00000000-0000-0000-0000-000000000000',
       title,
       description,
@@ -384,7 +344,7 @@ function NewRequestPage() {
   if (submitted) {
     return (
       <div className="flex min-h-[70vh] flex-col items-center justify-center px-4 text-center">
-        {/* Confetti effect - decorative circles */}
+        {/* Confetti effect */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           {Array.from({ length: 12 }).map((_, i) => (
             <motion.div
@@ -462,60 +422,6 @@ function NewRequestPage() {
           </p>
         </motion.div>
 
-        {/* WhatsApp confirmation to office */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="mb-6"
-        >
-          <WhatsAppButton
-            phone={office.phone.replace(/-/g, '')}
-            message={`تم إرسال بلاغ صيانة جديد: ${selectedCategory?.label} — ${selectedSubcategory?.label}، رقم البلاغ: ${ticketNumber}`}
-            label="إرسال تأكيد للمكتب عبر واتساب"
-            variant="secondary"
-            size="md"
-          />
-        </motion.div>
-
-        {/* Cost router animation */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="shadow-soft w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
-        >
-          <div className="mb-3 flex items-center gap-2">
-            <Scale className="text-brand-500 h-5 w-5" />
-            <span className="text-sm font-bold">تحديد المسؤولية المالية</span>
-          </div>
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: '100%' }}
-            transition={{ delay: 1, duration: 1.5 }}
-            className="bg-brand-500 mb-3 h-1.5 rounded-full"
-          />
-          {costResult && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 2.5 }}
-            >
-              <div
-                className={`mb-2 inline-flex rounded-full px-3 py-1 text-xs font-medium ${costColors[costResult.responsibility]}`}
-              >
-                المسؤول: {costResult.label}
-              </div>
-              <p className="text-[10px] text-[var(--muted-foreground)]">{costResult.article}</p>
-            </motion.div>
-          )}
-          {!costResult && (
-            <p className="text-xs text-[var(--muted-foreground)]">
-              جاري تحليل الطلب وتحديد المسؤولية المالية وفقاً للنظام...
-            </p>
-          )}
-        </motion.div>
-
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -545,7 +451,7 @@ function NewRequestPage() {
         >
           <AlertTriangle className="h-4 w-4 text-red-500" />
           <span className="text-xs font-medium text-red-700 dark:text-red-300">
-            بلاغ عاجل — سيتم التعامل معه بأولوية قصوى
+            بلاغ عاجل سيتم التعامل معه بأولوية قصوى
           </span>
         </motion.div>
       )}
@@ -573,7 +479,7 @@ function NewRequestPage() {
 
       {/* Step content */}
       <AnimatePresence mode="wait">
-        {/* Step 0: Category Selection — image-based cards */}
+        {/* Step 0: Category Selection */}
         {step === 0 && (
           <motion.div
             key="step0"
@@ -629,7 +535,7 @@ function NewRequestPage() {
           >
             <h2 className="text-base font-bold">حدد المشكلة بالتفصيل</h2>
             <p className="text-xs text-[var(--muted-foreground)]">
-              {selectedCategory?.label} — اختر المشكلة المحددة
+              {selectedCategory?.label} -- اختر المشكلة المحددة
             </p>
             <div className="space-y-2">
               {(subcategories[category] || []).map((sub) => {
@@ -680,7 +586,6 @@ function NewRequestPage() {
           >
             <h2 className="text-base font-bold">أين المشكلة؟</h2>
 
-            {/* Location type */}
             <div className="space-y-2">
               {locationTypes.map((loc) => {
                 const Icon = loc.icon;
@@ -716,7 +621,6 @@ function NewRequestPage() {
               })}
             </div>
 
-            {/* Specific location — dynamic based on type */}
             <AnimatePresence mode="wait">
               {locationType && (
                 <motion.div
@@ -759,7 +663,7 @@ function NewRequestPage() {
           </motion.div>
         )}
 
-        {/* Step 3: Description + Photos + Self-help tip */}
+        {/* Step 3: Description + Photos */}
         {step === 3 && (
           <motion.div
             key="step3"
@@ -769,35 +673,6 @@ function NewRequestPage() {
             className="space-y-4"
           >
             <h2 className="text-base font-bold">وصف المشكلة</h2>
-
-            {/* Self-help tip */}
-            {selfHelpTip && showSelfHelp && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="relative rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/30"
-              >
-                <button
-                  onClick={() => setShowSelfHelp(false)}
-                  className="absolute end-2 top-2 rounded-lg p-1 text-amber-600/50 hover:text-amber-600 dark:text-amber-400/50 dark:hover:text-amber-400"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/40">
-                    <Lightbulb className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <div>
-                    <p className="mb-1 text-xs font-bold text-amber-800 dark:text-amber-300">
-                      نصيحة سريعة قبل الإرسال
-                    </p>
-                    <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-400">
-                      {selfHelpTip.tip}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
 
             <textarea
               value={description}
@@ -816,7 +691,7 @@ function NewRequestPage() {
               <p className="text-[10px] text-[var(--muted-foreground)]">{description.length} حرف</p>
             </div>
 
-            {/* Photo upload area — real preview */}
+            {/* Photo upload area */}
             <div>
               <p className="mb-2 text-sm font-medium">صور (اختياري)</p>
               <input
@@ -864,7 +739,7 @@ function NewRequestPage() {
           </motion.div>
         )}
 
-        {/* Step 4: Review + Cost Preview */}
+        {/* Step 4: Review */}
         {step === 4 && (
           <motion.div
             key="step4"
@@ -875,7 +750,6 @@ function NewRequestPage() {
           >
             <h2 className="text-base font-bold">مراجعة الطلب</h2>
 
-            {/* Summary card */}
             <div className="shadow-soft space-y-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--muted-foreground)]">التصنيف</span>
@@ -899,7 +773,7 @@ function NewRequestPage() {
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--muted-foreground)]">الموقع</span>
                 <span className="text-sm font-medium">
-                  {selectedLocationType?.label} — {selectedRoom?.label}
+                  {selectedLocationType?.label} -- {selectedRoom?.label}
                 </span>
               </div>
               {urlPriority === 'urgent' && (
@@ -940,43 +814,6 @@ function NewRequestPage() {
                 </>
               )}
             </div>
-
-            {/* Cost Router Result */}
-            {costResult && (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
-              >
-                <div className="mb-3 flex items-center gap-2">
-                  <Scale className="text-brand-500 h-5 w-5" />
-                  <h3 className="text-sm font-bold">المسؤولية المالية</h3>
-                </div>
-
-                <div className="mb-3 flex items-center gap-2">
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${costColors[costResult.responsibility]}`}
-                  >
-                    المسؤول: {costResult.label}
-                  </span>
-                </div>
-
-                <div className="mb-3 flex items-center justify-between rounded-xl bg-[var(--secondary)] p-3">
-                  <span className="text-xs text-[var(--muted-foreground)]">التكلفة المتوقعة</span>
-                  <span className="text-sm font-bold">{costResult.estimatedRange}</span>
-                </div>
-
-                <div className="rounded-xl bg-[var(--secondary)] p-3">
-                  <p className="text-[10px] font-medium text-[var(--muted-foreground)]">
-                    {costResult.article}
-                  </p>
-                  <p className="mt-1 text-xs leading-relaxed text-[var(--muted-foreground)]">
-                    {costResult.legalBasis}
-                  </p>
-                </div>
-              </motion.div>
-            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -998,12 +835,18 @@ function NewRequestPage() {
           whileHover={{ scale: canNext() ? 1.01 : 1 }}
           whileTap={{ scale: canNext() ? 0.98 : 1 }}
           onClick={handleNext}
-          disabled={!canNext()}
+          disabled={!canNext() || createMutation.isPending}
           className="bg-brand-500 shadow-soft hover:bg-brand-600 flex h-12 flex-1 items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <span>{step === 4 ? 'إرسال البلاغ' : 'التالي'}</span>
+          <span>
+            {step === 4
+              ? createMutation.isPending
+                ? 'جاري الإرسال...'
+                : 'إرسال البلاغ'
+              : 'التالي'}
+          </span>
           {step < 4 && <ArrowLeft className="h-4 w-4" />}
-          {step === 4 && <CheckCircle2 className="h-4 w-4" />}
+          {step === 4 && !createMutation.isPending && <CheckCircle2 className="h-4 w-4" />}
         </motion.button>
       </div>
     </div>
