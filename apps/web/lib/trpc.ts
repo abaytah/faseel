@@ -1,6 +1,7 @@
 import { createTRPCReact, httpBatchLink } from '@trpc/react-query';
 import superjson from 'superjson';
 import type { AppRouter } from '@faseel/api';
+import { getAccessToken } from './auth';
 
 export const trpc = createTRPCReact<AppRouter>();
 
@@ -19,6 +20,12 @@ export function getTrpcClientConfig() {
         headers() {
           const headers = new Headers();
           headers.set('x-trpc-source', 'nextjs-react');
+
+          const token = getAccessToken();
+          if (token) {
+            headers.set('authorization', `Bearer ${token}`);
+          }
+
           return headers;
         },
       }),

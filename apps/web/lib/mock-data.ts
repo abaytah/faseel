@@ -1,3 +1,5 @@
+// DEPRECATED: This file is kept for the demo site at proptech1.ideaita.me
+// New pages should use tRPC queries from @/lib/trpc and labels from @/lib/format-utils.
 // ============================================================
 // Faseel — Mock Data (Culturally-Authentic Saudi Arabia)
 // ============================================================
@@ -1506,87 +1508,873 @@ export const serviceProviders: ServiceProvider[] = [
 
 export const units: Unit[] = [
   // --- Al Nakheel Tower (bld-001) — 8 units ---
-  { id: 'unit-001', buildingId: 'bld-001', unitNumber: 'شقة ١٠١', floor: 1, area: 120, rooms: 3, bathrooms: 2, monthlyRent: 4500, status: 'occupied', ownerId: 'own-001', tenantId: 'ten-001' },
-  { id: 'unit-002', buildingId: 'bld-001', unitNumber: 'شقة ١٠٢', floor: 1, area: 95, rooms: 2, bathrooms: 1, monthlyRent: 3500, status: 'occupied', ownerId: 'own-001', tenantId: 'ten-002' },
-  { id: 'unit-003', buildingId: 'bld-001', unitNumber: 'شقة ٢٠١', floor: 2, area: 150, rooms: 4, bathrooms: 2, monthlyRent: 5500, status: 'occupied', ownerId: 'own-002', tenantId: 'ten-003' },
-  { id: 'unit-004', buildingId: 'bld-001', unitNumber: 'شقة ٢٠٢', floor: 2, area: 110, rooms: 3, bathrooms: 2, monthlyRent: 4000, status: 'vacant', ownerId: 'own-002' },
-  { id: 'unit-005', buildingId: 'bld-001', unitNumber: 'شقة ٢٠٥', floor: 2, area: 85, rooms: 2, bathrooms: 1, monthlyRent: 3200, status: 'occupied', ownerId: 'own-001', tenantId: 'ten-004' },
-  { id: 'unit-006', buildingId: 'bld-001', unitNumber: 'شقة ٣٠٢', floor: 3, area: 130, rooms: 3, bathrooms: 2, monthlyRent: 5000, status: 'occupied', ownerId: 'own-003', tenantId: 'ten-005' },
-  { id: 'unit-007', buildingId: 'bld-001', unitNumber: 'شقة ٤٠٢', floor: 4, area: 140, rooms: 4, bathrooms: 3, monthlyRent: 6000, status: 'occupied', ownerId: 'own-003', tenantId: 'ten-006' },
-  { id: 'unit-008', buildingId: 'bld-001', unitNumber: 'شقة ٥٠١', floor: 5, area: 200, rooms: 5, bathrooms: 3, monthlyRent: 8000, status: 'maintenance', ownerId: 'own-001' },
+  {
+    id: 'unit-001',
+    buildingId: 'bld-001',
+    unitNumber: 'شقة ١٠١',
+    floor: 1,
+    area: 120,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 4500,
+    status: 'occupied',
+    ownerId: 'own-001',
+    tenantId: 'ten-001',
+  },
+  {
+    id: 'unit-002',
+    buildingId: 'bld-001',
+    unitNumber: 'شقة ١٠٢',
+    floor: 1,
+    area: 95,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 3500,
+    status: 'occupied',
+    ownerId: 'own-001',
+    tenantId: 'ten-002',
+  },
+  {
+    id: 'unit-003',
+    buildingId: 'bld-001',
+    unitNumber: 'شقة ٢٠١',
+    floor: 2,
+    area: 150,
+    rooms: 4,
+    bathrooms: 2,
+    monthlyRent: 5500,
+    status: 'occupied',
+    ownerId: 'own-002',
+    tenantId: 'ten-003',
+  },
+  {
+    id: 'unit-004',
+    buildingId: 'bld-001',
+    unitNumber: 'شقة ٢٠٢',
+    floor: 2,
+    area: 110,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 4000,
+    status: 'vacant',
+    ownerId: 'own-002',
+  },
+  {
+    id: 'unit-005',
+    buildingId: 'bld-001',
+    unitNumber: 'شقة ٢٠٥',
+    floor: 2,
+    area: 85,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 3200,
+    status: 'occupied',
+    ownerId: 'own-001',
+    tenantId: 'ten-004',
+  },
+  {
+    id: 'unit-006',
+    buildingId: 'bld-001',
+    unitNumber: 'شقة ٣٠٢',
+    floor: 3,
+    area: 130,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 5000,
+    status: 'occupied',
+    ownerId: 'own-003',
+    tenantId: 'ten-005',
+  },
+  {
+    id: 'unit-007',
+    buildingId: 'bld-001',
+    unitNumber: 'شقة ٤٠٢',
+    floor: 4,
+    area: 140,
+    rooms: 4,
+    bathrooms: 3,
+    monthlyRent: 6000,
+    status: 'occupied',
+    ownerId: 'own-003',
+    tenantId: 'ten-006',
+  },
+  {
+    id: 'unit-008',
+    buildingId: 'bld-001',
+    unitNumber: 'شقة ٥٠١',
+    floor: 5,
+    area: 200,
+    rooms: 5,
+    bathrooms: 3,
+    monthlyRent: 8000,
+    status: 'maintenance',
+    ownerId: 'own-001',
+  },
 
   // --- Al Yasmin Building (bld-002) — 6 units ---
-  { id: 'unit-009', buildingId: 'bld-002', unitNumber: 'شقة ١٠١', floor: 1, area: 100, rooms: 3, bathrooms: 2, monthlyRent: 3000, status: 'occupied', ownerId: 'own-004', tenantId: 'ten-001' },
-  { id: 'unit-010', buildingId: 'bld-002', unitNumber: 'شقة ١٠٢', floor: 1, area: 80, rooms: 2, bathrooms: 1, monthlyRent: 2500, status: 'occupied', ownerId: 'own-004', tenantId: 'ten-002' },
-  { id: 'unit-011', buildingId: 'bld-002', unitNumber: 'شقة ١٠٣', floor: 1, area: 90, rooms: 2, bathrooms: 1, monthlyRent: 2800, status: 'occupied', ownerId: 'own-002', tenantId: 'ten-004' },
-  { id: 'unit-012', buildingId: 'bld-002', unitNumber: 'شقة ٢٠١', floor: 2, area: 110, rooms: 3, bathrooms: 2, monthlyRent: 3500, status: 'occupied', ownerId: 'own-002', tenantId: 'ten-003' },
-  { id: 'unit-013', buildingId: 'bld-002', unitNumber: 'شقة ٢٠٢', floor: 2, area: 100, rooms: 3, bathrooms: 2, monthlyRent: 3200, status: 'vacant', ownerId: 'own-004' },
-  { id: 'unit-014', buildingId: 'bld-002', unitNumber: 'شقة ٣٠١', floor: 3, area: 120, rooms: 3, bathrooms: 2, monthlyRent: 3800, status: 'occupied', ownerId: 'own-004', tenantId: 'ten-006' },
+  {
+    id: 'unit-009',
+    buildingId: 'bld-002',
+    unitNumber: 'شقة ١٠١',
+    floor: 1,
+    area: 100,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 3000,
+    status: 'occupied',
+    ownerId: 'own-004',
+    tenantId: 'ten-001',
+  },
+  {
+    id: 'unit-010',
+    buildingId: 'bld-002',
+    unitNumber: 'شقة ١٠٢',
+    floor: 1,
+    area: 80,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 2500,
+    status: 'occupied',
+    ownerId: 'own-004',
+    tenantId: 'ten-002',
+  },
+  {
+    id: 'unit-011',
+    buildingId: 'bld-002',
+    unitNumber: 'شقة ١٠٣',
+    floor: 1,
+    area: 90,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 2800,
+    status: 'occupied',
+    ownerId: 'own-002',
+    tenantId: 'ten-004',
+  },
+  {
+    id: 'unit-012',
+    buildingId: 'bld-002',
+    unitNumber: 'شقة ٢٠١',
+    floor: 2,
+    area: 110,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 3500,
+    status: 'occupied',
+    ownerId: 'own-002',
+    tenantId: 'ten-003',
+  },
+  {
+    id: 'unit-013',
+    buildingId: 'bld-002',
+    unitNumber: 'شقة ٢٠٢',
+    floor: 2,
+    area: 100,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 3200,
+    status: 'vacant',
+    ownerId: 'own-004',
+  },
+  {
+    id: 'unit-014',
+    buildingId: 'bld-002',
+    unitNumber: 'شقة ٣٠١',
+    floor: 3,
+    area: 120,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 3800,
+    status: 'occupied',
+    ownerId: 'own-004',
+    tenantId: 'ten-006',
+  },
 
   // --- Al Waha Commercial Complex (bld-003) — 6 units ---
-  { id: 'unit-015', buildingId: 'bld-003', unitNumber: 'معرض ١', floor: 0, area: 150, rooms: 0, bathrooms: 1, monthlyRent: 12000, status: 'occupied', ownerId: 'own-001', tenantId: 'ten-005' },
-  { id: 'unit-016', buildingId: 'bld-003', unitNumber: 'معرض ٢', floor: 0, area: 120, rooms: 0, bathrooms: 1, monthlyRent: 10000, status: 'occupied', ownerId: 'own-001' },
-  { id: 'unit-017', buildingId: 'bld-003', unitNumber: 'مكتب ١٠١', floor: 1, area: 80, rooms: 0, bathrooms: 1, monthlyRent: 6000, status: 'occupied', ownerId: 'own-003', tenantId: 'ten-003' },
-  { id: 'unit-018', buildingId: 'bld-003', unitNumber: 'مكتب ١٠٢', floor: 1, area: 65, rooms: 0, bathrooms: 1, monthlyRent: 5000, status: 'occupied', ownerId: 'own-003' },
-  { id: 'unit-019', buildingId: 'bld-003', unitNumber: 'مكتب ٢٠١', floor: 2, area: 100, rooms: 0, bathrooms: 1, monthlyRent: 7000, status: 'vacant', ownerId: 'own-002' },
-  { id: 'unit-020', buildingId: 'bld-003', unitNumber: 'مكتب ٢٠٢', floor: 2, area: 90, rooms: 0, bathrooms: 1, monthlyRent: 6500, status: 'occupied', ownerId: 'own-002', tenantId: 'ten-006' },
+  {
+    id: 'unit-015',
+    buildingId: 'bld-003',
+    unitNumber: 'معرض ١',
+    floor: 0,
+    area: 150,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 12000,
+    status: 'occupied',
+    ownerId: 'own-001',
+    tenantId: 'ten-005',
+  },
+  {
+    id: 'unit-016',
+    buildingId: 'bld-003',
+    unitNumber: 'معرض ٢',
+    floor: 0,
+    area: 120,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 10000,
+    status: 'occupied',
+    ownerId: 'own-001',
+  },
+  {
+    id: 'unit-017',
+    buildingId: 'bld-003',
+    unitNumber: 'مكتب ١٠١',
+    floor: 1,
+    area: 80,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 6000,
+    status: 'occupied',
+    ownerId: 'own-003',
+    tenantId: 'ten-003',
+  },
+  {
+    id: 'unit-018',
+    buildingId: 'bld-003',
+    unitNumber: 'مكتب ١٠٢',
+    floor: 1,
+    area: 65,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 5000,
+    status: 'occupied',
+    ownerId: 'own-003',
+  },
+  {
+    id: 'unit-019',
+    buildingId: 'bld-003',
+    unitNumber: 'مكتب ٢٠١',
+    floor: 2,
+    area: 100,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 7000,
+    status: 'vacant',
+    ownerId: 'own-002',
+  },
+  {
+    id: 'unit-020',
+    buildingId: 'bld-003',
+    unitNumber: 'مكتب ٢٠٢',
+    floor: 2,
+    area: 90,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 6500,
+    status: 'occupied',
+    ownerId: 'own-002',
+    tenantId: 'ten-006',
+  },
 
   // --- Al Yaqoot Tower (bld-004) — 10 units ---
-  { id: 'unit-021', buildingId: 'bld-004', unitNumber: 'شقة ١٠١', floor: 1, area: 110, rooms: 3, bathrooms: 2, monthlyRent: 4200, status: 'occupied', ownerId: 'own-005', tenantId: 'ten-007' },
-  { id: 'unit-022', buildingId: 'bld-004', unitNumber: 'شقة ١٠٢', floor: 1, area: 90, rooms: 2, bathrooms: 1, monthlyRent: 3300, status: 'occupied', ownerId: 'own-005', tenantId: 'ten-008' },
-  { id: 'unit-023', buildingId: 'bld-004', unitNumber: 'شقة ٢٠١', floor: 2, area: 130, rooms: 3, bathrooms: 2, monthlyRent: 4800, status: 'occupied', ownerId: 'own-006', tenantId: 'ten-009' },
-  { id: 'unit-024', buildingId: 'bld-004', unitNumber: 'شقة ٢٠٢', floor: 2, area: 100, rooms: 2, bathrooms: 1, monthlyRent: 3600, status: 'vacant', ownerId: 'own-006' },
-  { id: 'unit-025', buildingId: 'bld-004', unitNumber: 'شقة ٣٠١', floor: 3, area: 140, rooms: 4, bathrooms: 2, monthlyRent: 5200, status: 'occupied', ownerId: 'own-005', tenantId: 'ten-010' },
-  { id: 'unit-026', buildingId: 'bld-004', unitNumber: 'شقة ٣٠٢', floor: 3, area: 120, rooms: 3, bathrooms: 2, monthlyRent: 4500, status: 'occupied', ownerId: 'own-005', tenantId: 'ten-011' },
-  { id: 'unit-027', buildingId: 'bld-004', unitNumber: 'شقة ٤٠١', floor: 4, area: 160, rooms: 4, bathrooms: 3, monthlyRent: 6000, status: 'maintenance', ownerId: 'own-006' },
-  { id: 'unit-028', buildingId: 'bld-004', unitNumber: 'شقة ٥٠١', floor: 5, area: 95, rooms: 2, bathrooms: 1, monthlyRent: 3400, status: 'occupied', ownerId: 'own-006', tenantId: 'ten-012' },
-  { id: 'unit-029', buildingId: 'bld-004', unitNumber: 'شقة ٦٠١', floor: 6, area: 180, rooms: 5, bathrooms: 3, monthlyRent: 7500, status: 'occupied', ownerId: 'own-005', tenantId: 'ten-013' },
-  { id: 'unit-030', buildingId: 'bld-004', unitNumber: 'شقة ٧٠١', floor: 7, area: 110, rooms: 3, bathrooms: 2, monthlyRent: 4300, status: 'vacant', ownerId: 'own-005' },
+  {
+    id: 'unit-021',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ١٠١',
+    floor: 1,
+    area: 110,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 4200,
+    status: 'occupied',
+    ownerId: 'own-005',
+    tenantId: 'ten-007',
+  },
+  {
+    id: 'unit-022',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ١٠٢',
+    floor: 1,
+    area: 90,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 3300,
+    status: 'occupied',
+    ownerId: 'own-005',
+    tenantId: 'ten-008',
+  },
+  {
+    id: 'unit-023',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ٢٠١',
+    floor: 2,
+    area: 130,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 4800,
+    status: 'occupied',
+    ownerId: 'own-006',
+    tenantId: 'ten-009',
+  },
+  {
+    id: 'unit-024',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ٢٠٢',
+    floor: 2,
+    area: 100,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 3600,
+    status: 'vacant',
+    ownerId: 'own-006',
+  },
+  {
+    id: 'unit-025',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ٣٠١',
+    floor: 3,
+    area: 140,
+    rooms: 4,
+    bathrooms: 2,
+    monthlyRent: 5200,
+    status: 'occupied',
+    ownerId: 'own-005',
+    tenantId: 'ten-010',
+  },
+  {
+    id: 'unit-026',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ٣٠٢',
+    floor: 3,
+    area: 120,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 4500,
+    status: 'occupied',
+    ownerId: 'own-005',
+    tenantId: 'ten-011',
+  },
+  {
+    id: 'unit-027',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ٤٠١',
+    floor: 4,
+    area: 160,
+    rooms: 4,
+    bathrooms: 3,
+    monthlyRent: 6000,
+    status: 'maintenance',
+    ownerId: 'own-006',
+  },
+  {
+    id: 'unit-028',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ٥٠١',
+    floor: 5,
+    area: 95,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 3400,
+    status: 'occupied',
+    ownerId: 'own-006',
+    tenantId: 'ten-012',
+  },
+  {
+    id: 'unit-029',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ٦٠١',
+    floor: 6,
+    area: 180,
+    rooms: 5,
+    bathrooms: 3,
+    monthlyRent: 7500,
+    status: 'occupied',
+    ownerId: 'own-005',
+    tenantId: 'ten-013',
+  },
+  {
+    id: 'unit-030',
+    buildingId: 'bld-004',
+    unitNumber: 'شقة ٧٠١',
+    floor: 7,
+    area: 110,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 4300,
+    status: 'vacant',
+    ownerId: 'own-005',
+  },
 
   // --- Al Rayan Commercial Complex (bld-005) — 8 units ---
-  { id: 'unit-031', buildingId: 'bld-005', unitNumber: 'معرض ١', floor: 0, area: 180, rooms: 0, bathrooms: 2, monthlyRent: 15000, status: 'occupied', ownerId: 'own-007', tenantId: 'ten-014' },
-  { id: 'unit-032', buildingId: 'bld-005', unitNumber: 'معرض ٢', floor: 0, area: 150, rooms: 0, bathrooms: 1, monthlyRent: 12000, status: 'occupied', ownerId: 'own-007', tenantId: 'ten-015' },
-  { id: 'unit-033', buildingId: 'bld-005', unitNumber: 'مكتب ١٠١', floor: 1, area: 90, rooms: 0, bathrooms: 1, monthlyRent: 7000, status: 'occupied', ownerId: 'own-007', tenantId: 'ten-016' },
-  { id: 'unit-034', buildingId: 'bld-005', unitNumber: 'مكتب ١٠٢', floor: 1, area: 75, rooms: 0, bathrooms: 1, monthlyRent: 5500, status: 'vacant', ownerId: 'own-008' },
-  { id: 'unit-035', buildingId: 'bld-005', unitNumber: 'مكتب ٢٠١', floor: 2, area: 110, rooms: 0, bathrooms: 1, monthlyRent: 8000, status: 'occupied', ownerId: 'own-008', tenantId: 'ten-017' },
-  { id: 'unit-036', buildingId: 'bld-005', unitNumber: 'مكتب ٢٠٢', floor: 2, area: 85, rooms: 0, bathrooms: 1, monthlyRent: 6000, status: 'occupied', ownerId: 'own-008', tenantId: 'ten-018' },
-  { id: 'unit-037', buildingId: 'bld-005', unitNumber: 'مكتب ٣٠١', floor: 3, area: 100, rooms: 0, bathrooms: 1, monthlyRent: 7500, status: 'vacant', ownerId: 'own-007' },
-  { id: 'unit-038', buildingId: 'bld-005', unitNumber: 'مكتب ٣٠٢', floor: 3, area: 70, rooms: 0, bathrooms: 1, monthlyRent: 5000, status: 'occupied', ownerId: 'own-007', tenantId: 'ten-019' },
+  {
+    id: 'unit-031',
+    buildingId: 'bld-005',
+    unitNumber: 'معرض ١',
+    floor: 0,
+    area: 180,
+    rooms: 0,
+    bathrooms: 2,
+    monthlyRent: 15000,
+    status: 'occupied',
+    ownerId: 'own-007',
+    tenantId: 'ten-014',
+  },
+  {
+    id: 'unit-032',
+    buildingId: 'bld-005',
+    unitNumber: 'معرض ٢',
+    floor: 0,
+    area: 150,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 12000,
+    status: 'occupied',
+    ownerId: 'own-007',
+    tenantId: 'ten-015',
+  },
+  {
+    id: 'unit-033',
+    buildingId: 'bld-005',
+    unitNumber: 'مكتب ١٠١',
+    floor: 1,
+    area: 90,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 7000,
+    status: 'occupied',
+    ownerId: 'own-007',
+    tenantId: 'ten-016',
+  },
+  {
+    id: 'unit-034',
+    buildingId: 'bld-005',
+    unitNumber: 'مكتب ١٠٢',
+    floor: 1,
+    area: 75,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 5500,
+    status: 'vacant',
+    ownerId: 'own-008',
+  },
+  {
+    id: 'unit-035',
+    buildingId: 'bld-005',
+    unitNumber: 'مكتب ٢٠١',
+    floor: 2,
+    area: 110,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 8000,
+    status: 'occupied',
+    ownerId: 'own-008',
+    tenantId: 'ten-017',
+  },
+  {
+    id: 'unit-036',
+    buildingId: 'bld-005',
+    unitNumber: 'مكتب ٢٠٢',
+    floor: 2,
+    area: 85,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 6000,
+    status: 'occupied',
+    ownerId: 'own-008',
+    tenantId: 'ten-018',
+  },
+  {
+    id: 'unit-037',
+    buildingId: 'bld-005',
+    unitNumber: 'مكتب ٣٠١',
+    floor: 3,
+    area: 100,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 7500,
+    status: 'vacant',
+    ownerId: 'own-007',
+  },
+  {
+    id: 'unit-038',
+    buildingId: 'bld-005',
+    unitNumber: 'مكتب ٣٠٢',
+    floor: 3,
+    area: 70,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 5000,
+    status: 'occupied',
+    ownerId: 'own-007',
+    tenantId: 'ten-019',
+  },
 
   // --- Al Salam Building (bld-006) — 8 units ---
-  { id: 'unit-039', buildingId: 'bld-006', unitNumber: 'شقة ١٠١', floor: 1, area: 85, rooms: 2, bathrooms: 1, monthlyRent: 2200, status: 'occupied', ownerId: 'own-008', tenantId: 'ten-020' },
-  { id: 'unit-040', buildingId: 'bld-006', unitNumber: 'شقة ١٠٢', floor: 1, area: 75, rooms: 2, bathrooms: 1, monthlyRent: 2000, status: 'occupied', ownerId: 'own-008', tenantId: 'ten-021' },
-  { id: 'unit-041', buildingId: 'bld-006', unitNumber: 'شقة ٢٠١', floor: 2, area: 100, rooms: 3, bathrooms: 2, monthlyRent: 2800, status: 'occupied', ownerId: 'own-009', tenantId: 'ten-022' },
-  { id: 'unit-042', buildingId: 'bld-006', unitNumber: 'شقة ٢٠٢', floor: 2, area: 90, rooms: 2, bathrooms: 1, monthlyRent: 2500, status: 'vacant', ownerId: 'own-009' },
-  { id: 'unit-043', buildingId: 'bld-006', unitNumber: 'شقة ٣٠١', floor: 3, area: 110, rooms: 3, bathrooms: 2, monthlyRent: 3000, status: 'occupied', ownerId: 'own-009', tenantId: 'ten-023' },
-  { id: 'unit-044', buildingId: 'bld-006', unitNumber: 'شقة ٣٠٢', floor: 3, area: 80, rooms: 2, bathrooms: 1, monthlyRent: 2300, status: 'occupied', ownerId: 'own-008', tenantId: 'ten-024' },
-  { id: 'unit-045', buildingId: 'bld-006', unitNumber: 'شقة ٤٠١', floor: 4, area: 120, rooms: 3, bathrooms: 2, monthlyRent: 3200, status: 'maintenance', ownerId: 'own-009' },
-  { id: 'unit-046', buildingId: 'bld-006', unitNumber: 'شقة ٤٠٢', floor: 4, area: 70, rooms: 1, bathrooms: 1, monthlyRent: 1500, status: 'occupied', ownerId: 'own-009', tenantId: 'ten-025' },
+  {
+    id: 'unit-039',
+    buildingId: 'bld-006',
+    unitNumber: 'شقة ١٠١',
+    floor: 1,
+    area: 85,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 2200,
+    status: 'occupied',
+    ownerId: 'own-008',
+    tenantId: 'ten-020',
+  },
+  {
+    id: 'unit-040',
+    buildingId: 'bld-006',
+    unitNumber: 'شقة ١٠٢',
+    floor: 1,
+    area: 75,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 2000,
+    status: 'occupied',
+    ownerId: 'own-008',
+    tenantId: 'ten-021',
+  },
+  {
+    id: 'unit-041',
+    buildingId: 'bld-006',
+    unitNumber: 'شقة ٢٠١',
+    floor: 2,
+    area: 100,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 2800,
+    status: 'occupied',
+    ownerId: 'own-009',
+    tenantId: 'ten-022',
+  },
+  {
+    id: 'unit-042',
+    buildingId: 'bld-006',
+    unitNumber: 'شقة ٢٠٢',
+    floor: 2,
+    area: 90,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 2500,
+    status: 'vacant',
+    ownerId: 'own-009',
+  },
+  {
+    id: 'unit-043',
+    buildingId: 'bld-006',
+    unitNumber: 'شقة ٣٠١',
+    floor: 3,
+    area: 110,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 3000,
+    status: 'occupied',
+    ownerId: 'own-009',
+    tenantId: 'ten-023',
+  },
+  {
+    id: 'unit-044',
+    buildingId: 'bld-006',
+    unitNumber: 'شقة ٣٠٢',
+    floor: 3,
+    area: 80,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 2300,
+    status: 'occupied',
+    ownerId: 'own-008',
+    tenantId: 'ten-024',
+  },
+  {
+    id: 'unit-045',
+    buildingId: 'bld-006',
+    unitNumber: 'شقة ٤٠١',
+    floor: 4,
+    area: 120,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 3200,
+    status: 'maintenance',
+    ownerId: 'own-009',
+  },
+  {
+    id: 'unit-046',
+    buildingId: 'bld-006',
+    unitNumber: 'شقة ٤٠٢',
+    floor: 4,
+    area: 70,
+    rooms: 1,
+    bathrooms: 1,
+    monthlyRent: 1500,
+    status: 'occupied',
+    ownerId: 'own-009',
+    tenantId: 'ten-025',
+  },
 
   // --- Al Murooj Towers (bld-007) — 12 units ---
-  { id: 'unit-047', buildingId: 'bld-007', unitNumber: 'شقة ١٠١', floor: 1, area: 130, rooms: 3, bathrooms: 2, monthlyRent: 5500, status: 'occupied', ownerId: 'own-010', tenantId: 'ten-007' },
-  { id: 'unit-048', buildingId: 'bld-007', unitNumber: 'شقة ١٠٢', floor: 1, area: 100, rooms: 2, bathrooms: 1, monthlyRent: 4000, status: 'occupied', ownerId: 'own-010', tenantId: 'ten-008' },
-  { id: 'unit-049', buildingId: 'bld-007', unitNumber: 'شقة ٢٠١', floor: 2, area: 150, rooms: 4, bathrooms: 2, monthlyRent: 6500, status: 'occupied', ownerId: 'own-010', tenantId: 'ten-009' },
-  { id: 'unit-050', buildingId: 'bld-007', unitNumber: 'شقة ٢٠٢', floor: 2, area: 110, rooms: 3, bathrooms: 2, monthlyRent: 4800, status: 'occupied', ownerId: 'own-007', tenantId: 'ten-010' },
-  { id: 'unit-051', buildingId: 'bld-007', unitNumber: 'شقة ٣٠١', floor: 3, area: 160, rooms: 4, bathrooms: 3, monthlyRent: 7000, status: 'occupied', ownerId: 'own-007', tenantId: 'ten-011' },
-  { id: 'unit-052', buildingId: 'bld-007', unitNumber: 'شقة ٤٠١', floor: 4, area: 120, rooms: 3, bathrooms: 2, monthlyRent: 5200, status: 'vacant', ownerId: 'own-010' },
-  { id: 'unit-053', buildingId: 'bld-007', unitNumber: 'شقة ٥٠١', floor: 5, area: 140, rooms: 3, bathrooms: 2, monthlyRent: 5800, status: 'occupied', ownerId: 'own-010', tenantId: 'ten-012' },
-  { id: 'unit-054', buildingId: 'bld-007', unitNumber: 'شقة ٦٠١', floor: 6, area: 170, rooms: 4, bathrooms: 3, monthlyRent: 7200, status: 'occupied', ownerId: 'own-007', tenantId: 'ten-013' },
-  { id: 'unit-055', buildingId: 'bld-007', unitNumber: 'شقة ٧٠١', floor: 7, area: 100, rooms: 2, bathrooms: 1, monthlyRent: 4200, status: 'occupied', ownerId: 'own-007', tenantId: 'ten-014' },
-  { id: 'unit-056', buildingId: 'bld-007', unitNumber: 'شقة ٨٠١', floor: 8, area: 190, rooms: 5, bathrooms: 3, monthlyRent: 8000, status: 'occupied', ownerId: 'own-010', tenantId: 'ten-015' },
-  { id: 'unit-057', buildingId: 'bld-007', unitNumber: 'شقة ٩٠١', floor: 9, area: 130, rooms: 3, bathrooms: 2, monthlyRent: 5500, status: 'vacant', ownerId: 'own-010' },
-  { id: 'unit-058', buildingId: 'bld-007', unitNumber: 'شقة ١٠٠١', floor: 10, area: 200, rooms: 5, bathrooms: 3, monthlyRent: 8500, status: 'maintenance', ownerId: 'own-007' },
+  {
+    id: 'unit-047',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ١٠١',
+    floor: 1,
+    area: 130,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 5500,
+    status: 'occupied',
+    ownerId: 'own-010',
+    tenantId: 'ten-007',
+  },
+  {
+    id: 'unit-048',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ١٠٢',
+    floor: 1,
+    area: 100,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 4000,
+    status: 'occupied',
+    ownerId: 'own-010',
+    tenantId: 'ten-008',
+  },
+  {
+    id: 'unit-049',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ٢٠١',
+    floor: 2,
+    area: 150,
+    rooms: 4,
+    bathrooms: 2,
+    monthlyRent: 6500,
+    status: 'occupied',
+    ownerId: 'own-010',
+    tenantId: 'ten-009',
+  },
+  {
+    id: 'unit-050',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ٢٠٢',
+    floor: 2,
+    area: 110,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 4800,
+    status: 'occupied',
+    ownerId: 'own-007',
+    tenantId: 'ten-010',
+  },
+  {
+    id: 'unit-051',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ٣٠١',
+    floor: 3,
+    area: 160,
+    rooms: 4,
+    bathrooms: 3,
+    monthlyRent: 7000,
+    status: 'occupied',
+    ownerId: 'own-007',
+    tenantId: 'ten-011',
+  },
+  {
+    id: 'unit-052',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ٤٠١',
+    floor: 4,
+    area: 120,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 5200,
+    status: 'vacant',
+    ownerId: 'own-010',
+  },
+  {
+    id: 'unit-053',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ٥٠١',
+    floor: 5,
+    area: 140,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 5800,
+    status: 'occupied',
+    ownerId: 'own-010',
+    tenantId: 'ten-012',
+  },
+  {
+    id: 'unit-054',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ٦٠١',
+    floor: 6,
+    area: 170,
+    rooms: 4,
+    bathrooms: 3,
+    monthlyRent: 7200,
+    status: 'occupied',
+    ownerId: 'own-007',
+    tenantId: 'ten-013',
+  },
+  {
+    id: 'unit-055',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ٧٠١',
+    floor: 7,
+    area: 100,
+    rooms: 2,
+    bathrooms: 1,
+    monthlyRent: 4200,
+    status: 'occupied',
+    ownerId: 'own-007',
+    tenantId: 'ten-014',
+  },
+  {
+    id: 'unit-056',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ٨٠١',
+    floor: 8,
+    area: 190,
+    rooms: 5,
+    bathrooms: 3,
+    monthlyRent: 8000,
+    status: 'occupied',
+    ownerId: 'own-010',
+    tenantId: 'ten-015',
+  },
+  {
+    id: 'unit-057',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ٩٠١',
+    floor: 9,
+    area: 130,
+    rooms: 3,
+    bathrooms: 2,
+    monthlyRent: 5500,
+    status: 'vacant',
+    ownerId: 'own-010',
+  },
+  {
+    id: 'unit-058',
+    buildingId: 'bld-007',
+    unitNumber: 'شقة ١٠٠١',
+    floor: 10,
+    area: 200,
+    rooms: 5,
+    bathrooms: 3,
+    monthlyRent: 8500,
+    status: 'maintenance',
+    ownerId: 'own-007',
+  },
 
   // --- Al Andalus Complex (bld-008) — 9 units ---
-  { id: 'unit-059', buildingId: 'bld-008', unitNumber: 'معرض ١', floor: 0, area: 200, rooms: 0, bathrooms: 2, monthlyRent: 14000, status: 'occupied', ownerId: 'own-009', tenantId: 'ten-016' },
-  { id: 'unit-060', buildingId: 'bld-008', unitNumber: 'معرض ٢', floor: 0, area: 160, rooms: 0, bathrooms: 1, monthlyRent: 11000, status: 'occupied', ownerId: 'own-009', tenantId: 'ten-017' },
-  { id: 'unit-061', buildingId: 'bld-008', unitNumber: 'مكتب ١٠١', floor: 1, area: 85, rooms: 0, bathrooms: 1, monthlyRent: 6500, status: 'occupied', ownerId: 'own-010', tenantId: 'ten-018' },
-  { id: 'unit-062', buildingId: 'bld-008', unitNumber: 'مكتب ١٠٢', floor: 1, area: 70, rooms: 0, bathrooms: 1, monthlyRent: 5000, status: 'vacant', ownerId: 'own-010' },
-  { id: 'unit-063', buildingId: 'bld-008', unitNumber: 'مكتب ٢٠١', floor: 2, area: 95, rooms: 0, bathrooms: 1, monthlyRent: 7000, status: 'occupied', ownerId: 'own-009', tenantId: 'ten-019' },
-  { id: 'unit-064', buildingId: 'bld-008', unitNumber: 'مكتب ٢٠٢', floor: 2, area: 80, rooms: 0, bathrooms: 1, monthlyRent: 6000, status: 'occupied', ownerId: 'own-009', tenantId: 'ten-020' },
-  { id: 'unit-065', buildingId: 'bld-008', unitNumber: 'مكتب ٣٠١', floor: 3, area: 100, rooms: 0, bathrooms: 1, monthlyRent: 7500, status: 'vacant', ownerId: 'own-010' },
-  { id: 'unit-066', buildingId: 'bld-008', unitNumber: 'مكتب ٤٠١', floor: 4, area: 110, rooms: 0, bathrooms: 1, monthlyRent: 8000, status: 'occupied', ownerId: 'own-010', tenantId: 'ten-021' },
-  { id: 'unit-067', buildingId: 'bld-008', unitNumber: 'مكتب ٥٠١', floor: 5, area: 130, rooms: 0, bathrooms: 2, monthlyRent: 9500, status: 'occupied', ownerId: 'own-009', tenantId: 'ten-022' },
+  {
+    id: 'unit-059',
+    buildingId: 'bld-008',
+    unitNumber: 'معرض ١',
+    floor: 0,
+    area: 200,
+    rooms: 0,
+    bathrooms: 2,
+    monthlyRent: 14000,
+    status: 'occupied',
+    ownerId: 'own-009',
+    tenantId: 'ten-016',
+  },
+  {
+    id: 'unit-060',
+    buildingId: 'bld-008',
+    unitNumber: 'معرض ٢',
+    floor: 0,
+    area: 160,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 11000,
+    status: 'occupied',
+    ownerId: 'own-009',
+    tenantId: 'ten-017',
+  },
+  {
+    id: 'unit-061',
+    buildingId: 'bld-008',
+    unitNumber: 'مكتب ١٠١',
+    floor: 1,
+    area: 85,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 6500,
+    status: 'occupied',
+    ownerId: 'own-010',
+    tenantId: 'ten-018',
+  },
+  {
+    id: 'unit-062',
+    buildingId: 'bld-008',
+    unitNumber: 'مكتب ١٠٢',
+    floor: 1,
+    area: 70,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 5000,
+    status: 'vacant',
+    ownerId: 'own-010',
+  },
+  {
+    id: 'unit-063',
+    buildingId: 'bld-008',
+    unitNumber: 'مكتب ٢٠١',
+    floor: 2,
+    area: 95,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 7000,
+    status: 'occupied',
+    ownerId: 'own-009',
+    tenantId: 'ten-019',
+  },
+  {
+    id: 'unit-064',
+    buildingId: 'bld-008',
+    unitNumber: 'مكتب ٢٠٢',
+    floor: 2,
+    area: 80,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 6000,
+    status: 'occupied',
+    ownerId: 'own-009',
+    tenantId: 'ten-020',
+  },
+  {
+    id: 'unit-065',
+    buildingId: 'bld-008',
+    unitNumber: 'مكتب ٣٠١',
+    floor: 3,
+    area: 100,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 7500,
+    status: 'vacant',
+    ownerId: 'own-010',
+  },
+  {
+    id: 'unit-066',
+    buildingId: 'bld-008',
+    unitNumber: 'مكتب ٤٠١',
+    floor: 4,
+    area: 110,
+    rooms: 0,
+    bathrooms: 1,
+    monthlyRent: 8000,
+    status: 'occupied',
+    ownerId: 'own-010',
+    tenantId: 'ten-021',
+  },
+  {
+    id: 'unit-067',
+    buildingId: 'bld-008',
+    unitNumber: 'مكتب ٥٠١',
+    floor: 5,
+    area: 130,
+    rooms: 0,
+    bathrooms: 2,
+    monthlyRent: 9500,
+    status: 'occupied',
+    ownerId: 'own-009',
+    tenantId: 'ten-022',
+  },
 ];
 
 // --- Maintenance Requests ---
@@ -1595,7 +2383,8 @@ export const maintenanceRequests: MaintenanceRequest[] = [
   {
     id: 'req-001',
     title: 'عطل كومبرسور التكييف',
-    description: 'الكومبرسور الخارجي توقف عن العمل بشكل كامل. درجة الحرارة داخل الشقة مرتفعة جداً. الموديل: سبليت ٢٤٠٠٠ وحدة.',
+    description:
+      'الكومبرسور الخارجي توقف عن العمل بشكل كامل. درجة الحرارة داخل الشقة مرتفعة جداً. الموديل: سبليت ٢٤٠٠٠ وحدة.',
     category: 'hvac',
     subcategory: 'كومبرسور',
     buildingId: 'bld-001',
@@ -1605,23 +2394,45 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'in_progress',
     priority: 'high',
     costResponsibility: 'owner',
-    costLegalBasis: 'وفقاً للمادة ٥ من نظام إيجار: "يتحمل المؤجر نفقات الصيانة غير التأجيرية وإصلاح الخلل الذي يؤثر في استيفاء المنفعة المقصودة" — الكومبرسور من الأنظمة الأساسية للعين المؤجرة.',
+    costLegalBasis:
+      'وفقاً للمادة ٥ من نظام إيجار: "يتحمل المؤجر نفقات الصيانة غير التأجيرية وإصلاح الخلل الذي يؤثر في استيفاء المنفعة المقصودة" — الكومبرسور من الأنظمة الأساسية للعين المؤجرة.',
     estimatedCost: 3500,
     reportedById: 'ten-005',
     assignedProviderId: 'sp-001',
     createdAt: '2026-03-04T09:30:00',
     updatedAt: '2026-03-05T14:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-04T09:30:00', note: 'تم تقديم الطلب من المستأجر', userId: 'ten-005' },
-      { status: 'reviewed', timestamp: '2026-03-04T11:00:00', note: 'تمت مراجعة الطلب — أولوية عالية بسبب ارتفاع الحرارة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-04T12:30:00', note: 'تم تعيين مؤسسة الفيصل للتكييف والتبريد', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-05T08:00:00', note: 'الفني وصل الموقع وبدأ الفحص. يحتاج استبدال كومبرسور.', userId: 'sp-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-04T09:30:00',
+        note: 'تم تقديم الطلب من المستأجر',
+        userId: 'ten-005',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-04T11:00:00',
+        note: 'تمت مراجعة الطلب — أولوية عالية بسبب ارتفاع الحرارة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-04T12:30:00',
+        note: 'تم تعيين مؤسسة الفيصل للتكييف والتبريد',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-05T08:00:00',
+        note: 'الفني وصل الموقع وبدأ الفحص. يحتاج استبدال كومبرسور.',
+        userId: 'sp-001',
+      },
     ],
   },
   {
     id: 'req-002',
     title: 'تسريب في أنبوب المياه الرئيسي',
-    description: 'تسريب ماء مستمر من أنبوب المياه الرئيسي أسفل حوض المطبخ. أدى لتلف الخزانة السفلية.',
+    description:
+      'تسريب ماء مستمر من أنبوب المياه الرئيسي أسفل حوض المطبخ. أدى لتلف الخزانة السفلية.',
     category: 'plumbing',
     subcategory: 'تسريب',
     buildingId: 'bld-002',
@@ -1631,7 +2442,8 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'completed',
     priority: 'high',
     costResponsibility: 'owner',
-    costLegalBasis: 'وفقاً للمادة ٥ من نظام إيجار: أنابيب المياه الرئيسية من مكونات العين المؤجرة التي يتحمل المؤجر صيانتها وإصلاحها.',
+    costLegalBasis:
+      'وفقاً للمادة ٥ من نظام إيجار: أنابيب المياه الرئيسية من مكونات العين المؤجرة التي يتحمل المؤجر صيانتها وإصلاحها.',
     estimatedCost: 1200,
     actualCost: 980,
     reportedById: 'ten-001',
@@ -1640,17 +2452,43 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     updatedAt: '2026-03-02T11:30:00',
     completedAt: '2026-03-02T11:30:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-28T16:45:00', note: 'تم تقديم الطلب', userId: 'ten-001' },
-      { status: 'reviewed', timestamp: '2026-02-28T17:30:00', note: 'تمت المراجعة — حالة طارئة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-02-28T18:00:00', note: 'تم تعيين شركة البناء المتين للسباكة', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-01T08:30:00', note: 'بدء أعمال الإصلاح', userId: 'sp-002' },
-      { status: 'completed', timestamp: '2026-03-02T11:30:00', note: 'تم إصلاح التسريب واستبدال الأنبوب التالف. التكلفة الفعلية ٩٨٠ ر.س', userId: 'sp-002' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-28T16:45:00',
+        note: 'تم تقديم الطلب',
+        userId: 'ten-001',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-02-28T17:30:00',
+        note: 'تمت المراجعة — حالة طارئة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-02-28T18:00:00',
+        note: 'تم تعيين شركة البناء المتين للسباكة',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-01T08:30:00',
+        note: 'بدء أعمال الإصلاح',
+        userId: 'sp-002',
+      },
+      {
+        status: 'completed',
+        timestamp: '2026-03-02T11:30:00',
+        note: 'تم إصلاح التسريب واستبدال الأنبوب التالف. التكلفة الفعلية ٩٨٠ ر.س',
+        userId: 'sp-002',
+      },
     ],
   },
   {
     id: 'req-003',
     title: 'عطل في مصعد المبنى',
-    description: 'المصعد يتوقف بشكل متكرر بين الطوابق. صدرت أصوات غير طبيعية من المحرك. المصعد ماركة أوتيس — موديل ٢٠١٩.',
+    description:
+      'المصعد يتوقف بشكل متكرر بين الطوابق. صدرت أصوات غير طبيعية من المحرك. المصعد ماركة أوتيس — موديل ٢٠١٩.',
     category: 'elevator',
     subcategory: 'محرك',
     buildingId: 'bld-001',
@@ -1660,16 +2498,32 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'assigned',
     priority: 'urgent',
     costResponsibility: 'hoa',
-    costLegalBasis: 'وفقاً لنظام ملكية الوحدات العقارية المفرزة وإدارتها (المادة ١١): "تكون نفقات صيانة الأجزاء المشتركة على جميع الملاك كل بنسبة حصته" — المصعد من الأجزاء المشتركة.',
+    costLegalBasis:
+      'وفقاً لنظام ملكية الوحدات العقارية المفرزة وإدارتها (المادة ١١): "تكون نفقات صيانة الأجزاء المشتركة على جميع الملاك كل بنسبة حصته" — المصعد من الأجزاء المشتركة.',
     estimatedCost: 8500,
     reportedById: 'off-001',
     assignedProviderId: 'sp-004',
     createdAt: '2026-03-06T07:15:00',
     updatedAt: '2026-03-06T10:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-06T07:15:00', note: 'بلاغ من حارس المبنى عن خلل في المصعد', userId: 'off-001' },
-      { status: 'reviewed', timestamp: '2026-03-06T08:00:00', note: 'تم إيقاف المصعد احترازياً — أولوية عاجلة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-06T10:00:00', note: 'تم تعيين شركة الأمان للصيانة العامة — موعد الزيارة غداً الساعة ٨ صباحاً', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-06T07:15:00',
+        note: 'بلاغ من حارس المبنى عن خلل في المصعد',
+        userId: 'off-001',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-06T08:00:00',
+        note: 'تم إيقاف المصعد احترازياً — أولوية عاجلة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-06T10:00:00',
+        note: 'تم تعيين شركة الأمان للصيانة العامة — موعد الزيارة غداً الساعة ٨ صباحاً',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -1685,19 +2539,26 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'submitted',
     priority: 'medium',
     costResponsibility: 'tenant',
-    costLegalBasis: 'وفقاً للمادة ١٣ من نظام إيجار: "يلتزم المستأجر بإصلاح ما أحدثه هو أو من يأذن لهم بالانتفاع من تلف في العين المؤجرة" — الضرر ناتج عن فعل المستأجر.',
+    costLegalBasis:
+      'وفقاً للمادة ١٣ من نظام إيجار: "يلتزم المستأجر بإصلاح ما أحدثه هو أو من يأذن لهم بالانتفاع من تلف في العين المؤجرة" — الضرر ناتج عن فعل المستأجر.',
     estimatedCost: 650,
     reportedById: 'ten-004',
     createdAt: '2026-03-07T11:20:00',
     updatedAt: '2026-03-07T11:20:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-07T11:20:00', note: 'تم تقديم الطلب — المستأجر أقر بأن الكسر بسبب كرة أطفال', userId: 'ten-004' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-07T11:20:00',
+        note: 'تم تقديم الطلب — المستأجر أقر بأن الكسر بسبب كرة أطفال',
+        userId: 'ten-004',
+      },
     ],
   },
   {
     id: 'req-005',
     title: 'خلل في نظام الإنذار',
-    description: 'نظام إنذار الحريق يعطي إنذارات كاذبة متكررة في الطابق الثاني. تم فحص الدخان — لا يوجد مصدر.',
+    description:
+      'نظام إنذار الحريق يعطي إنذارات كاذبة متكررة في الطابق الثاني. تم فحص الدخان — لا يوجد مصدر.',
     category: 'fire_safety',
     subcategory: 'إنذار حريق',
     buildingId: 'bld-002',
@@ -1707,20 +2568,32 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'reviewed',
     priority: 'high',
     costResponsibility: 'hoa',
-    costLegalBasis: 'وفقاً لنظام ملكية الوحدات العقارية المفرزة: أنظمة السلامة والحماية من الحريق من الأجزاء المشتركة — نفقاتها على جميع الملاك بنسبة حصصهم.',
+    costLegalBasis:
+      'وفقاً لنظام ملكية الوحدات العقارية المفرزة: أنظمة السلامة والحماية من الحريق من الأجزاء المشتركة — نفقاتها على جميع الملاك بنسبة حصصهم.',
     estimatedCost: 2200,
     reportedById: 'ten-003',
     createdAt: '2026-03-05T20:00:00',
     updatedAt: '2026-03-06T09:15:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-05T20:00:00', note: 'بلاغ من مستأجر الطابق الثاني عن إنذارات كاذبة متكررة', userId: 'ten-003' },
-      { status: 'reviewed', timestamp: '2026-03-06T09:15:00', note: 'تمت المراجعة — يحتاج فحص النظام بالكامل. تم التواصل مع شركة صيانة أنظمة الحريق.', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-05T20:00:00',
+        note: 'بلاغ من مستأجر الطابق الثاني عن إنذارات كاذبة متكررة',
+        userId: 'ten-003',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-06T09:15:00',
+        note: 'تمت المراجعة — يحتاج فحص النظام بالكامل. تم التواصل مع شركة صيانة أنظمة الحريق.',
+        userId: 'off-001',
+      },
     ],
   },
   {
     id: 'req-006',
     title: 'تسريب من سخان الماء',
-    description: 'تسريب بسيط من سخان الماء الكهربائي (٥٠ لتر). السخان عمره ٤ سنوات — يحتاج استبدال.',
+    description:
+      'تسريب بسيط من سخان الماء الكهربائي (٥٠ لتر). السخان عمره ٤ سنوات — يحتاج استبدال.',
     category: 'plumbing',
     subcategory: 'سخان',
     buildingId: 'bld-001',
@@ -1730,7 +2603,8 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'completed',
     priority: 'medium',
     costResponsibility: 'owner',
-    costLegalBasis: 'وفقاً لنظام إيجار (المادة ٥): السخان من تجهيزات العين المؤجرة الأساسية — صيانته واستبداله على المؤجر ما لم يكن التلف بفعل المستأجر.',
+    costLegalBasis:
+      'وفقاً لنظام إيجار (المادة ٥): السخان من تجهيزات العين المؤجرة الأساسية — صيانته واستبداله على المؤجر ما لم يكن التلف بفعل المستأجر.',
     estimatedCost: 1800,
     actualCost: 1650,
     reportedById: 'ten-006',
@@ -1739,17 +2613,43 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     updatedAt: '2026-02-23T16:00:00',
     completedAt: '2026-02-23T16:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-20T14:00:00', note: 'تم تقديم الطلب', userId: 'ten-006' },
-      { status: 'reviewed', timestamp: '2026-02-20T15:30:00', note: 'تمت المراجعة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-02-21T09:00:00', note: 'تم تعيين شركة البناء المتين للسباكة', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-02-22T10:00:00', note: 'تم طلب سخان جديد — التركيب غداً', userId: 'sp-002' },
-      { status: 'completed', timestamp: '2026-02-23T16:00:00', note: 'تم استبدال السخان بنجاح — ضمان سنة', userId: 'sp-002' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-20T14:00:00',
+        note: 'تم تقديم الطلب',
+        userId: 'ten-006',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-02-20T15:30:00',
+        note: 'تمت المراجعة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-02-21T09:00:00',
+        note: 'تم تعيين شركة البناء المتين للسباكة',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-02-22T10:00:00',
+        note: 'تم طلب سخان جديد — التركيب غداً',
+        userId: 'sp-002',
+      },
+      {
+        status: 'completed',
+        timestamp: '2026-02-23T16:00:00',
+        note: 'تم استبدال السخان بنجاح — ضمان سنة',
+        userId: 'sp-002',
+      },
     ],
   },
   {
     id: 'req-007',
     title: 'صيانة مولد الكهرباء',
-    description: 'الصيانة الدورية للمولد الاحتياطي. آخر صيانة قبل ٦ أشهر. يحتاج تغيير زيت وفلاتر وفحص البطارية.',
+    description:
+      'الصيانة الدورية للمولد الاحتياطي. آخر صيانة قبل ٦ أشهر. يحتاج تغيير زيت وفلاتر وفحص البطارية.',
     category: 'generator',
     subcategory: 'صيانة دورية',
     buildingId: 'bld-003',
@@ -1759,22 +2659,39 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'in_progress',
     priority: 'medium',
     costResponsibility: 'hoa',
-    costLegalBasis: 'وفقاً لنظام ملكية الوحدات المفرزة (المادة ١١): المولد الاحتياطي من المرافق المشتركة — نفقات صيانته الدورية على جميع الملاك.',
+    costLegalBasis:
+      'وفقاً لنظام ملكية الوحدات المفرزة (المادة ١١): المولد الاحتياطي من المرافق المشتركة — نفقات صيانته الدورية على جميع الملاك.',
     estimatedCost: 4500,
     reportedById: 'off-001',
     assignedProviderId: 'sp-003',
     createdAt: '2026-03-03T08:00:00',
     updatedAt: '2026-03-06T15:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-03T08:00:00', note: 'جدولة صيانة دورية للمولد', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-03T10:00:00', note: 'تم تعيين مؤسسة النور للكهرباء', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-06T09:00:00', note: 'بدأ الفني العمل — يحتاج تغيير فلتر الهواء أيضاً', userId: 'sp-003' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-03T08:00:00',
+        note: 'جدولة صيانة دورية للمولد',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-03T10:00:00',
+        note: 'تم تعيين مؤسسة النور للكهرباء',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-06T09:00:00',
+        note: 'بدأ الفني العمل — يحتاج تغيير فلتر الهواء أيضاً',
+        userId: 'sp-003',
+      },
     ],
   },
   {
     id: 'req-008',
     title: 'انسداد في مجرى الصرف',
-    description: 'انسداد في مجرى الصرف الرئيسي للحمام. المياه لا تنزل بشكل طبيعي. المشكلة متكررة للمرة الثالثة خلال شهرين.',
+    description:
+      'انسداد في مجرى الصرف الرئيسي للحمام. المياه لا تنزل بشكل طبيعي. المشكلة متكررة للمرة الثالثة خلال شهرين.',
     category: 'plumbing',
     subcategory: 'انسداد',
     buildingId: 'bld-002',
@@ -1784,13 +2701,19 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'submitted',
     priority: 'medium',
     costResponsibility: 'tenant',
-    costLegalBasis: 'وفقاً للمادة ١٠ من نظام إيجار: "يلتزم المستأجر بالصيانة التأجيرية (الدورية) اللازمة للمحافظة على العين المؤجرة" — الانسداد المتكرر ناتج عن سوء الاستخدام.',
+    costLegalBasis:
+      'وفقاً للمادة ١٠ من نظام إيجار: "يلتزم المستأجر بالصيانة التأجيرية (الدورية) اللازمة للمحافظة على العين المؤجرة" — الانسداد المتكرر ناتج عن سوء الاستخدام.',
     estimatedCost: 350,
     reportedById: 'ten-004',
     createdAt: '2026-03-07T08:30:00',
     updatedAt: '2026-03-07T08:30:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-07T08:30:00', note: 'تم تقديم الطلب — المشكلة متكررة', userId: 'ten-004' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-07T08:30:00',
+        note: 'تم تقديم الطلب — المشكلة متكررة',
+        userId: 'ten-004',
+      },
     ],
   },
   {
@@ -1806,20 +2729,32 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'reviewed',
     priority: 'low',
     costResponsibility: 'owner',
-    costLegalBasis: 'وفقاً للمادة ٥ من نظام إيجار: التلف ناتج عن عيب هيكلي (رطوبة) وليس بفعل المستأجر — المسؤولية على المؤجر.',
+    costLegalBasis:
+      'وفقاً للمادة ٥ من نظام إيجار: التلف ناتج عن عيب هيكلي (رطوبة) وليس بفعل المستأجر — المسؤولية على المؤجر.',
     estimatedCost: 800,
     reportedById: 'ten-002',
     createdAt: '2026-03-06T13:00:00',
     updatedAt: '2026-03-07T09:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-06T13:00:00', note: 'تم تقديم الطلب مع صور للتلف', userId: 'ten-002' },
-      { status: 'reviewed', timestamp: '2026-03-07T09:00:00', note: 'تمت المراجعة — يجب معالجة مصدر الرطوبة أولاً قبل إعادة الدهان', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-06T13:00:00',
+        note: 'تم تقديم الطلب مع صور للتلف',
+        userId: 'ten-002',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-07T09:00:00',
+        note: 'تمت المراجعة — يجب معالجة مصدر الرطوبة أولاً قبل إعادة الدهان',
+        userId: 'off-001',
+      },
     ],
   },
   {
     id: 'req-010',
     title: 'تركيب قفل جديد للباب',
-    description: 'قفل الباب الرئيسي للشقة لا يعمل بشكل سليم. المفتاح يعلق أحياناً. يحتاج استبدال كامل.',
+    description:
+      'قفل الباب الرئيسي للشقة لا يعمل بشكل سليم. المفتاح يعلق أحياناً. يحتاج استبدال كامل.',
     category: 'general',
     subcategory: 'أقفال',
     buildingId: 'bld-002',
@@ -1829,16 +2764,32 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'assigned',
     priority: 'high',
     costResponsibility: 'owner',
-    costLegalBasis: 'وفقاً لنظام إيجار: الباب الرئيسي وقفله من مكونات العين المؤجرة — صيانته على المؤجر ما لم يثبت تلف بفعل المستأجر.',
+    costLegalBasis:
+      'وفقاً لنظام إيجار: الباب الرئيسي وقفله من مكونات العين المؤجرة — صيانته على المؤجر ما لم يثبت تلف بفعل المستأجر.',
     estimatedCost: 450,
     reportedById: 'ten-003',
     assignedProviderId: 'sp-004',
     createdAt: '2026-03-05T10:00:00',
     updatedAt: '2026-03-06T14:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-05T10:00:00', note: 'تم تقديم الطلب', userId: 'ten-003' },
-      { status: 'reviewed', timestamp: '2026-03-05T16:00:00', note: 'تمت المراجعة — مسألة أمنية تحتاج سرعة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-06T14:00:00', note: 'تم تعيين شركة الأمان للصيانة العامة', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-05T10:00:00',
+        note: 'تم تقديم الطلب',
+        userId: 'ten-003',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-05T16:00:00',
+        note: 'تمت المراجعة — مسألة أمنية تحتاج سرعة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-06T14:00:00',
+        note: 'تم تعيين شركة الأمان للصيانة العامة',
+        userId: 'off-001',
+      },
     ],
   },
 
@@ -1846,7 +2797,8 @@ export const maintenanceRequests: MaintenanceRequest[] = [
   {
     id: 'req-011',
     title: 'تسريب مياه من السقف',
-    description: 'تسريب مياه من السقف في صالة المعيشة بعد هطول الأمطار. يبدو أن المشكلة من العزل الخارجي.',
+    description:
+      'تسريب مياه من السقف في صالة المعيشة بعد هطول الأمطار. يبدو أن المشكلة من العزل الخارجي.',
     category: 'plumbing',
     subcategory: 'تسريب مياه',
     buildingId: 'bld-004',
@@ -1856,19 +2808,26 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'submitted',
     priority: 'high',
     costResponsibility: 'owner',
-    costLegalBasis: 'وفقاً للمادة ٥ من نظام إيجار: تسريب الأمطار من عيوب العين المؤجرة الهيكلية — المسؤولية على المؤجر.',
+    costLegalBasis:
+      'وفقاً للمادة ٥ من نظام إيجار: تسريب الأمطار من عيوب العين المؤجرة الهيكلية — المسؤولية على المؤجر.',
     estimatedCost: 2500,
     reportedById: 'ten-013',
     createdAt: '2026-03-08T07:00:00',
     updatedAt: '2026-03-08T07:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-08T07:00:00', note: 'تم تقديم الطلب مع صور للتسريب', userId: 'ten-013' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-08T07:00:00',
+        note: 'تم تقديم الطلب مع صور للتسريب',
+        userId: 'ten-013',
+      },
     ],
   },
   {
     id: 'req-012',
     title: 'عطل في التكييف المركزي',
-    description: 'التكييف المركزي لا يعمل في الطابق الثالث. جميع المكاتب متأثرة. درجة الحرارة مرتفعة جداً.',
+    description:
+      'التكييف المركزي لا يعمل في الطابق الثالث. جميع المكاتب متأثرة. درجة الحرارة مرتفعة جداً.',
     category: 'hvac',
     subcategory: 'تكييف مركزي',
     buildingId: 'bld-005',
@@ -1878,17 +2837,38 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'in_progress',
     priority: 'urgent',
     costResponsibility: 'hoa',
-    costLegalBasis: 'التكييف المركزي من أنظمة المبنى المشتركة — نفقاته على جميع الملاك وفقاً لنظام ملكية الوحدات المفرزة.',
+    costLegalBasis:
+      'التكييف المركزي من أنظمة المبنى المشتركة — نفقاته على جميع الملاك وفقاً لنظام ملكية الوحدات المفرزة.',
     estimatedCost: 12000,
     reportedById: 'ten-017',
     assignedProviderId: 'sp-017',
     createdAt: '2026-03-07T10:00:00',
     updatedAt: '2026-03-08T09:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-07T10:00:00', note: 'بلاغ عن توقف التكييف المركزي', userId: 'ten-017' },
-      { status: 'reviewed', timestamp: '2026-03-07T10:30:00', note: 'أولوية عاجلة — مكاتب تجارية متأثرة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-07T11:00:00', note: 'تم تعيين شركة البرودة السعودية', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-08T08:00:00', note: 'الفريق الفني في الموقع — تشخيص العطل جاري', userId: 'sp-017' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-07T10:00:00',
+        note: 'بلاغ عن توقف التكييف المركزي',
+        userId: 'ten-017',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-07T10:30:00',
+        note: 'أولوية عاجلة — مكاتب تجارية متأثرة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-07T11:00:00',
+        note: 'تم تعيين شركة البرودة السعودية',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-08T08:00:00',
+        note: 'الفريق الفني في الموقع — تشخيص العطل جاري',
+        userId: 'sp-017',
+      },
     ],
   },
   {
@@ -1911,9 +2891,24 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-06T18:00:00',
     updatedAt: '2026-03-07T11:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-06T18:00:00', note: 'بلاغ عن انطفاء الإضاءة الخارجية', userId: 'ten-020' },
-      { status: 'reviewed', timestamp: '2026-03-07T08:00:00', note: 'تمت المراجعة — مشكلة أمنية', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-07T11:00:00', note: 'تم تعيين شركة الكهرباء المتقدمة', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-06T18:00:00',
+        note: 'بلاغ عن انطفاء الإضاءة الخارجية',
+        userId: 'ten-020',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-07T08:00:00',
+        note: 'تمت المراجعة — مشكلة أمنية',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-07T11:00:00',
+        note: 'تم تعيين شركة الكهرباء المتقدمة',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -1936,9 +2931,24 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-05T09:00:00',
     updatedAt: '2026-03-07T10:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-05T09:00:00', note: 'طلب صيانة وقائية للمصعد', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-05T14:00:00', note: 'تم تعيين شركة أوتيس السعودية', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-07T10:00:00', note: 'فريق أوتيس في الموقع — بدء أعمال الصيانة', userId: 'sp-027' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-05T09:00:00',
+        note: 'طلب صيانة وقائية للمصعد',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-05T14:00:00',
+        note: 'تم تعيين شركة أوتيس السعودية',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-07T10:00:00',
+        note: 'فريق أوتيس في الموقع — بدء أعمال الصيانة',
+        userId: 'sp-027',
+      },
     ],
   },
   {
@@ -1963,17 +2973,43 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     updatedAt: '2026-02-27T16:00:00',
     completedAt: '2026-02-27T16:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-25T09:00:00', note: 'بلاغ عن ظهور حشرات', userId: 'ten-022' },
-      { status: 'reviewed', timestamp: '2026-02-25T10:30:00', note: 'تمت المراجعة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-02-25T14:00:00', note: 'تم تعيين مؤسسة البيئة النظيفة', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-02-26T08:00:00', note: 'بدء أعمال الرش', userId: 'sp-044' },
-      { status: 'completed', timestamp: '2026-02-27T16:00:00', note: 'تم الرش بنجاح — ضمان ٣ أشهر', userId: 'sp-044' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-25T09:00:00',
+        note: 'بلاغ عن ظهور حشرات',
+        userId: 'ten-022',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-02-25T10:30:00',
+        note: 'تمت المراجعة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-02-25T14:00:00',
+        note: 'تم تعيين مؤسسة البيئة النظيفة',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-02-26T08:00:00',
+        note: 'بدء أعمال الرش',
+        userId: 'sp-044',
+      },
+      {
+        status: 'completed',
+        timestamp: '2026-02-27T16:00:00',
+        note: 'تم الرش بنجاح — ضمان ٣ أشهر',
+        userId: 'sp-044',
+      },
     ],
   },
   {
     id: 'req-016',
     title: 'إعادة دهان الشقة',
-    description: 'دهان الشقة متهالك بعد ٥ سنوات من الاستخدام. يحتاج إعادة دهان كاملة قبل تأجيرها مجدداً.',
+    description:
+      'دهان الشقة متهالك بعد ٥ سنوات من الاستخدام. يحتاج إعادة دهان كاملة قبل تأجيرها مجدداً.',
     category: 'painting',
     subcategory: 'دهان كامل',
     buildingId: 'bld-004',
@@ -1990,15 +3026,31 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-01T10:00:00',
     updatedAt: '2026-03-06T14:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-01T10:00:00', note: 'طلب إعادة دهان الشقة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-02T09:00:00', note: 'تم تعيين دهانات الفخامة', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-06T08:00:00', note: 'بدء أعمال الدهان — متوقع الانتهاء خلال ٣ أيام', userId: 'sp-033' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-01T10:00:00',
+        note: 'طلب إعادة دهان الشقة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-02T09:00:00',
+        note: 'تم تعيين دهانات الفخامة',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-06T08:00:00',
+        note: 'بدء أعمال الدهان — متوقع الانتهاء خلال ٣ أيام',
+        userId: 'sp-033',
+      },
     ],
   },
   {
     id: 'req-017',
     title: 'عطل في القاطع الكهربائي',
-    description: 'القاطع الرئيسي يفصل بشكل متكرر عند تشغيل المكيف والغسالة معاً. يحتاج ترقية اللوحة.',
+    description:
+      'القاطع الرئيسي يفصل بشكل متكرر عند تشغيل المكيف والغسالة معاً. يحتاج ترقية اللوحة.',
     category: 'electrical',
     subcategory: 'لوحة كهربائية',
     buildingId: 'bld-004',
@@ -2017,11 +3069,36 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     updatedAt: '2026-02-19T12:00:00',
     completedAt: '2026-02-19T12:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-15T16:00:00', note: 'تم تقديم الطلب', userId: 'ten-007' },
-      { status: 'reviewed', timestamp: '2026-02-16T09:00:00', note: 'تمت المراجعة — يحتاج ترقية', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-02-16T14:00:00', note: 'تم تعيين مؤسسة النور للكهرباء', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-02-18T08:00:00', note: 'بدء أعمال ترقية اللوحة', userId: 'sp-003' },
-      { status: 'completed', timestamp: '2026-02-19T12:00:00', note: 'تم ترقية اللوحة الكهربائية — التكلفة الفعلية ٣,٢٠٠ ر.س', userId: 'sp-003' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-15T16:00:00',
+        note: 'تم تقديم الطلب',
+        userId: 'ten-007',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-02-16T09:00:00',
+        note: 'تمت المراجعة — يحتاج ترقية',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-02-16T14:00:00',
+        note: 'تم تعيين مؤسسة النور للكهرباء',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-02-18T08:00:00',
+        note: 'بدء أعمال ترقية اللوحة',
+        userId: 'sp-003',
+      },
+      {
+        status: 'completed',
+        timestamp: '2026-02-19T12:00:00',
+        note: 'تم ترقية اللوحة الكهربائية — التكلفة الفعلية ٣,٢٠٠ ر.س',
+        userId: 'sp-003',
+      },
     ],
   },
   {
@@ -2046,10 +3123,30 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     updatedAt: '2026-02-12T15:00:00',
     completedAt: '2026-02-12T15:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-10T08:00:00', note: 'جدولة تنظيف دوري للخزان', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-02-10T10:00:00', note: 'تم تعيين شركة نقاء', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-02-11T07:00:00', note: 'بدء أعمال التنظيف والتعقيم', userId: 'sp-042' },
-      { status: 'completed', timestamp: '2026-02-12T15:00:00', note: 'تم التنظيف والتعقيم — شهادة صلاحية المياه مرفقة', userId: 'sp-042' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-10T08:00:00',
+        note: 'جدولة تنظيف دوري للخزان',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-02-10T10:00:00',
+        note: 'تم تعيين شركة نقاء',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-02-11T07:00:00',
+        note: 'بدء أعمال التنظيف والتعقيم',
+        userId: 'sp-042',
+      },
+      {
+        status: 'completed',
+        timestamp: '2026-02-12T15:00:00',
+        note: 'تم التنظيف والتعقيم — شهادة صلاحية المياه مرفقة',
+        userId: 'sp-042',
+      },
     ],
   },
   {
@@ -2072,10 +3169,30 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-08T06:30:00',
     updatedAt: '2026-03-08T11:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-08T06:30:00', note: 'بلاغ عاجل عن تسريب صرف صحي', userId: 'ten-016' },
-      { status: 'reviewed', timestamp: '2026-03-08T07:00:00', note: 'حالة طارئة — تحتاج تدخل فوري', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-08T07:30:00', note: 'تم تعيين مؤسسة الأنابيب الذهبية', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-08T09:00:00', note: 'الفريق الفني وصل الموقع', userId: 'sp-010' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-08T06:30:00',
+        note: 'بلاغ عاجل عن تسريب صرف صحي',
+        userId: 'ten-016',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-08T07:00:00',
+        note: 'حالة طارئة — تحتاج تدخل فوري',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-08T07:30:00',
+        note: 'تم تعيين مؤسسة الأنابيب الذهبية',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-08T09:00:00',
+        note: 'الفريق الفني وصل الموقع',
+        userId: 'sp-010',
+      },
     ],
   },
   {
@@ -2097,8 +3214,18 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-04T10:00:00',
     updatedAt: '2026-03-05T14:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-04T10:00:00', note: 'طلب تركيب كاميرات مراقبة', userId: 'off-001' },
-      { status: 'reviewed', timestamp: '2026-03-05T14:00:00', note: 'تمت المراجعة — بانتظار عروض أسعار من الموردين', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-04T10:00:00',
+        note: 'طلب تركيب كاميرات مراقبة',
+        userId: 'off-001',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-05T14:00:00',
+        note: 'تمت المراجعة — بانتظار عروض أسعار من الموردين',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -2121,9 +3248,24 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-07T14:00:00',
     updatedAt: '2026-03-08T10:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-07T14:00:00', note: 'تم تقديم الطلب', userId: 'ten-022' },
-      { status: 'reviewed', timestamp: '2026-03-07T16:00:00', note: 'تمت المراجعة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-08T10:00:00', note: 'تم تعيين تكييف الراحة', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-07T14:00:00',
+        note: 'تم تقديم الطلب',
+        userId: 'ten-022',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-07T16:00:00',
+        note: 'تمت المراجعة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-08T10:00:00',
+        note: 'تم تعيين تكييف الراحة',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -2148,11 +3290,36 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     updatedAt: '2026-02-24T14:00:00',
     completedAt: '2026-02-24T14:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-22T11:00:00', note: 'تم تقديم الطلب', userId: 'ten-006' },
-      { status: 'reviewed', timestamp: '2026-02-22T14:00:00', note: 'تمت المراجعة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-02-23T09:00:00', note: 'تم تعيين مؤسسة الفيصل للتكييف', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-02-24T08:00:00', note: 'الفني في الموقع — المشكلة في انسداد خرطوم التصريف', userId: 'sp-001' },
-      { status: 'completed', timestamp: '2026-02-24T14:00:00', note: 'تم تنظيف خرطوم التصريف — التكلفة ٤٥٠ ر.س', userId: 'sp-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-22T11:00:00',
+        note: 'تم تقديم الطلب',
+        userId: 'ten-006',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-02-22T14:00:00',
+        note: 'تمت المراجعة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-02-23T09:00:00',
+        note: 'تم تعيين مؤسسة الفيصل للتكييف',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-02-24T08:00:00',
+        note: 'الفني في الموقع — المشكلة في انسداد خرطوم التصريف',
+        userId: 'sp-001',
+      },
+      {
+        status: 'completed',
+        timestamp: '2026-02-24T14:00:00',
+        note: 'تم تنظيف خرطوم التصريف — التكلفة ٤٥٠ ر.س',
+        userId: 'sp-001',
+      },
     ],
   },
   {
@@ -2168,13 +3335,19 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     status: 'submitted',
     priority: 'low',
     costResponsibility: 'pending_review',
-    costLegalBasis: 'يحتاج تحديد سبب التلف — إذا كان بفعل المستأجر فالمسؤولية عليه، وإذا كان عيب في التصنيع فالمسؤولية على المالك.',
+    costLegalBasis:
+      'يحتاج تحديد سبب التلف — إذا كان بفعل المستأجر فالمسؤولية عليه، وإذا كان عيب في التصنيع فالمسؤولية على المالك.',
     estimatedCost: 1200,
     reportedById: 'ten-010',
     createdAt: '2026-03-08T15:00:00',
     updatedAt: '2026-03-08T15:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-08T15:00:00', note: 'تم تقديم الطلب — بانتظار تحديد المسؤولية', userId: 'ten-010' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-08T15:00:00',
+        note: 'تم تقديم الطلب — بانتظار تحديد المسؤولية',
+        userId: 'ten-010',
+      },
     ],
   },
   {
@@ -2197,9 +3370,24 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-06T08:00:00',
     updatedAt: '2026-03-07T09:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-06T08:00:00', note: 'جدولة الفحص السنوي لنظام الحريق', userId: 'off-001' },
-      { status: 'reviewed', timestamp: '2026-03-06T10:00:00', note: 'تمت المراجعة والموافقة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-07T09:00:00', note: 'تم تعيين شركة الحماية والسلامة', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-06T08:00:00',
+        note: 'جدولة الفحص السنوي لنظام الحريق',
+        userId: 'off-001',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-06T10:00:00',
+        note: 'تمت المراجعة والموافقة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-07T09:00:00',
+        note: 'تم تعيين شركة الحماية والسلامة',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -2224,10 +3412,30 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     updatedAt: '2026-03-02T17:00:00',
     completedAt: '2026-03-02T17:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-01T07:00:00', note: 'طلب تنظيف شامل شهري', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-01T09:00:00', note: 'تم تعيين شركة النظافة المتكاملة', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-02T07:00:00', note: 'بدء أعمال التنظيف', userId: 'sp-039' },
-      { status: 'completed', timestamp: '2026-03-02T17:00:00', note: 'تم الانتهاء من التنظيف', userId: 'sp-039' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-01T07:00:00',
+        note: 'طلب تنظيف شامل شهري',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-01T09:00:00',
+        note: 'تم تعيين شركة النظافة المتكاملة',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-02T07:00:00',
+        note: 'بدء أعمال التنظيف',
+        userId: 'sp-039',
+      },
+      {
+        status: 'completed',
+        timestamp: '2026-03-02T17:00:00',
+        note: 'تم الانتهاء من التنظيف',
+        userId: 'sp-039',
+      },
     ],
   },
   {
@@ -2249,8 +3457,18 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-07T12:00:00',
     updatedAt: '2026-03-08T09:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-07T12:00:00', note: 'تم تقديم الطلب — المستأجر أقر بأن التلف بسببه', userId: 'ten-020' },
-      { status: 'reviewed', timestamp: '2026-03-08T09:00:00', note: 'تمت المراجعة — المسؤولية على المستأجر', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-07T12:00:00',
+        note: 'تم تقديم الطلب — المستأجر أقر بأن التلف بسببه',
+        userId: 'ten-020',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-08T09:00:00',
+        note: 'تمت المراجعة — المسؤولية على المستأجر',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -2272,7 +3490,12 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-08T08:00:00',
     updatedAt: '2026-03-08T08:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-08T08:00:00', note: 'طلب إعادة عزل سطح المبنى', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-08T08:00:00',
+        note: 'طلب إعادة عزل سطح المبنى',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -2297,10 +3520,30 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     updatedAt: '2026-03-01T11:00:00',
     completedAt: '2026-03-01T11:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-28T10:00:00', note: 'تم تقديم الطلب', userId: 'ten-008' },
-      { status: 'assigned', timestamp: '2026-02-28T14:00:00', note: 'تم تعيين كهربائي الخبرة', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-01T09:00:00', note: 'الفني في الموقع', userId: 'sp-015' },
-      { status: 'completed', timestamp: '2026-03-01T11:00:00', note: 'تم الاستبدال', userId: 'sp-015' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-28T10:00:00',
+        note: 'تم تقديم الطلب',
+        userId: 'ten-008',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-02-28T14:00:00',
+        note: 'تم تعيين كهربائي الخبرة',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-01T09:00:00',
+        note: 'الفني في الموقع',
+        userId: 'sp-015',
+      },
+      {
+        status: 'completed',
+        timestamp: '2026-03-01T11:00:00',
+        note: 'تم الاستبدال',
+        userId: 'sp-015',
+      },
     ],
   },
   {
@@ -2323,10 +3566,30 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-08T14:00:00',
     updatedAt: '2026-03-08T16:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-08T14:00:00', note: 'بلاغ عاجل — كسر واجهة المحل', userId: 'ten-014' },
-      { status: 'reviewed', timestamp: '2026-03-08T14:30:00', note: 'حالة طارئة — يحتاج تأمين فوري', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-08T15:00:00', note: 'تم تعيين ورشة الخشب الذهبي لتأمين الواجهة مؤقتاً', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-03-08T16:00:00', note: 'تم تركيب حماية مؤقتة — طلب زجاج جديد', userId: 'sp-036' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-08T14:00:00',
+        note: 'بلاغ عاجل — كسر واجهة المحل',
+        userId: 'ten-014',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-08T14:30:00',
+        note: 'حالة طارئة — يحتاج تأمين فوري',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-08T15:00:00',
+        note: 'تم تعيين ورشة الخشب الذهبي لتأمين الواجهة مؤقتاً',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-03-08T16:00:00',
+        note: 'تم تركيب حماية مؤقتة — طلب زجاج جديد',
+        userId: 'sp-036',
+      },
     ],
   },
   {
@@ -2351,10 +3614,30 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     updatedAt: '2026-02-22T16:00:00',
     completedAt: '2026-02-22T16:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-20T08:00:00', note: 'طلب صيانة دورية للحديقة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-02-20T10:00:00', note: 'تم تعيين مؤسسة الحدائق الجميلة', userId: 'off-001' },
-      { status: 'in_progress', timestamp: '2026-02-21T07:00:00', note: 'بدء أعمال التنسيق', userId: 'sp-052' },
-      { status: 'completed', timestamp: '2026-02-22T16:00:00', note: 'تم الانتهاء — تم إصلاح نظام الري', userId: 'sp-052' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-20T08:00:00',
+        note: 'طلب صيانة دورية للحديقة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-02-20T10:00:00',
+        note: 'تم تعيين مؤسسة الحدائق الجميلة',
+        userId: 'off-001',
+      },
+      {
+        status: 'in_progress',
+        timestamp: '2026-02-21T07:00:00',
+        note: 'بدء أعمال التنسيق',
+        userId: 'sp-052',
+      },
+      {
+        status: 'completed',
+        timestamp: '2026-02-22T16:00:00',
+        note: 'تم الانتهاء — تم إصلاح نظام الري',
+        userId: 'sp-052',
+      },
     ],
   },
   {
@@ -2376,7 +3659,12 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-08T13:00:00',
     updatedAt: '2026-03-08T13:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-08T13:00:00', note: 'تم تقديم الطلب', userId: 'ten-024' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-08T13:00:00',
+        note: 'تم تقديم الطلب',
+        userId: 'ten-024',
+      },
     ],
   },
   {
@@ -2399,9 +3687,24 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-07T09:00:00',
     updatedAt: '2026-03-08T10:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-07T09:00:00', note: 'تم تقديم الطلب', userId: 'ten-007' },
-      { status: 'reviewed', timestamp: '2026-03-07T14:00:00', note: 'تمت المراجعة', userId: 'off-001' },
-      { status: 'assigned', timestamp: '2026-03-08T10:00:00', note: 'تم تعيين مؤسسة الفيصل للسباكة', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-07T09:00:00',
+        note: 'تم تقديم الطلب',
+        userId: 'ten-007',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-07T14:00:00',
+        note: 'تمت المراجعة',
+        userId: 'off-001',
+      },
+      {
+        status: 'assigned',
+        timestamp: '2026-03-08T10:00:00',
+        note: 'تم تعيين مؤسسة الفيصل للسباكة',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -2423,9 +3726,24 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-02-18T10:00:00',
     updatedAt: '2026-02-20T09:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-18T10:00:00', note: 'طلب إصلاح سور المواقف', userId: 'off-001' },
-      { status: 'reviewed', timestamp: '2026-02-19T09:00:00', note: 'تمت المراجعة', userId: 'off-001' },
-      { status: 'cancelled', timestamp: '2026-02-20T09:00:00', note: 'تم إلغاء الطلب — سيتم التعامل من خلال التأمين', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-18T10:00:00',
+        note: 'طلب إصلاح سور المواقف',
+        userId: 'off-001',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-02-19T09:00:00',
+        note: 'تمت المراجعة',
+        userId: 'off-001',
+      },
+      {
+        status: 'cancelled',
+        timestamp: '2026-02-20T09:00:00',
+        note: 'تم إلغاء الطلب — سيتم التعامل من خلال التأمين',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -2447,8 +3765,18 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-03-03T11:00:00',
     updatedAt: '2026-03-05T10:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-03-03T11:00:00', note: 'طلب تركيب نظام إنتركم', userId: 'off-001' },
-      { status: 'reviewed', timestamp: '2026-03-05T10:00:00', note: 'تمت المراجعة — بانتظار موافقة الملاك', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-03-03T11:00:00',
+        note: 'طلب تركيب نظام إنتركم',
+        userId: 'off-001',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-03-05T10:00:00',
+        note: 'تمت المراجعة — بانتظار موافقة الملاك',
+        userId: 'off-001',
+      },
     ],
   },
   {
@@ -2470,9 +3798,24 @@ export const maintenanceRequests: MaintenanceRequest[] = [
     createdAt: '2026-02-15T08:00:00',
     updatedAt: '2026-02-17T10:00:00',
     statusLog: [
-      { status: 'submitted', timestamp: '2026-02-15T08:00:00', note: 'بلاغ عن تسريب من الخزان', userId: 'off-001' },
-      { status: 'reviewed', timestamp: '2026-02-15T10:00:00', note: 'تمت المعاينة — تبين أنه تكثف وليس تسريب', userId: 'off-001' },
-      { status: 'cancelled', timestamp: '2026-02-17T10:00:00', note: 'تم إلغاء الطلب — لا يوجد تسريب حقيقي', userId: 'off-001' },
+      {
+        status: 'submitted',
+        timestamp: '2026-02-15T08:00:00',
+        note: 'بلاغ عن تسريب من الخزان',
+        userId: 'off-001',
+      },
+      {
+        status: 'reviewed',
+        timestamp: '2026-02-15T10:00:00',
+        note: 'تمت المعاينة — تبين أنه تكثف وليس تسريب',
+        userId: 'off-001',
+      },
+      {
+        status: 'cancelled',
+        timestamp: '2026-02-17T10:00:00',
+        note: 'تم إلغاء الطلب — لا يوجد تسريب حقيقي',
+        userId: 'off-001',
+      },
     ],
   },
 ];
@@ -2481,17 +3824,103 @@ export const maintenanceRequests: MaintenanceRequest[] = [
 
 export const hoaFees: HOAFee[] = [
   // Al Nakheel Tower Q1 2026
-  { id: 'hoa-001', unitId: 'unit-001', buildingId: 'bld-001', period: 'الربع الأول ٢٠٢٦', amount: 1800, status: 'paid', dueDate: '2026-01-15', paidDate: '2026-01-10' },
-  { id: 'hoa-002', unitId: 'unit-002', buildingId: 'bld-001', period: 'الربع الأول ٢٠٢٦', amount: 1425, status: 'paid', dueDate: '2026-01-15', paidDate: '2026-01-14' },
-  { id: 'hoa-003', unitId: 'unit-003', buildingId: 'bld-001', period: 'الربع الأول ٢٠٢٦', amount: 2250, status: 'overdue', dueDate: '2026-01-15' },
-  { id: 'hoa-004', unitId: 'unit-005', buildingId: 'bld-001', period: 'الربع الأول ٢٠٢٦', amount: 1275, status: 'outstanding', dueDate: '2026-03-15' },
-  { id: 'hoa-005', unitId: 'unit-006', buildingId: 'bld-001', period: 'الربع الأول ٢٠٢٦', amount: 1950, status: 'paid', dueDate: '2026-01-15', paidDate: '2026-01-12' },
-  { id: 'hoa-006', unitId: 'unit-007', buildingId: 'bld-001', period: 'الربع الأول ٢٠٢٦', amount: 2100, status: 'overdue', dueDate: '2026-01-15' },
+  {
+    id: 'hoa-001',
+    unitId: 'unit-001',
+    buildingId: 'bld-001',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 1800,
+    status: 'paid',
+    dueDate: '2026-01-15',
+    paidDate: '2026-01-10',
+  },
+  {
+    id: 'hoa-002',
+    unitId: 'unit-002',
+    buildingId: 'bld-001',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 1425,
+    status: 'paid',
+    dueDate: '2026-01-15',
+    paidDate: '2026-01-14',
+  },
+  {
+    id: 'hoa-003',
+    unitId: 'unit-003',
+    buildingId: 'bld-001',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 2250,
+    status: 'overdue',
+    dueDate: '2026-01-15',
+  },
+  {
+    id: 'hoa-004',
+    unitId: 'unit-005',
+    buildingId: 'bld-001',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 1275,
+    status: 'outstanding',
+    dueDate: '2026-03-15',
+  },
+  {
+    id: 'hoa-005',
+    unitId: 'unit-006',
+    buildingId: 'bld-001',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 1950,
+    status: 'paid',
+    dueDate: '2026-01-15',
+    paidDate: '2026-01-12',
+  },
+  {
+    id: 'hoa-006',
+    unitId: 'unit-007',
+    buildingId: 'bld-001',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 2100,
+    status: 'overdue',
+    dueDate: '2026-01-15',
+  },
   // Al Yasmin Q1 2026
-  { id: 'hoa-007', unitId: 'unit-009', buildingId: 'bld-002', period: 'الربع الأول ٢٠٢٦', amount: 1000, status: 'paid', dueDate: '2026-01-15', paidDate: '2026-01-13' },
-  { id: 'hoa-008', unitId: 'unit-010', buildingId: 'bld-002', period: 'الربع الأول ٢٠٢٦', amount: 800, status: 'paid', dueDate: '2026-01-15', paidDate: '2026-01-15' },
-  { id: 'hoa-009', unitId: 'unit-011', buildingId: 'bld-002', period: 'الربع الأول ٢٠٢٦', amount: 900, status: 'outstanding', dueDate: '2026-03-15' },
-  { id: 'hoa-010', unitId: 'unit-012', buildingId: 'bld-002', period: 'الربع الأول ٢٠٢٦', amount: 1100, status: 'paid', dueDate: '2026-01-15', paidDate: '2026-01-11' },
+  {
+    id: 'hoa-007',
+    unitId: 'unit-009',
+    buildingId: 'bld-002',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 1000,
+    status: 'paid',
+    dueDate: '2026-01-15',
+    paidDate: '2026-01-13',
+  },
+  {
+    id: 'hoa-008',
+    unitId: 'unit-010',
+    buildingId: 'bld-002',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 800,
+    status: 'paid',
+    dueDate: '2026-01-15',
+    paidDate: '2026-01-15',
+  },
+  {
+    id: 'hoa-009',
+    unitId: 'unit-011',
+    buildingId: 'bld-002',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 900,
+    status: 'outstanding',
+    dueDate: '2026-03-15',
+  },
+  {
+    id: 'hoa-010',
+    unitId: 'unit-012',
+    buildingId: 'bld-002',
+    period: 'الربع الأول ٢٠٢٦',
+    amount: 1100,
+    status: 'paid',
+    dueDate: '2026-01-15',
+    paidDate: '2026-01-11',
+  },
 ];
 
 // --- Cost Rules ---
@@ -2502,28 +3931,32 @@ export const costRules: CostRule[] = [
     category: 'الصيانة الأساسية (هيكلية)',
     responsibility: 'owner',
     legalBasis: 'المادة ٥ من نظام إيجار',
-    description: 'يتحمل المؤجر نفقات الصيانة غير التأجيرية وإصلاح الخلل الذي يؤثر في استيفاء المنفعة المقصودة.',
+    description:
+      'يتحمل المؤجر نفقات الصيانة غير التأجيرية وإصلاح الخلل الذي يؤثر في استيفاء المنفعة المقصودة.',
   },
   {
     id: 'cr-002',
     category: 'الصيانة الدورية',
     responsibility: 'tenant',
     legalBasis: 'المادة ١٠ من نظام إيجار',
-    description: 'يلتزم المستأجر بالصيانة التأجيرية (الدورية) اللازمة للمحافظة على العين المؤجرة بحالة حسنة.',
+    description:
+      'يلتزم المستأجر بالصيانة التأجيرية (الدورية) اللازمة للمحافظة على العين المؤجرة بحالة حسنة.',
   },
   {
     id: 'cr-003',
     category: 'تلف بفعل المستأجر',
     responsibility: 'tenant',
     legalBasis: 'المادة ١٣ من نظام إيجار',
-    description: 'يلتزم المستأجر بإصلاح ما أحدثه هو أو من يأذن لهم بالانتفاع من تلف في العين المؤجرة.',
+    description:
+      'يلتزم المستأجر بإصلاح ما أحدثه هو أو من يأذن لهم بالانتفاع من تلف في العين المؤجرة.',
   },
   {
     id: 'cr-004',
     category: 'المرافق المشتركة',
     responsibility: 'hoa',
     legalBasis: 'المادة ١١ من نظام ملكية الوحدات المفرزة',
-    description: 'تكون نفقات صيانة الأجزاء المشتركة على جميع الملاك كل بنسبة حصته من المساحة الكلية.',
+    description:
+      'تكون نفقات صيانة الأجزاء المشتركة على جميع الملاك كل بنسبة حصته من المساحة الكلية.',
   },
 ];
 
@@ -2622,15 +4055,25 @@ export function getRelativeTime(dateStr: string): string {
 
 export function getOfficeStats() {
   const totalRequests = maintenanceRequests.length;
-  const activeRequests = maintenanceRequests.filter((r) => !['completed', 'cancelled'].includes(r.status)).length;
-  const pendingRequests = maintenanceRequests.filter((r) => ['submitted', 'reviewed'].includes(r.status)).length;
-  const completedThisMonth = maintenanceRequests.filter((r) => r.status === 'completed' && r.completedAt && r.completedAt.startsWith('2026-03')).length;
+  const activeRequests = maintenanceRequests.filter(
+    (r) => !['completed', 'cancelled'].includes(r.status),
+  ).length;
+  const pendingRequests = maintenanceRequests.filter((r) =>
+    ['submitted', 'reviewed'].includes(r.status),
+  ).length;
+  const completedThisMonth = maintenanceRequests.filter(
+    (r) => r.status === 'completed' && r.completedAt && r.completedAt.startsWith('2026-03'),
+  ).length;
   const totalUnits = units.length;
   const occupiedUnits = units.filter((u) => u.status === 'occupied').length;
   const occupancyRate = Math.round((occupiedUnits / totalUnits) * 100);
-  const totalMonthlyRent = units.filter((u) => u.status === 'occupied').reduce((sum, u) => sum + u.monthlyRent, 0);
+  const totalMonthlyRent = units
+    .filter((u) => u.status === 'occupied')
+    .reduce((sum, u) => sum + u.monthlyRent, 0);
   const hoaPaid = hoaFees.filter((f) => f.status === 'paid').reduce((sum, f) => sum + f.amount, 0);
-  const hoaOutstanding = hoaFees.filter((f) => f.status !== 'paid').reduce((sum, f) => sum + f.amount, 0);
+  const hoaOutstanding = hoaFees
+    .filter((f) => f.status !== 'paid')
+    .reduce((sum, f) => sum + f.amount, 0);
 
   return {
     totalBuildings: buildings.length,
@@ -2676,48 +4119,608 @@ export interface EjarContract {
 
 export const ejarContracts: EjarContract[] = [
   // Original 14 contracts
-  { id: 'ej-001', unitId: 'unit-001', buildingId: 'bld-001', tenantId: 'ten-001', ownerId: 'own-001', monthlyRent: 4500, annualRent: 54000, startDate: '2025-04-01', endDate: '2026-03-31', ejarNumber: 'EJ-1446-00001', status: 'expiring_soon', depositAmount: 2700, contractTerms: 'عقد سكني سنوي — يشمل صيانة التكييف' },
-  { id: 'ej-002', unitId: 'unit-002', buildingId: 'bld-001', tenantId: 'ten-002', ownerId: 'own-001', monthlyRent: 3500, annualRent: 42000, startDate: '2025-06-01', endDate: '2026-05-31', ejarNumber: 'EJ-1446-00002', status: 'active', depositAmount: 2100, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-003', unitId: 'unit-003', buildingId: 'bld-001', tenantId: 'ten-003', ownerId: 'own-002', monthlyRent: 5500, annualRent: 66000, startDate: '2025-09-01', endDate: '2026-08-31', ejarNumber: 'EJ-1446-00003', status: 'active', depositAmount: 3300, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-004', unitId: 'unit-005', buildingId: 'bld-001', tenantId: 'ten-004', ownerId: 'own-001', monthlyRent: 3200, annualRent: 38400, startDate: '2025-07-01', endDate: '2026-06-30', ejarNumber: 'EJ-1446-00004', status: 'active', depositAmount: 1920, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-005', unitId: 'unit-006', buildingId: 'bld-001', tenantId: 'ten-005', ownerId: 'own-003', monthlyRent: 5000, annualRent: 60000, startDate: '2025-05-01', endDate: '2026-04-30', ejarNumber: 'EJ-1446-00005', status: 'expiring_soon', depositAmount: 3000, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-006', unitId: 'unit-007', buildingId: 'bld-001', tenantId: 'ten-006', ownerId: 'own-003', monthlyRent: 6000, annualRent: 72000, startDate: '2025-08-01', endDate: '2026-07-31', ejarNumber: 'EJ-1446-00006', status: 'active', depositAmount: 3600, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-007', unitId: 'unit-009', buildingId: 'bld-002', tenantId: 'ten-001', ownerId: 'own-004', monthlyRent: 3000, annualRent: 36000, startDate: '2025-03-01', endDate: '2026-02-28', ejarNumber: 'EJ-1446-00007', status: 'expired', depositAmount: 1800, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-008', unitId: 'unit-010', buildingId: 'bld-002', tenantId: 'ten-002', ownerId: 'own-004', monthlyRent: 2500, annualRent: 30000, startDate: '2025-10-01', endDate: '2026-09-30', ejarNumber: 'EJ-1446-00008', status: 'active', depositAmount: 1500, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-009', unitId: 'unit-011', buildingId: 'bld-002', tenantId: 'ten-004', ownerId: 'own-002', monthlyRent: 2800, annualRent: 33600, startDate: '2025-11-01', endDate: '2026-04-15', ejarNumber: 'EJ-1446-00009', status: 'expiring_soon', depositAmount: 1680, contractTerms: 'عقد سكني — ٦ أشهر' },
-  { id: 'ej-010', unitId: 'unit-012', buildingId: 'bld-002', tenantId: 'ten-003', ownerId: 'own-002', monthlyRent: 3500, annualRent: 42000, startDate: '2025-12-01', endDate: '2026-11-30', ejarNumber: 'EJ-1446-00010', status: 'active', depositAmount: 2100, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-011', unitId: 'unit-014', buildingId: 'bld-002', tenantId: 'ten-006', ownerId: 'own-004', monthlyRent: 3800, annualRent: 45600, startDate: '2025-06-01', endDate: '2026-05-31', ejarNumber: 'EJ-1446-00011', status: 'active', depositAmount: 2280, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-012', unitId: 'unit-015', buildingId: 'bld-003', tenantId: 'ten-005', ownerId: 'own-001', monthlyRent: 12000, annualRent: 144000, startDate: '2025-01-01', endDate: '2026-12-31', ejarNumber: 'EJ-1446-00012', status: 'active', depositAmount: 7200, contractTerms: 'عقد تجاري — سنتين' },
-  { id: 'ej-013', unitId: 'unit-017', buildingId: 'bld-003', tenantId: 'ten-003', ownerId: 'own-003', monthlyRent: 6000, annualRent: 72000, startDate: '2025-04-01', endDate: '2026-03-31', ejarNumber: 'EJ-1446-00013', status: 'expiring_soon', depositAmount: 3600, contractTerms: 'عقد تجاري سنوي' },
-  { id: 'ej-014', unitId: 'unit-020', buildingId: 'bld-003', tenantId: 'ten-006', ownerId: 'own-002', monthlyRent: 6500, annualRent: 78000, startDate: '2025-07-01', endDate: '2026-06-30', ejarNumber: 'EJ-1446-00014', status: 'active', depositAmount: 3900, contractTerms: 'عقد تجاري سنوي' },
+  {
+    id: 'ej-001',
+    unitId: 'unit-001',
+    buildingId: 'bld-001',
+    tenantId: 'ten-001',
+    ownerId: 'own-001',
+    monthlyRent: 4500,
+    annualRent: 54000,
+    startDate: '2025-04-01',
+    endDate: '2026-03-31',
+    ejarNumber: 'EJ-1446-00001',
+    status: 'expiring_soon',
+    depositAmount: 2700,
+    contractTerms: 'عقد سكني سنوي — يشمل صيانة التكييف',
+  },
+  {
+    id: 'ej-002',
+    unitId: 'unit-002',
+    buildingId: 'bld-001',
+    tenantId: 'ten-002',
+    ownerId: 'own-001',
+    monthlyRent: 3500,
+    annualRent: 42000,
+    startDate: '2025-06-01',
+    endDate: '2026-05-31',
+    ejarNumber: 'EJ-1446-00002',
+    status: 'active',
+    depositAmount: 2100,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-003',
+    unitId: 'unit-003',
+    buildingId: 'bld-001',
+    tenantId: 'ten-003',
+    ownerId: 'own-002',
+    monthlyRent: 5500,
+    annualRent: 66000,
+    startDate: '2025-09-01',
+    endDate: '2026-08-31',
+    ejarNumber: 'EJ-1446-00003',
+    status: 'active',
+    depositAmount: 3300,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-004',
+    unitId: 'unit-005',
+    buildingId: 'bld-001',
+    tenantId: 'ten-004',
+    ownerId: 'own-001',
+    monthlyRent: 3200,
+    annualRent: 38400,
+    startDate: '2025-07-01',
+    endDate: '2026-06-30',
+    ejarNumber: 'EJ-1446-00004',
+    status: 'active',
+    depositAmount: 1920,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-005',
+    unitId: 'unit-006',
+    buildingId: 'bld-001',
+    tenantId: 'ten-005',
+    ownerId: 'own-003',
+    monthlyRent: 5000,
+    annualRent: 60000,
+    startDate: '2025-05-01',
+    endDate: '2026-04-30',
+    ejarNumber: 'EJ-1446-00005',
+    status: 'expiring_soon',
+    depositAmount: 3000,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-006',
+    unitId: 'unit-007',
+    buildingId: 'bld-001',
+    tenantId: 'ten-006',
+    ownerId: 'own-003',
+    monthlyRent: 6000,
+    annualRent: 72000,
+    startDate: '2025-08-01',
+    endDate: '2026-07-31',
+    ejarNumber: 'EJ-1446-00006',
+    status: 'active',
+    depositAmount: 3600,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-007',
+    unitId: 'unit-009',
+    buildingId: 'bld-002',
+    tenantId: 'ten-001',
+    ownerId: 'own-004',
+    monthlyRent: 3000,
+    annualRent: 36000,
+    startDate: '2025-03-01',
+    endDate: '2026-02-28',
+    ejarNumber: 'EJ-1446-00007',
+    status: 'expired',
+    depositAmount: 1800,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-008',
+    unitId: 'unit-010',
+    buildingId: 'bld-002',
+    tenantId: 'ten-002',
+    ownerId: 'own-004',
+    monthlyRent: 2500,
+    annualRent: 30000,
+    startDate: '2025-10-01',
+    endDate: '2026-09-30',
+    ejarNumber: 'EJ-1446-00008',
+    status: 'active',
+    depositAmount: 1500,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-009',
+    unitId: 'unit-011',
+    buildingId: 'bld-002',
+    tenantId: 'ten-004',
+    ownerId: 'own-002',
+    monthlyRent: 2800,
+    annualRent: 33600,
+    startDate: '2025-11-01',
+    endDate: '2026-04-15',
+    ejarNumber: 'EJ-1446-00009',
+    status: 'expiring_soon',
+    depositAmount: 1680,
+    contractTerms: 'عقد سكني — ٦ أشهر',
+  },
+  {
+    id: 'ej-010',
+    unitId: 'unit-012',
+    buildingId: 'bld-002',
+    tenantId: 'ten-003',
+    ownerId: 'own-002',
+    monthlyRent: 3500,
+    annualRent: 42000,
+    startDate: '2025-12-01',
+    endDate: '2026-11-30',
+    ejarNumber: 'EJ-1446-00010',
+    status: 'active',
+    depositAmount: 2100,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-011',
+    unitId: 'unit-014',
+    buildingId: 'bld-002',
+    tenantId: 'ten-006',
+    ownerId: 'own-004',
+    monthlyRent: 3800,
+    annualRent: 45600,
+    startDate: '2025-06-01',
+    endDate: '2026-05-31',
+    ejarNumber: 'EJ-1446-00011',
+    status: 'active',
+    depositAmount: 2280,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-012',
+    unitId: 'unit-015',
+    buildingId: 'bld-003',
+    tenantId: 'ten-005',
+    ownerId: 'own-001',
+    monthlyRent: 12000,
+    annualRent: 144000,
+    startDate: '2025-01-01',
+    endDate: '2026-12-31',
+    ejarNumber: 'EJ-1446-00012',
+    status: 'active',
+    depositAmount: 7200,
+    contractTerms: 'عقد تجاري — سنتين',
+  },
+  {
+    id: 'ej-013',
+    unitId: 'unit-017',
+    buildingId: 'bld-003',
+    tenantId: 'ten-003',
+    ownerId: 'own-003',
+    monthlyRent: 6000,
+    annualRent: 72000,
+    startDate: '2025-04-01',
+    endDate: '2026-03-31',
+    ejarNumber: 'EJ-1446-00013',
+    status: 'expiring_soon',
+    depositAmount: 3600,
+    contractTerms: 'عقد تجاري سنوي',
+  },
+  {
+    id: 'ej-014',
+    unitId: 'unit-020',
+    buildingId: 'bld-003',
+    tenantId: 'ten-006',
+    ownerId: 'own-002',
+    monthlyRent: 6500,
+    annualRent: 78000,
+    startDate: '2025-07-01',
+    endDate: '2026-06-30',
+    ejarNumber: 'EJ-1446-00014',
+    status: 'active',
+    depositAmount: 3900,
+    contractTerms: 'عقد تجاري سنوي',
+  },
 
   // New contracts for new buildings
-  { id: 'ej-015', unitId: 'unit-021', buildingId: 'bld-004', tenantId: 'ten-007', ownerId: 'own-005', monthlyRent: 4200, annualRent: 50400, startDate: '2025-08-01', endDate: '2026-07-31', ejarNumber: 'EJ-1446-00015', status: 'active', depositAmount: 2520, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-016', unitId: 'unit-022', buildingId: 'bld-004', tenantId: 'ten-008', ownerId: 'own-005', monthlyRent: 3300, annualRent: 39600, startDate: '2025-09-01', endDate: '2026-08-31', ejarNumber: 'EJ-1446-00016', status: 'active', depositAmount: 1980, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-017', unitId: 'unit-023', buildingId: 'bld-004', tenantId: 'ten-009', ownerId: 'own-006', monthlyRent: 4800, annualRent: 57600, startDate: '2025-06-01', endDate: '2026-05-31', ejarNumber: 'EJ-1446-00017', status: 'active', depositAmount: 2880, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-018', unitId: 'unit-025', buildingId: 'bld-004', tenantId: 'ten-010', ownerId: 'own-005', monthlyRent: 5200, annualRent: 62400, startDate: '2025-10-01', endDate: '2026-09-30', ejarNumber: 'EJ-1446-00018', status: 'active', depositAmount: 3120, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-019', unitId: 'unit-026', buildingId: 'bld-004', tenantId: 'ten-011', ownerId: 'own-005', monthlyRent: 4500, annualRent: 54000, startDate: '2025-11-01', endDate: '2026-10-31', ejarNumber: 'EJ-1446-00019', status: 'active', depositAmount: 2700, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-020', unitId: 'unit-028', buildingId: 'bld-004', tenantId: 'ten-012', ownerId: 'own-006', monthlyRent: 3400, annualRent: 40800, startDate: '2025-05-01', endDate: '2026-04-30', ejarNumber: 'EJ-1446-00020', status: 'expiring_soon', depositAmount: 2040, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-021', unitId: 'unit-029', buildingId: 'bld-004', tenantId: 'ten-013', ownerId: 'own-005', monthlyRent: 7500, annualRent: 90000, startDate: '2025-07-01', endDate: '2026-06-30', ejarNumber: 'EJ-1446-00021', status: 'active', depositAmount: 4500, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-022', unitId: 'unit-031', buildingId: 'bld-005', tenantId: 'ten-014', ownerId: 'own-007', monthlyRent: 15000, annualRent: 180000, startDate: '2025-01-01', endDate: '2026-12-31', ejarNumber: 'EJ-1446-00022', status: 'active', depositAmount: 9000, contractTerms: 'عقد تجاري — سنتين' },
-  { id: 'ej-023', unitId: 'unit-032', buildingId: 'bld-005', tenantId: 'ten-015', ownerId: 'own-007', monthlyRent: 12000, annualRent: 144000, startDate: '2025-03-01', endDate: '2026-02-28', ejarNumber: 'EJ-1446-00023', status: 'expired', depositAmount: 7200, contractTerms: 'عقد تجاري سنوي' },
-  { id: 'ej-024', unitId: 'unit-033', buildingId: 'bld-005', tenantId: 'ten-016', ownerId: 'own-007', monthlyRent: 7000, annualRent: 84000, startDate: '2025-08-01', endDate: '2026-07-31', ejarNumber: 'EJ-1446-00024', status: 'active', depositAmount: 4200, contractTerms: 'عقد تجاري سنوي' },
-  { id: 'ej-025', unitId: 'unit-035', buildingId: 'bld-005', tenantId: 'ten-017', ownerId: 'own-008', monthlyRent: 8000, annualRent: 96000, startDate: '2025-04-01', endDate: '2026-03-31', ejarNumber: 'EJ-1446-00025', status: 'expiring_soon', depositAmount: 4800, contractTerms: 'عقد تجاري سنوي' },
-  { id: 'ej-026', unitId: 'unit-036', buildingId: 'bld-005', tenantId: 'ten-018', ownerId: 'own-008', monthlyRent: 6000, annualRent: 72000, startDate: '2025-09-01', endDate: '2026-08-31', ejarNumber: 'EJ-1446-00026', status: 'active', depositAmount: 3600, contractTerms: 'عقد تجاري سنوي' },
-  { id: 'ej-027', unitId: 'unit-038', buildingId: 'bld-005', tenantId: 'ten-019', ownerId: 'own-007', monthlyRent: 5000, annualRent: 60000, startDate: '2025-06-01', endDate: '2026-05-31', ejarNumber: 'EJ-1446-00027', status: 'active', depositAmount: 3000, contractTerms: 'عقد تجاري سنوي' },
-  { id: 'ej-028', unitId: 'unit-039', buildingId: 'bld-006', tenantId: 'ten-020', ownerId: 'own-008', monthlyRent: 2200, annualRent: 26400, startDate: '2025-10-01', endDate: '2026-09-30', ejarNumber: 'EJ-1446-00028', status: 'active', depositAmount: 1320, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-029', unitId: 'unit-040', buildingId: 'bld-006', tenantId: 'ten-021', ownerId: 'own-008', monthlyRent: 2000, annualRent: 24000, startDate: '2025-12-01', endDate: '2026-11-30', ejarNumber: 'EJ-1446-00029', status: 'active', depositAmount: 1200, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-030', unitId: 'unit-041', buildingId: 'bld-006', tenantId: 'ten-022', ownerId: 'own-009', monthlyRent: 2800, annualRent: 33600, startDate: '2025-07-01', endDate: '2026-06-30', ejarNumber: 'EJ-1446-00030', status: 'active', depositAmount: 1680, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-031', unitId: 'unit-043', buildingId: 'bld-006', tenantId: 'ten-023', ownerId: 'own-009', monthlyRent: 3000, annualRent: 36000, startDate: '2025-05-01', endDate: '2026-04-30', ejarNumber: 'EJ-1446-00031', status: 'expiring_soon', depositAmount: 1800, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-032', unitId: 'unit-044', buildingId: 'bld-006', tenantId: 'ten-024', ownerId: 'own-008', monthlyRent: 2300, annualRent: 27600, startDate: '2025-08-01', endDate: '2026-07-31', ejarNumber: 'EJ-1446-00032', status: 'active', depositAmount: 1380, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-033', unitId: 'unit-046', buildingId: 'bld-006', tenantId: 'ten-025', ownerId: 'own-009', monthlyRent: 1500, annualRent: 18000, startDate: '2025-02-01', endDate: '2026-01-31', ejarNumber: 'EJ-1446-00033', status: 'pending_renewal', depositAmount: 900, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-034', unitId: 'unit-047', buildingId: 'bld-007', tenantId: 'ten-007', ownerId: 'own-010', monthlyRent: 5500, annualRent: 66000, startDate: '2025-09-01', endDate: '2026-08-31', ejarNumber: 'EJ-1446-00034', status: 'active', depositAmount: 3300, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-035', unitId: 'unit-048', buildingId: 'bld-007', tenantId: 'ten-008', ownerId: 'own-010', monthlyRent: 4000, annualRent: 48000, startDate: '2025-11-01', endDate: '2026-10-31', ejarNumber: 'EJ-1446-00035', status: 'active', depositAmount: 2400, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-036', unitId: 'unit-049', buildingId: 'bld-007', tenantId: 'ten-009', ownerId: 'own-010', monthlyRent: 6500, annualRent: 78000, startDate: '2025-06-01', endDate: '2026-05-31', ejarNumber: 'EJ-1446-00036', status: 'active', depositAmount: 3900, contractTerms: 'عقد سكني سنوي' },
-  { id: 'ej-037', unitId: 'unit-059', buildingId: 'bld-008', tenantId: 'ten-016', ownerId: 'own-009', monthlyRent: 14000, annualRent: 168000, startDate: '2025-02-01', endDate: '2027-01-31', ejarNumber: 'EJ-1446-00037', status: 'active', depositAmount: 8400, contractTerms: 'عقد تجاري — سنتين' },
-  { id: 'ej-038', unitId: 'unit-060', buildingId: 'bld-008', tenantId: 'ten-017', ownerId: 'own-009', monthlyRent: 11000, annualRent: 132000, startDate: '2025-04-01', endDate: '2026-03-31', ejarNumber: 'EJ-1446-00038', status: 'expiring_soon', depositAmount: 6600, contractTerms: 'عقد تجاري سنوي' },
-  { id: 'ej-039', unitId: 'unit-061', buildingId: 'bld-008', tenantId: 'ten-018', ownerId: 'own-010', monthlyRent: 6500, annualRent: 78000, startDate: '2025-07-01', endDate: '2026-06-30', ejarNumber: 'EJ-1446-00039', status: 'active', depositAmount: 3900, contractTerms: 'عقد تجاري سنوي' },
-  { id: 'ej-040', unitId: 'unit-063', buildingId: 'bld-008', tenantId: 'ten-019', ownerId: 'own-009', monthlyRent: 7000, annualRent: 84000, startDate: '2025-10-01', endDate: '2026-09-30', ejarNumber: 'EJ-1446-00040', status: 'active', depositAmount: 4200, contractTerms: 'عقد تجاري سنوي' },
+  {
+    id: 'ej-015',
+    unitId: 'unit-021',
+    buildingId: 'bld-004',
+    tenantId: 'ten-007',
+    ownerId: 'own-005',
+    monthlyRent: 4200,
+    annualRent: 50400,
+    startDate: '2025-08-01',
+    endDate: '2026-07-31',
+    ejarNumber: 'EJ-1446-00015',
+    status: 'active',
+    depositAmount: 2520,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-016',
+    unitId: 'unit-022',
+    buildingId: 'bld-004',
+    tenantId: 'ten-008',
+    ownerId: 'own-005',
+    monthlyRent: 3300,
+    annualRent: 39600,
+    startDate: '2025-09-01',
+    endDate: '2026-08-31',
+    ejarNumber: 'EJ-1446-00016',
+    status: 'active',
+    depositAmount: 1980,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-017',
+    unitId: 'unit-023',
+    buildingId: 'bld-004',
+    tenantId: 'ten-009',
+    ownerId: 'own-006',
+    monthlyRent: 4800,
+    annualRent: 57600,
+    startDate: '2025-06-01',
+    endDate: '2026-05-31',
+    ejarNumber: 'EJ-1446-00017',
+    status: 'active',
+    depositAmount: 2880,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-018',
+    unitId: 'unit-025',
+    buildingId: 'bld-004',
+    tenantId: 'ten-010',
+    ownerId: 'own-005',
+    monthlyRent: 5200,
+    annualRent: 62400,
+    startDate: '2025-10-01',
+    endDate: '2026-09-30',
+    ejarNumber: 'EJ-1446-00018',
+    status: 'active',
+    depositAmount: 3120,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-019',
+    unitId: 'unit-026',
+    buildingId: 'bld-004',
+    tenantId: 'ten-011',
+    ownerId: 'own-005',
+    monthlyRent: 4500,
+    annualRent: 54000,
+    startDate: '2025-11-01',
+    endDate: '2026-10-31',
+    ejarNumber: 'EJ-1446-00019',
+    status: 'active',
+    depositAmount: 2700,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-020',
+    unitId: 'unit-028',
+    buildingId: 'bld-004',
+    tenantId: 'ten-012',
+    ownerId: 'own-006',
+    monthlyRent: 3400,
+    annualRent: 40800,
+    startDate: '2025-05-01',
+    endDate: '2026-04-30',
+    ejarNumber: 'EJ-1446-00020',
+    status: 'expiring_soon',
+    depositAmount: 2040,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-021',
+    unitId: 'unit-029',
+    buildingId: 'bld-004',
+    tenantId: 'ten-013',
+    ownerId: 'own-005',
+    monthlyRent: 7500,
+    annualRent: 90000,
+    startDate: '2025-07-01',
+    endDate: '2026-06-30',
+    ejarNumber: 'EJ-1446-00021',
+    status: 'active',
+    depositAmount: 4500,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-022',
+    unitId: 'unit-031',
+    buildingId: 'bld-005',
+    tenantId: 'ten-014',
+    ownerId: 'own-007',
+    monthlyRent: 15000,
+    annualRent: 180000,
+    startDate: '2025-01-01',
+    endDate: '2026-12-31',
+    ejarNumber: 'EJ-1446-00022',
+    status: 'active',
+    depositAmount: 9000,
+    contractTerms: 'عقد تجاري — سنتين',
+  },
+  {
+    id: 'ej-023',
+    unitId: 'unit-032',
+    buildingId: 'bld-005',
+    tenantId: 'ten-015',
+    ownerId: 'own-007',
+    monthlyRent: 12000,
+    annualRent: 144000,
+    startDate: '2025-03-01',
+    endDate: '2026-02-28',
+    ejarNumber: 'EJ-1446-00023',
+    status: 'expired',
+    depositAmount: 7200,
+    contractTerms: 'عقد تجاري سنوي',
+  },
+  {
+    id: 'ej-024',
+    unitId: 'unit-033',
+    buildingId: 'bld-005',
+    tenantId: 'ten-016',
+    ownerId: 'own-007',
+    monthlyRent: 7000,
+    annualRent: 84000,
+    startDate: '2025-08-01',
+    endDate: '2026-07-31',
+    ejarNumber: 'EJ-1446-00024',
+    status: 'active',
+    depositAmount: 4200,
+    contractTerms: 'عقد تجاري سنوي',
+  },
+  {
+    id: 'ej-025',
+    unitId: 'unit-035',
+    buildingId: 'bld-005',
+    tenantId: 'ten-017',
+    ownerId: 'own-008',
+    monthlyRent: 8000,
+    annualRent: 96000,
+    startDate: '2025-04-01',
+    endDate: '2026-03-31',
+    ejarNumber: 'EJ-1446-00025',
+    status: 'expiring_soon',
+    depositAmount: 4800,
+    contractTerms: 'عقد تجاري سنوي',
+  },
+  {
+    id: 'ej-026',
+    unitId: 'unit-036',
+    buildingId: 'bld-005',
+    tenantId: 'ten-018',
+    ownerId: 'own-008',
+    monthlyRent: 6000,
+    annualRent: 72000,
+    startDate: '2025-09-01',
+    endDate: '2026-08-31',
+    ejarNumber: 'EJ-1446-00026',
+    status: 'active',
+    depositAmount: 3600,
+    contractTerms: 'عقد تجاري سنوي',
+  },
+  {
+    id: 'ej-027',
+    unitId: 'unit-038',
+    buildingId: 'bld-005',
+    tenantId: 'ten-019',
+    ownerId: 'own-007',
+    monthlyRent: 5000,
+    annualRent: 60000,
+    startDate: '2025-06-01',
+    endDate: '2026-05-31',
+    ejarNumber: 'EJ-1446-00027',
+    status: 'active',
+    depositAmount: 3000,
+    contractTerms: 'عقد تجاري سنوي',
+  },
+  {
+    id: 'ej-028',
+    unitId: 'unit-039',
+    buildingId: 'bld-006',
+    tenantId: 'ten-020',
+    ownerId: 'own-008',
+    monthlyRent: 2200,
+    annualRent: 26400,
+    startDate: '2025-10-01',
+    endDate: '2026-09-30',
+    ejarNumber: 'EJ-1446-00028',
+    status: 'active',
+    depositAmount: 1320,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-029',
+    unitId: 'unit-040',
+    buildingId: 'bld-006',
+    tenantId: 'ten-021',
+    ownerId: 'own-008',
+    monthlyRent: 2000,
+    annualRent: 24000,
+    startDate: '2025-12-01',
+    endDate: '2026-11-30',
+    ejarNumber: 'EJ-1446-00029',
+    status: 'active',
+    depositAmount: 1200,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-030',
+    unitId: 'unit-041',
+    buildingId: 'bld-006',
+    tenantId: 'ten-022',
+    ownerId: 'own-009',
+    monthlyRent: 2800,
+    annualRent: 33600,
+    startDate: '2025-07-01',
+    endDate: '2026-06-30',
+    ejarNumber: 'EJ-1446-00030',
+    status: 'active',
+    depositAmount: 1680,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-031',
+    unitId: 'unit-043',
+    buildingId: 'bld-006',
+    tenantId: 'ten-023',
+    ownerId: 'own-009',
+    monthlyRent: 3000,
+    annualRent: 36000,
+    startDate: '2025-05-01',
+    endDate: '2026-04-30',
+    ejarNumber: 'EJ-1446-00031',
+    status: 'expiring_soon',
+    depositAmount: 1800,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-032',
+    unitId: 'unit-044',
+    buildingId: 'bld-006',
+    tenantId: 'ten-024',
+    ownerId: 'own-008',
+    monthlyRent: 2300,
+    annualRent: 27600,
+    startDate: '2025-08-01',
+    endDate: '2026-07-31',
+    ejarNumber: 'EJ-1446-00032',
+    status: 'active',
+    depositAmount: 1380,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-033',
+    unitId: 'unit-046',
+    buildingId: 'bld-006',
+    tenantId: 'ten-025',
+    ownerId: 'own-009',
+    monthlyRent: 1500,
+    annualRent: 18000,
+    startDate: '2025-02-01',
+    endDate: '2026-01-31',
+    ejarNumber: 'EJ-1446-00033',
+    status: 'pending_renewal',
+    depositAmount: 900,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-034',
+    unitId: 'unit-047',
+    buildingId: 'bld-007',
+    tenantId: 'ten-007',
+    ownerId: 'own-010',
+    monthlyRent: 5500,
+    annualRent: 66000,
+    startDate: '2025-09-01',
+    endDate: '2026-08-31',
+    ejarNumber: 'EJ-1446-00034',
+    status: 'active',
+    depositAmount: 3300,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-035',
+    unitId: 'unit-048',
+    buildingId: 'bld-007',
+    tenantId: 'ten-008',
+    ownerId: 'own-010',
+    monthlyRent: 4000,
+    annualRent: 48000,
+    startDate: '2025-11-01',
+    endDate: '2026-10-31',
+    ejarNumber: 'EJ-1446-00035',
+    status: 'active',
+    depositAmount: 2400,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-036',
+    unitId: 'unit-049',
+    buildingId: 'bld-007',
+    tenantId: 'ten-009',
+    ownerId: 'own-010',
+    monthlyRent: 6500,
+    annualRent: 78000,
+    startDate: '2025-06-01',
+    endDate: '2026-05-31',
+    ejarNumber: 'EJ-1446-00036',
+    status: 'active',
+    depositAmount: 3900,
+    contractTerms: 'عقد سكني سنوي',
+  },
+  {
+    id: 'ej-037',
+    unitId: 'unit-059',
+    buildingId: 'bld-008',
+    tenantId: 'ten-016',
+    ownerId: 'own-009',
+    monthlyRent: 14000,
+    annualRent: 168000,
+    startDate: '2025-02-01',
+    endDate: '2027-01-31',
+    ejarNumber: 'EJ-1446-00037',
+    status: 'active',
+    depositAmount: 8400,
+    contractTerms: 'عقد تجاري — سنتين',
+  },
+  {
+    id: 'ej-038',
+    unitId: 'unit-060',
+    buildingId: 'bld-008',
+    tenantId: 'ten-017',
+    ownerId: 'own-009',
+    monthlyRent: 11000,
+    annualRent: 132000,
+    startDate: '2025-04-01',
+    endDate: '2026-03-31',
+    ejarNumber: 'EJ-1446-00038',
+    status: 'expiring_soon',
+    depositAmount: 6600,
+    contractTerms: 'عقد تجاري سنوي',
+  },
+  {
+    id: 'ej-039',
+    unitId: 'unit-061',
+    buildingId: 'bld-008',
+    tenantId: 'ten-018',
+    ownerId: 'own-010',
+    monthlyRent: 6500,
+    annualRent: 78000,
+    startDate: '2025-07-01',
+    endDate: '2026-06-30',
+    ejarNumber: 'EJ-1446-00039',
+    status: 'active',
+    depositAmount: 3900,
+    contractTerms: 'عقد تجاري سنوي',
+  },
+  {
+    id: 'ej-040',
+    unitId: 'unit-063',
+    buildingId: 'bld-008',
+    tenantId: 'ten-019',
+    ownerId: 'own-009',
+    monthlyRent: 7000,
+    annualRent: 84000,
+    startDate: '2025-10-01',
+    endDate: '2026-09-30',
+    ejarNumber: 'EJ-1446-00040',
+    status: 'active',
+    depositAmount: 4200,
+    contractTerms: 'عقد تجاري سنوي',
+  },
 ];
 
 export function getContractsByOwner(ownerId: string): EjarContract[] {
@@ -2742,16 +4745,60 @@ export interface OwnerMonthlyFinance {
 
 export function getOwnerMonthlyFinances(ownerId: string): OwnerMonthlyFinance[] {
   const ownerUnitsList = units.filter((u) => u.ownerId === ownerId);
-  const monthlyIncome = ownerUnitsList.filter((u) => u.status === 'occupied').reduce((sum, u) => sum + u.monthlyRent, 0);
+  const monthlyIncome = ownerUnitsList
+    .filter((u) => u.status === 'occupied')
+    .reduce((sum, u) => sum + u.monthlyRent, 0);
   const mgmtRate = 0.07;
 
   return [
-    { month: '2025-10', monthLabel: 'أكتوبر', income: Math.round(monthlyIncome * 0.95), maintenance: 1200, hoaFees: 0, managementFee: Math.round(monthlyIncome * 0.95 * mgmtRate) },
-    { month: '2025-11', monthLabel: 'نوفمبر', income: monthlyIncome, maintenance: 0, hoaFees: 0, managementFee: Math.round(monthlyIncome * mgmtRate) },
-    { month: '2025-12', monthLabel: 'ديسمبر', income: monthlyIncome, maintenance: 3500, hoaFees: 0, managementFee: Math.round(monthlyIncome * mgmtRate) },
-    { month: '2026-01', monthLabel: 'يناير', income: monthlyIncome, maintenance: 980, hoaFees: 3225, managementFee: Math.round(monthlyIncome * mgmtRate) },
-    { month: '2026-02', monthLabel: 'فبراير', income: monthlyIncome, maintenance: 1650, hoaFees: 0, managementFee: Math.round(monthlyIncome * mgmtRate) },
-    { month: '2026-03', monthLabel: 'مارس', income: Math.round(monthlyIncome * 0.88), maintenance: 800, hoaFees: 1275, managementFee: Math.round(monthlyIncome * 0.88 * mgmtRate) },
+    {
+      month: '2025-10',
+      monthLabel: 'أكتوبر',
+      income: Math.round(monthlyIncome * 0.95),
+      maintenance: 1200,
+      hoaFees: 0,
+      managementFee: Math.round(monthlyIncome * 0.95 * mgmtRate),
+    },
+    {
+      month: '2025-11',
+      monthLabel: 'نوفمبر',
+      income: monthlyIncome,
+      maintenance: 0,
+      hoaFees: 0,
+      managementFee: Math.round(monthlyIncome * mgmtRate),
+    },
+    {
+      month: '2025-12',
+      monthLabel: 'ديسمبر',
+      income: monthlyIncome,
+      maintenance: 3500,
+      hoaFees: 0,
+      managementFee: Math.round(monthlyIncome * mgmtRate),
+    },
+    {
+      month: '2026-01',
+      monthLabel: 'يناير',
+      income: monthlyIncome,
+      maintenance: 980,
+      hoaFees: 3225,
+      managementFee: Math.round(monthlyIncome * mgmtRate),
+    },
+    {
+      month: '2026-02',
+      monthLabel: 'فبراير',
+      income: monthlyIncome,
+      maintenance: 1650,
+      hoaFees: 0,
+      managementFee: Math.round(monthlyIncome * mgmtRate),
+    },
+    {
+      month: '2026-03',
+      monthLabel: 'مارس',
+      income: Math.round(monthlyIncome * 0.88),
+      maintenance: 800,
+      hoaFees: 1275,
+      managementFee: Math.round(monthlyIncome * 0.88 * mgmtRate),
+    },
   ];
 }
 
@@ -2775,25 +4822,40 @@ export function getExtendedOfficeStats() {
   const base = getOfficeStats();
 
   // Urgency breakdown
-  const urgentRequests = maintenanceRequests.filter((r) => r.priority === 'urgent' && !['completed', 'cancelled'].includes(r.status)).length;
-  const highRequests = maintenanceRequests.filter((r) => r.priority === 'high' && !['completed', 'cancelled'].includes(r.status)).length;
-  const mediumRequests = maintenanceRequests.filter((r) => r.priority === 'medium' && !['completed', 'cancelled'].includes(r.status)).length;
-  const lowRequests = maintenanceRequests.filter((r) => r.priority === 'low' && !['completed', 'cancelled'].includes(r.status)).length;
+  const urgentRequests = maintenanceRequests.filter(
+    (r) => r.priority === 'urgent' && !['completed', 'cancelled'].includes(r.status),
+  ).length;
+  const highRequests = maintenanceRequests.filter(
+    (r) => r.priority === 'high' && !['completed', 'cancelled'].includes(r.status),
+  ).length;
+  const mediumRequests = maintenanceRequests.filter(
+    (r) => r.priority === 'medium' && !['completed', 'cancelled'].includes(r.status),
+  ).length;
+  const lowRequests = maintenanceRequests.filter(
+    (r) => r.priority === 'low' && !['completed', 'cancelled'].includes(r.status),
+  ).length;
 
   // Rent collection: occupied units expected rent vs "collected" (mock 88%)
-  const expectedRent = units.filter((u) => u.status === 'occupied').reduce((sum, u) => sum + u.monthlyRent, 0);
+  const expectedRent = units
+    .filter((u) => u.status === 'occupied')
+    .reduce((sum, u) => sum + u.monthlyRent, 0);
   const collectedRent = Math.round(expectedRent * 0.88);
   const collectionRate = Math.round((collectedRent / expectedRent) * 100);
 
   // Average resolution time (completed requests)
-  const completedRequests = maintenanceRequests.filter((r) => r.status === 'completed' && r.completedAt);
-  const avgResolutionDays = completedRequests.length > 0
-    ? Math.round(completedRequests.reduce((sum, r) => {
-        const created = new Date(r.createdAt).getTime();
-        const completed = new Date(r.completedAt!).getTime();
-        return sum + (completed - created) / (1000 * 60 * 60 * 24);
-      }, 0) / completedRequests.length)
-    : 0;
+  const completedRequests = maintenanceRequests.filter(
+    (r) => r.status === 'completed' && r.completedAt,
+  );
+  const avgResolutionDays =
+    completedRequests.length > 0
+      ? Math.round(
+          completedRequests.reduce((sum, r) => {
+            const created = new Date(r.createdAt).getTime();
+            const completed = new Date(r.completedAt!).getTime();
+            return sum + (completed - created) / (1000 * 60 * 60 * 24);
+          }, 0) / completedRequests.length,
+        )
+      : 0;
 
   // Category breakdown for expense chart
   const categoryExpenses: Record<string, number> = {};
@@ -2806,15 +4868,27 @@ export function getExtendedOfficeStats() {
   // Building-level profitability
   const buildingProfitability = buildings.map((b) => {
     const bUnits = units.filter((u) => u.buildingId === b.id);
-    const revenue = bUnits.filter((u) => u.status === 'occupied').reduce((sum, u) => sum + u.monthlyRent, 0);
+    const revenue = bUnits
+      .filter((u) => u.status === 'occupied')
+      .reduce((sum, u) => sum + u.monthlyRent, 0);
     const bRequests = maintenanceRequests.filter((r) => r.buildingId === b.id);
     const expenses = bRequests.reduce((sum, r) => sum + (r.actualCost || r.estimatedCost || 0), 0);
     const occupancy = Math.round((b.occupiedUnits / b.unitCount) * 100);
-    const activeIssues = bRequests.filter((r) => !['completed', 'cancelled'].includes(r.status)).length;
+    const activeIssues = bRequests.filter(
+      (r) => !['completed', 'cancelled'].includes(r.status),
+    ).length;
     // Health score: occupancy weight 40%, issue-free weight 30%, collection weight 30%
     const issueScore = Math.max(0, 100 - activeIssues * 20);
     const healthScore = Math.round(occupancy * 0.4 + issueScore * 0.3 + collectionRate * 0.3);
-    return { building: b, revenue, expenses, net: revenue - expenses, occupancy, activeIssues, healthScore };
+    return {
+      building: b,
+      revenue,
+      expenses,
+      net: revenue - expenses,
+      occupancy,
+      activeIssues,
+      healthScore,
+    };
   });
 
   // Monthly revenue mock (last 6 months)
@@ -2849,10 +4923,30 @@ export function getExtendedOfficeStats() {
 
   // Compliance alerts
   const complianceAlerts = [
-    { type: 'ejar' as const, severity: 'warning' as const, message: `عقود إيجار تحتاج تجديد خلال ٣٠ يوم`, count: ejarExpiringContracts.length },
-    { type: 'fire_safety' as const, severity: 'danger' as const, message: 'فحص السلامة مستحق — عمارة الياسمين', count: 1 },
-    { type: 'elevator' as const, severity: 'warning' as const, message: 'شهادة صيانة المصعد تنتهي قريباً — برج النخيل', count: 1 },
-    { type: 'hoa' as const, severity: 'danger' as const, message: 'رسوم اتحاد ملاك متأخرة', count: hoaFees.filter((f) => f.status === 'overdue').length },
+    {
+      type: 'ejar' as const,
+      severity: 'warning' as const,
+      message: `عقود إيجار تحتاج تجديد خلال ٣٠ يوم`,
+      count: ejarExpiringContracts.length,
+    },
+    {
+      type: 'fire_safety' as const,
+      severity: 'danger' as const,
+      message: 'فحص السلامة مستحق — عمارة الياسمين',
+      count: 1,
+    },
+    {
+      type: 'elevator' as const,
+      severity: 'warning' as const,
+      message: 'شهادة صيانة المصعد تنتهي قريباً — برج النخيل',
+      count: 1,
+    },
+    {
+      type: 'hoa' as const,
+      severity: 'danger' as const,
+      message: 'رسوم اتحاد ملاك متأخرة',
+      count: hoaFees.filter((f) => f.status === 'overdue').length,
+    },
   ];
 
   return {
@@ -2906,11 +5000,51 @@ export interface TenantContract {
 // Khaled's rent payments (ten-001, unit-001 in bld-001)
 export const tenantRentPayments: RentPayment[] = [
   { id: 'rp-001', month: 'مارس ٢٠٢٦', amount: 4500, status: 'due', dueDate: '2026-03-15' },
-  { id: 'rp-002', month: 'فبراير ٢٠٢٦', amount: 4500, status: 'paid', dueDate: '2026-02-15', paidDate: '2026-02-13', method: 'تحويل بنكي' },
-  { id: 'rp-003', month: 'يناير ٢٠٢٦', amount: 4500, status: 'paid', dueDate: '2026-01-15', paidDate: '2026-01-14', method: 'تحويل بنكي' },
-  { id: 'rp-004', month: 'ديسمبر ٢٠٢٥', amount: 4500, status: 'paid', dueDate: '2025-12-15', paidDate: '2025-12-12', method: 'مدى' },
-  { id: 'rp-005', month: 'نوفمبر ٢٠٢٥', amount: 4500, status: 'paid', dueDate: '2025-11-15', paidDate: '2025-11-15', method: 'تحويل بنكي' },
-  { id: 'rp-006', month: 'أكتوبر ٢٠٢٥', amount: 4500, status: 'paid', dueDate: '2025-10-15', paidDate: '2025-10-10', method: 'مدى' },
+  {
+    id: 'rp-002',
+    month: 'فبراير ٢٠٢٦',
+    amount: 4500,
+    status: 'paid',
+    dueDate: '2026-02-15',
+    paidDate: '2026-02-13',
+    method: 'تحويل بنكي',
+  },
+  {
+    id: 'rp-003',
+    month: 'يناير ٢٠٢٦',
+    amount: 4500,
+    status: 'paid',
+    dueDate: '2026-01-15',
+    paidDate: '2026-01-14',
+    method: 'تحويل بنكي',
+  },
+  {
+    id: 'rp-004',
+    month: 'ديسمبر ٢٠٢٥',
+    amount: 4500,
+    status: 'paid',
+    dueDate: '2025-12-15',
+    paidDate: '2025-12-12',
+    method: 'مدى',
+  },
+  {
+    id: 'rp-005',
+    month: 'نوفمبر ٢٠٢٥',
+    amount: 4500,
+    status: 'paid',
+    dueDate: '2025-11-15',
+    paidDate: '2025-11-15',
+    method: 'تحويل بنكي',
+  },
+  {
+    id: 'rp-006',
+    month: 'أكتوبر ٢٠٢٥',
+    amount: 4500,
+    status: 'paid',
+    dueDate: '2025-10-15',
+    paidDate: '2025-10-10',
+    method: 'مدى',
+  },
 ];
 
 export const tenantContract: TenantContract = {
@@ -2970,7 +5104,8 @@ export function getDaysUntilContractEnd(): number {
 }
 
 export function getRentStatusColor(status: RentPayment['status']): string {
-  if (status === 'paid') return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300';
+  if (status === 'paid')
+    return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300';
   if (status === 'due') return 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300';
   return 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300';
 }
@@ -2990,13 +5125,18 @@ export interface CostRouterResult {
   article: string;
 }
 
-export function getCostRouterResult(category: string, subcategory: string, location: string): CostRouterResult {
+export function getCostRouterResult(
+  category: string,
+  subcategory: string,
+  location: string,
+): CostRouterResult {
   // Common area / building system = HOA
   if (location === 'common_area' || location === 'building_system') {
     return {
       responsibility: 'hoa',
       label: 'صندوق الملاك (اتحاد المُلّاك)',
-      legalBasis: 'المناطق المشتركة وأنظمة المبنى من مسؤولية اتحاد الملاك وفقاً لنظام ملكية الوحدات المفرزة.',
+      legalBasis:
+        'المناطق المشتركة وأنظمة المبنى من مسؤولية اتحاد الملاك وفقاً لنظام ملكية الوحدات المفرزة.',
       estimatedRange: '٥٠٠ - ١٠,٠٠٠ ر.س',
       article: 'المادة ١١ — نظام ملكية الوحدات المفرزة',
     };
@@ -3044,28 +5184,56 @@ export function getCostRouterResult(category: string, subcategory: string, locat
   return {
     responsibility: 'owner',
     label: 'المالك',
-    legalBasis: 'يتحمل المؤجر نفقات الصيانة غير التأجيرية وإصلاح الخلل الذي يؤثر في استيفاء المنفعة المقصودة من العين المؤجرة.',
+    legalBasis:
+      'يتحمل المؤجر نفقات الصيانة غير التأجيرية وإصلاح الخلل الذي يؤثر في استيفاء المنفعة المقصودة من العين المؤجرة.',
     estimatedRange: costMap[category] || '١٠٠ - ٣,٠٠٠ ر.س',
     article: 'المادة ٤١٩ — نظام المعاملات المدنية',
   };
 }
 
 // Self-help tips per category+subcategory
-export function getSelfHelpTip(category: string, subcategory: string): { tip: string; icon: string } | null {
+export function getSelfHelpTip(
+  category: string,
+  subcategory: string,
+): { tip: string; icon: string } | null {
   const tips: Record<string, Record<string, { tip: string; icon: string }>> = {
     hvac: {
-      'لا يبرد بشكل كافي': { tip: 'جرب أولا: نظف فلتر المكيف وتأكد من عدم انسداده بالغبار. أغلق النوافذ والأبواب واضبط الحرارة على ٢٢ درجة. إذا المشكلة مستمرة بعد ساعة، أكمل البلاغ.', icon: 'snowflake' },
-      'أصوات غير طبيعية': { tip: 'جرب أولا: أطفئ المكيف لمدة ٥ دقائق ثم أعد تشغيله. تأكد من عدم وجود أشياء قريبة من الوحدة الخارجية.', icon: 'volume' },
-      'تسريب ماء': { tip: 'ضع وعاء أسفل التسريب فوراً وامسح المياه المتراكمة. لا تستخدم المكيف حتى يتم الإصلاح.', icon: 'droplet' },
-      'رائحة كريهة': { tip: 'جرب أولا: افتح النوافذ لتهوية الغرفة وأطفئ المكيف. نظف الفلتر بالماء والصابون إن أمكن.', icon: 'wind' },
+      'لا يبرد بشكل كافي': {
+        tip: 'جرب أولا: نظف فلتر المكيف وتأكد من عدم انسداده بالغبار. أغلق النوافذ والأبواب واضبط الحرارة على ٢٢ درجة. إذا المشكلة مستمرة بعد ساعة، أكمل البلاغ.',
+        icon: 'snowflake',
+      },
+      'أصوات غير طبيعية': {
+        tip: 'جرب أولا: أطفئ المكيف لمدة ٥ دقائق ثم أعد تشغيله. تأكد من عدم وجود أشياء قريبة من الوحدة الخارجية.',
+        icon: 'volume',
+      },
+      'تسريب ماء': {
+        tip: 'ضع وعاء أسفل التسريب فوراً وامسح المياه المتراكمة. لا تستخدم المكيف حتى يتم الإصلاح.',
+        icon: 'droplet',
+      },
+      'رائحة كريهة': {
+        tip: 'جرب أولا: افتح النوافذ لتهوية الغرفة وأطفئ المكيف. نظف الفلتر بالماء والصابون إن أمكن.',
+        icon: 'wind',
+      },
     },
     plumbing: {
-      'انسداد': { tip: 'جرب أولا: استخدم المكبس (السحاب) عدة مرات بقوة. صب ماء مغلي في المصرف. إذا لم ينفع، أكمل البلاغ.', icon: 'wrench' },
-      'تسريب مياه': { tip: 'أغلق المحبس الرئيسي فوراً لمنع تلف إضافي. ضع مناشف حول منطقة التسريب.', icon: 'alert' },
+      انسداد: {
+        tip: 'جرب أولا: استخدم المكبس (السحاب) عدة مرات بقوة. صب ماء مغلي في المصرف. إذا لم ينفع، أكمل البلاغ.',
+        icon: 'wrench',
+      },
+      'تسريب مياه': {
+        tip: 'أغلق المحبس الرئيسي فوراً لمنع تلف إضافي. ضع مناشف حول منطقة التسريب.',
+        icon: 'alert',
+      },
     },
     electrical: {
-      'انقطاع كهرباء': { tip: 'تحقق أولا: هل انقطعت الكهرباء عن شقتك فقط أم المبنى كاملاً؟ جرب إعادة تفعيل القاطع في لوحة الكهرباء.', icon: 'zap' },
-      'إضاءة': { tip: 'جرب أولا: استبدل اللمبة بواحدة جديدة. إذا لم تعمل الإضاءة مع لمبة جديدة، المشكلة في التوصيلات — أكمل البلاغ.', icon: 'lightbulb' },
+      'انقطاع كهرباء': {
+        tip: 'تحقق أولا: هل انقطعت الكهرباء عن شقتك فقط أم المبنى كاملاً؟ جرب إعادة تفعيل القاطع في لوحة الكهرباء.',
+        icon: 'zap',
+      },
+      إضاءة: {
+        tip: 'جرب أولا: استبدل اللمبة بواحدة جديدة. إذا لم تعمل الإضاءة مع لمبة جديدة، المشكلة في التوصيلات — أكمل البلاغ.',
+        icon: 'lightbulb',
+      },
     },
   };
 
@@ -3076,7 +5244,13 @@ export function getSelfHelpTip(category: string, subcategory: string): { tip: st
 
 export interface ActivityEvent {
   id: string;
-  type: 'request_created' | 'status_changed' | 'payment_received' | 'provider_assigned' | 'request_completed' | 'hoa_overdue';
+  type:
+    | 'request_created'
+    | 'status_changed'
+    | 'payment_received'
+    | 'provider_assigned'
+    | 'request_completed'
+    | 'hoa_overdue';
   buildingName: string;
   unitNumber?: string;
   description: string;
@@ -3097,10 +5271,22 @@ export function getActivityFeed(): ActivityEvent[] {
       let icon: ActivityEvent['icon'] = 'clock';
       let color = 'text-sky-500';
 
-      if (log.status === 'submitted') { type = 'request_created'; icon = 'wrench'; color = 'text-blue-500'; }
-      else if (log.status === 'assigned') { type = 'provider_assigned'; icon = 'user'; color = 'text-purple-500'; }
-      else if (log.status === 'completed') { type = 'request_completed'; icon = 'check'; color = 'text-emerald-500'; }
-      else if (log.status === 'in_progress') { icon = 'clock'; color = 'text-orange-500'; }
+      if (log.status === 'submitted') {
+        type = 'request_created';
+        icon = 'wrench';
+        color = 'text-blue-500';
+      } else if (log.status === 'assigned') {
+        type = 'provider_assigned';
+        icon = 'user';
+        color = 'text-purple-500';
+      } else if (log.status === 'completed') {
+        type = 'request_completed';
+        icon = 'check';
+        color = 'text-emerald-500';
+      } else if (log.status === 'in_progress') {
+        icon = 'clock';
+        color = 'text-orange-500';
+      }
 
       events.push({
         id: `${r.id}-${log.status}-${log.timestamp}`,
@@ -3116,20 +5302,22 @@ export function getActivityFeed(): ActivityEvent[] {
   });
 
   // Add HOA payment events
-  hoaFees.filter((f) => f.status === 'paid' && f.paidDate).forEach((f) => {
-    const building = getBuildingById(f.buildingId);
-    const unit = getUnitById(f.unitId);
-    events.push({
-      id: `hoa-paid-${f.id}`,
-      type: 'payment_received',
-      buildingName: building?.name || '',
-      unitNumber: unit?.unitNumber,
-      description: `تم تحصيل رسوم اتحاد الملاك — ${formatSAR(f.amount)}`,
-      timestamp: f.paidDate!,
-      icon: 'wallet',
-      color: 'text-emerald-500',
+  hoaFees
+    .filter((f) => f.status === 'paid' && f.paidDate)
+    .forEach((f) => {
+      const building = getBuildingById(f.buildingId);
+      const unit = getUnitById(f.unitId);
+      events.push({
+        id: `hoa-paid-${f.id}`,
+        type: 'payment_received',
+        buildingName: building?.name || '',
+        unitNumber: unit?.unitNumber,
+        description: `تم تحصيل رسوم اتحاد الملاك — ${formatSAR(f.amount)}`,
+        timestamp: f.paidDate!,
+        icon: 'wallet',
+        color: 'text-emerald-500',
+      });
     });
-  });
 
   // Sort by timestamp descending
   events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -3140,13 +5328,15 @@ export function getActivityFeed(): ActivityEvent[] {
 
 /** Get all providers by specialty */
 export function getProvidersBySpecialty(specialty: string): ServiceProvider[] {
-  return serviceProviders.filter((sp) => sp.specialty === specialty || sp.specialtyEn === specialty);
+  return serviceProviders.filter(
+    (sp) => sp.specialty === specialty || sp.specialtyEn === specialty,
+  );
 }
 
 /** Get provider's assigned/active requests */
 export function getProviderActiveJobs(providerId: string): MaintenanceRequest[] {
   return maintenanceRequests.filter(
-    (r) => r.assignedProviderId === providerId && !['completed', 'cancelled'].includes(r.status)
+    (r) => r.assignedProviderId === providerId && !['completed', 'cancelled'].includes(r.status),
   );
 }
 
@@ -3164,7 +5354,8 @@ export function getOwnerPropertySummary(ownerId: string): {
   const totalRent = ownerUnits
     .filter((u) => u.status === 'occupied')
     .reduce((sum, u) => sum + u.monthlyRent, 0);
-  const occupancy = ownerUnits.length > 0 ? Math.round((occupiedCount / ownerUnits.length) * 100) : 0;
+  const occupancy =
+    ownerUnits.length > 0 ? Math.round((occupiedCount / ownerUnits.length) * 100) : 0;
 
   return {
     buildings: ownerBuildings,
@@ -3185,7 +5376,9 @@ export function getTenantProfile(tenantId: string): {
   const tenant = tenants.find((t) => t.id === tenantId);
   const unit = units.find((u) => u.tenantId === tenantId);
   const building = unit ? getBuildingById(unit.buildingId) : undefined;
-  const contract = unit ? ejarContracts.find((c) => c.unitId === unit.id && c.tenantId === tenantId) : undefined;
+  const contract = unit
+    ? ejarContracts.find((c) => c.unitId === unit.id && c.tenantId === tenantId)
+    : undefined;
   const requests = maintenanceRequests.filter((r) => r.reportedById === tenantId);
 
   return {

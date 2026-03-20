@@ -38,22 +38,86 @@ import {
   getSelfHelpTip,
   costColors,
   type CostRouterResult,
-  maintenanceRequests,
   office,
 } from '@/lib/mock-data';
+import { trpc } from '@/lib/trpc';
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
 import { useToast } from '@/components/ui/toast-provider';
 
 // ----- Categories (8 image-based cards) -----
 const categories = [
-  { id: 'hvac', label: 'تكييف', labelEn: 'AC', icon: Wind, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-900/20', emoji: '' },
-  { id: 'plumbing', label: 'سباكة', labelEn: 'Plumbing', icon: Droplets, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/20', emoji: '' },
-  { id: 'electrical', label: 'كهرباء', labelEn: 'Electrical', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-900/20', emoji: '' },
-  { id: 'structural', label: 'هيكلي', labelEn: 'Structural', icon: Hammer, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-900/20', emoji: '' },
-  { id: 'fire_safety', label: 'سلامة', labelEn: 'Fire Safety', icon: ShieldAlert, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/20', emoji: '' },
-  { id: 'elevator', label: 'مصاعد', labelEn: 'Elevator', icon: ArrowUpDown, color: 'text-violet-500', bg: 'bg-violet-50 dark:bg-violet-900/20', emoji: '' },
-  { id: 'cosmetic', label: 'تجميلي', labelEn: 'Cosmetic', icon: Paintbrush, color: 'text-pink-500', bg: 'bg-pink-50 dark:bg-pink-900/20', emoji: '' },
-  { id: 'general', label: 'عام', labelEn: 'General', icon: Wrench, color: 'text-slate-500', bg: 'bg-slate-50 dark:bg-slate-900/20', emoji: '' },
+  {
+    id: 'hvac',
+    label: 'تكييف',
+    labelEn: 'AC',
+    icon: Wind,
+    color: 'text-sky-500',
+    bg: 'bg-sky-50 dark:bg-sky-900/20',
+    emoji: '',
+  },
+  {
+    id: 'plumbing',
+    label: 'سباكة',
+    labelEn: 'Plumbing',
+    icon: Droplets,
+    color: 'text-blue-500',
+    bg: 'bg-blue-50 dark:bg-blue-900/20',
+    emoji: '',
+  },
+  {
+    id: 'electrical',
+    label: 'كهرباء',
+    labelEn: 'Electrical',
+    icon: Zap,
+    color: 'text-amber-500',
+    bg: 'bg-amber-50 dark:bg-amber-900/20',
+    emoji: '',
+  },
+  {
+    id: 'structural',
+    label: 'هيكلي',
+    labelEn: 'Structural',
+    icon: Hammer,
+    color: 'text-orange-500',
+    bg: 'bg-orange-50 dark:bg-orange-900/20',
+    emoji: '',
+  },
+  {
+    id: 'fire_safety',
+    label: 'سلامة',
+    labelEn: 'Fire Safety',
+    icon: ShieldAlert,
+    color: 'text-red-500',
+    bg: 'bg-red-50 dark:bg-red-900/20',
+    emoji: '',
+  },
+  {
+    id: 'elevator',
+    label: 'مصاعد',
+    labelEn: 'Elevator',
+    icon: ArrowUpDown,
+    color: 'text-violet-500',
+    bg: 'bg-violet-50 dark:bg-violet-900/20',
+    emoji: '',
+  },
+  {
+    id: 'cosmetic',
+    label: 'تجميلي',
+    labelEn: 'Cosmetic',
+    icon: Paintbrush,
+    color: 'text-pink-500',
+    bg: 'bg-pink-50 dark:bg-pink-900/20',
+    emoji: '',
+  },
+  {
+    id: 'general',
+    label: 'عام',
+    labelEn: 'General',
+    icon: Wrench,
+    color: 'text-slate-500',
+    bg: 'bg-slate-50 dark:bg-slate-900/20',
+    emoji: '',
+  },
 ];
 
 // ----- Subcategories (dynamic per category) -----
@@ -142,7 +206,15 @@ interface PhotoItem {
 
 export default function NewRequestPageWrapper() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-pulse text-sm text-[var(--muted-foreground)]">جاري التحميل...</div></div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center p-8">
+          <div className="animate-pulse text-sm text-[var(--muted-foreground)]">
+            جاري التحميل...
+          </div>
+        </div>
+      }
+    >
       <NewRequestPage />
     </Suspense>
   );
@@ -192,7 +264,7 @@ function NewRequestPage() {
       ? getCostRouterResult(
           category,
           subcategories[category]?.find((s) => s.id === subcategory)?.label || '',
-          locationType
+          locationType,
         )
       : null;
 
@@ -200,16 +272,17 @@ function NewRequestPage() {
     category && subcategory
       ? getSelfHelpTip(
           category,
-          subcategories[category]?.find((s) => s.id === subcategory)?.label || ''
+          subcategories[category]?.find((s) => s.id === subcategory)?.label || '',
         )
       : null;
 
   const selectedCategory = categories.find((c) => c.id === category);
   const selectedSubcategory = subcategories[category]?.find((s) => s.id === subcategory);
   const selectedLocationType = locationTypes.find((l) => l.id === locationType);
-  const selectedRoom = locationType === 'unit'
-    ? unitRooms.find((r) => r.id === specificLocation)
-    : commonAreas.find((a) => a.id === specificLocation);
+  const selectedRoom =
+    locationType === 'unit'
+      ? unitRooms.find((r) => r.id === specificLocation)
+      : commonAreas.find((a) => a.id === specificLocation);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -240,47 +313,62 @@ function NewRequestPage() {
     setPhotos(photos.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
-    // Generate ticket number
-    const num = `MR-${String(maintenanceRequests.length + 1001).padStart(4, '0')}`;
-    setTicketNumber(num);
+  const createMutation = trpc.maintenance.create.useMutation({
+    onSuccess: (data) => {
+      setTicketNumber(data.id.slice(0, 8).toUpperCase());
+      setSubmitted(true);
+      toast.success('تم إرسال البلاغ بنجاح!');
+    },
+    onError: () => {
+      toast.error('حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى.');
+    },
+  });
 
-    // Save to localStorage so it shows up in the list
-    const newRequest = {
-      id: `req-new-${Date.now()}`,
-      title: `${selectedCategory?.label} — ${selectedSubcategory?.label}`,
-      description,
-      category,
-      subcategory: selectedSubcategory?.label || '',
-      buildingId: 'bld-001',
-      unitId: locationType === 'unit' ? 'unit-001' : undefined,
-      location: locationType,
-      locationLabel: `${selectedRoom?.label || ''} — ${locationType === 'unit' ? 'شقة ١٠١ — برج النخيل' : 'منطقة مشتركة — برج النخيل'}`,
-      status: 'submitted',
-      priority: priority || 'medium',
-      costResponsibility: costResult?.responsibility || 'owner',
-      costLegalBasis: costResult?.legalBasis || '',
-      estimatedCost: null,
-      reportedById: 'ten-001',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      ticketNumber: num,
-      photoNames: photos.map((p) => p.name),
-      statusLog: [
-        { status: 'submitted', timestamp: new Date().toISOString(), note: 'تم تقديم الطلب من المستأجر', userId: 'ten-001' },
-      ],
+  const handleSubmit = () => {
+    // Map the UI category to the API category enum
+    const categoryMap: Record<string, string> = {
+      hvac: 'HVAC',
+      plumbing: 'PLUMBING',
+      electrical: 'ELECTRICAL',
+      structural: 'STRUCTURAL',
+      fire_safety: 'SECURITY',
+      elevator: 'ELEVATOR',
+      cosmetic: 'COSMETIC',
+      general: 'OTHER',
     };
 
-    try {
-      const existing = JSON.parse(localStorage.getItem('tenant_requests') || '[]');
-      existing.unshift(newRequest);
-      localStorage.setItem('tenant_requests', JSON.stringify(existing));
-    } catch {
-      // Ignore localStorage errors
-    }
+    const apiCategory = categoryMap[category] ?? 'OTHER';
+    const title = `${selectedCategory?.label ?? ''} — ${selectedSubcategory?.label ?? ''}`;
+    const priorityMap: Record<string, 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'> = {
+      low: 'LOW',
+      medium: 'MEDIUM',
+      high: 'HIGH',
+      urgent: 'URGENT',
+    };
 
-    setSubmitted(true);
-    toast.success('تم إرسال البلاغ بنجاح!');
+    // For now, use a placeholder unitId. In production the tenant's unit is known from auth context.
+    // The API requires a valid unitId; if the user is authenticated, the backend resolves this.
+    createMutation.mutate({
+      // TODO: replace with actual unitId from tenant's auth session
+      unitId: '00000000-0000-0000-0000-000000000000',
+      title,
+      description,
+      priority: priorityMap[priority] ?? 'MEDIUM',
+      category: apiCategory as
+        | 'PLUMBING'
+        | 'ELECTRICAL'
+        | 'HVAC'
+        | 'STRUCTURAL'
+        | 'APPLIANCE'
+        | 'COSMETIC'
+        | 'PAINTING'
+        | 'CARPENTRY'
+        | 'PEST_CONTROL'
+        | 'ELEVATOR'
+        | 'SECURITY'
+        | 'CLEANING'
+        | 'OTHER',
+    });
   };
 
   const handleNext = () => {
@@ -318,7 +406,14 @@ function NewRequestPage() {
                 ease: 'easeOut',
               }}
               className={`absolute h-3 w-3 rounded-full ${
-                ['bg-brand-400', 'bg-sky-400', 'bg-amber-400', 'bg-emerald-400', 'bg-violet-400', 'bg-pink-400'][i % 6]
+                [
+                  'bg-brand-400',
+                  'bg-sky-400',
+                  'bg-amber-400',
+                  'bg-emerald-400',
+                  'bg-violet-400',
+                  'bg-pink-400',
+                ][i % 6]
               }`}
             />
           ))}
@@ -349,14 +444,14 @@ function NewRequestPage() {
           className="mb-6 space-y-1"
         >
           <p className="text-sm text-[var(--muted-foreground)]">رقم التذكرة</p>
-          <p className="text-2xl font-bold tracking-wider text-brand-500">{ticketNumber}</p>
+          <p className="text-brand-500 text-2xl font-bold tracking-wider">{ticketNumber}</p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mb-6 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 p-4 text-center"
+          className="mb-6 rounded-2xl bg-emerald-50 p-4 text-center dark:bg-emerald-900/20"
         >
           <div className="flex items-center justify-center gap-2 text-emerald-700 dark:text-emerald-300">
             <MessageSquare className="h-4 w-4" />
@@ -388,17 +483,17 @@ function NewRequestPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft"
+          className="shadow-soft w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
         >
           <div className="mb-3 flex items-center gap-2">
-            <Scale className="h-5 w-5 text-brand-500" />
+            <Scale className="text-brand-500 h-5 w-5" />
             <span className="text-sm font-bold">تحديد المسؤولية المالية</span>
           </div>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: '100%' }}
             transition={{ delay: 1, duration: 1.5 }}
-            className="mb-3 h-1.5 rounded-full bg-brand-500"
+            className="bg-brand-500 mb-3 h-1.5 rounded-full"
           />
           {costResult && (
             <motion.div
@@ -406,7 +501,9 @@ function NewRequestPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 2.5 }}
             >
-              <div className={`mb-2 inline-flex rounded-full px-3 py-1 text-xs font-medium ${costColors[costResult.responsibility]}`}>
+              <div
+                className={`mb-2 inline-flex rounded-full px-3 py-1 text-xs font-medium ${costColors[costResult.responsibility]}`}
+              >
                 المسؤول: {costResult.label}
               </div>
               <p className="text-[10px] text-[var(--muted-foreground)]">{costResult.article}</p>
@@ -447,7 +544,9 @@ function NewRequestPage() {
           className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950/30"
         >
           <AlertTriangle className="h-4 w-4 text-red-500" />
-          <span className="text-xs font-medium text-red-700 dark:text-red-300">بلاغ عاجل — سيتم التعامل معه بأولوية قصوى</span>
+          <span className="text-xs font-medium text-red-700 dark:text-red-300">
+            بلاغ عاجل — سيتم التعامل معه بأولوية قصوى
+          </span>
         </motion.div>
       )}
 
@@ -460,10 +559,12 @@ function NewRequestPage() {
                 initial={false}
                 animate={{ width: i <= step ? '100%' : '0%' }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="absolute inset-y-0 start-0 rounded-full bg-brand-500"
+                className="bg-brand-500 absolute inset-y-0 start-0 rounded-full"
               />
             </div>
-            <span className={`text-[10px] ${i === step ? 'font-medium text-brand-500' : 'text-[var(--muted-foreground)]'}`}>
+            <span
+              className={`text-[10px] ${i === step ? 'text-brand-500 font-medium' : 'text-[var(--muted-foreground)]'}`}
+            >
               {s}
             </span>
           </div>
@@ -492,14 +593,21 @@ function NewRequestPage() {
                     key={cat.id}
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.97 }}
-                    onClick={() => { setCategory(cat.id); setSubcategory(''); setLocationType(''); setSpecificLocation(''); }}
+                    onClick={() => {
+                      setCategory(cat.id);
+                      setSubcategory('');
+                      setLocationType('');
+                      setSpecificLocation('');
+                    }}
                     className={`flex flex-col items-center gap-2.5 rounded-2xl border-2 p-5 transition-all ${
                       isSelected
                         ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/20 shadow-card'
-                        : 'border-[var(--border)] bg-[var(--card)] hover:border-brand-200 hover:shadow-soft'
+                        : 'hover:border-brand-200 hover:shadow-soft border-[var(--border)] bg-[var(--card)]'
                     }`}
                   >
-                    <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${cat.bg} transition-transform ${isSelected ? 'scale-110' : ''}`}>
+                    <div
+                      className={`flex h-14 w-14 items-center justify-center rounded-2xl ${cat.bg} transition-transform ${isSelected ? 'scale-110' : ''}`}
+                    >
                       <Icon className={`h-7 w-7 ${cat.color}`} />
                     </div>
                     <span className="text-sm font-medium">{cat.label}</span>
@@ -539,19 +647,19 @@ function NewRequestPage() {
                         : 'border-[var(--border)] bg-[var(--card)] hover:bg-[var(--secondary)]'
                     }`}
                   >
-                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
-                      isSelected ? 'bg-brand-100 dark:bg-brand-900/40' : 'bg-[var(--secondary)]'
-                    }`}>
-                      <Icon className={`h-4.5 w-4.5 ${isSelected ? 'text-brand-500' : 'text-[var(--muted-foreground)]'}`} />
+                    <div
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                        isSelected ? 'bg-brand-100 dark:bg-brand-900/40' : 'bg-[var(--secondary)]'
+                      }`}
+                    >
+                      <Icon
+                        className={`h-4.5 w-4.5 ${isSelected ? 'text-brand-500' : 'text-[var(--muted-foreground)]'}`}
+                      />
                     </div>
                     <span className="text-sm font-medium">{sub.label}</span>
                     {isSelected && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="mr-auto"
-                      >
-                        <CheckCircle2 className="h-5 w-5 text-brand-500" />
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="mr-auto">
+                        <CheckCircle2 className="text-brand-500 h-5 w-5" />
                       </motion.div>
                     )}
                   </motion.button>
@@ -582,15 +690,22 @@ function NewRequestPage() {
                     key={loc.id}
                     whileHover={{ x: -4 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => { setLocationType(loc.id); setSpecificLocation(''); }}
+                    onClick={() => {
+                      setLocationType(loc.id);
+                      setSpecificLocation('');
+                    }}
                     className={`flex w-full items-center gap-4 rounded-xl border-2 p-4 text-start transition-all ${
                       isSelected
                         ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/20'
                         : 'border-[var(--border)] bg-[var(--card)] hover:bg-[var(--secondary)]'
                     }`}
                   >
-                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${isSelected ? 'bg-brand-100 dark:bg-brand-900/40' : 'bg-[var(--secondary)]'}`}>
-                      <Icon className={`h-5 w-5 ${isSelected ? 'text-brand-500' : 'text-[var(--muted-foreground)]'}`} />
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${isSelected ? 'bg-brand-100 dark:bg-brand-900/40' : 'bg-[var(--secondary)]'}`}
+                    >
+                      <Icon
+                        className={`h-5 w-5 ${isSelected ? 'text-brand-500' : 'text-[var(--muted-foreground)]'}`}
+                      />
                     </div>
                     <div>
                       <p className="text-sm font-medium">{loc.label}</p>
@@ -630,7 +745,9 @@ function NewRequestPage() {
                               : 'border-[var(--border)] bg-[var(--card)]'
                           }`}
                         >
-                          <Icon className={`h-5 w-5 ${isSelected ? 'text-brand-500' : 'text-[var(--muted-foreground)]'}`} />
+                          <Icon
+                            className={`h-5 w-5 ${isSelected ? 'text-brand-500' : 'text-[var(--muted-foreground)]'}`}
+                          />
                           <span className="text-[10px] font-medium">{room.label}</span>
                         </motion.button>
                       );
@@ -662,7 +779,7 @@ function NewRequestPage() {
               >
                 <button
                   onClick={() => setShowSelfHelp(false)}
-                  className="absolute top-2 end-2 rounded-lg p-1 text-amber-600/50 hover:text-amber-600 dark:text-amber-400/50 dark:hover:text-amber-400"
+                  className="absolute end-2 top-2 rounded-lg p-1 text-amber-600/50 hover:text-amber-600 dark:text-amber-400/50 dark:hover:text-amber-400"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -671,7 +788,9 @@ function NewRequestPage() {
                     <Lightbulb className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <p className="mb-1 text-xs font-bold text-amber-800 dark:text-amber-300">نصيحة سريعة قبل الإرسال</p>
+                    <p className="mb-1 text-xs font-bold text-amber-800 dark:text-amber-300">
+                      نصيحة سريعة قبل الإرسال
+                    </p>
                     <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-400">
                       {selfHelpTip.tip}
                     </p>
@@ -685,12 +804,14 @@ function NewRequestPage() {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="اشرح المشكلة بالتفصيل... مثل: متى بدأت؟ هل تتكرر؟ ما الذي جربته؟"
               rows={5}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] p-4 text-sm outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 resize-none"
+              className="focus:border-brand-500 focus:ring-brand-500/20 w-full resize-none rounded-xl border border-[var(--border)] bg-[var(--background)] p-4 text-sm outline-none transition-colors focus:ring-2"
               autoFocus
             />
             <div className="flex items-center justify-between">
               <p className="text-[10px] text-[var(--muted-foreground)]">
-                {description.length < 10 ? `أدخل ${10 - description.length} حرف على الأقل` : 'ممتاز!'}
+                {description.length < 10
+                  ? `أدخل ${10 - description.length} حرف على الأقل`
+                  : 'ممتاز!'}
               </p>
               <p className="text-[10px] text-[var(--muted-foreground)]">{description.length} حرف</p>
             </div>
@@ -721,7 +842,7 @@ function NewRequestPage() {
                     />
                     <button
                       onClick={() => removePhoto(index)}
-                      className="absolute top-1 end-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white"
+                      className="absolute end-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -732,7 +853,7 @@ function NewRequestPage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-[var(--border)] bg-[var(--secondary)] transition-colors hover:border-brand-500"
+                    className="hover:border-brand-500 flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-[var(--border)] bg-[var(--secondary)] transition-colors"
                   >
                     <ImagePlus className="h-5 w-5 text-[var(--muted-foreground)]" />
                     <span className="text-[9px] text-[var(--muted-foreground)]">إضافة صورة</span>
@@ -755,12 +876,14 @@ function NewRequestPage() {
             <h2 className="text-base font-bold">مراجعة الطلب</h2>
 
             {/* Summary card */}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft space-y-3">
+            <div className="shadow-soft space-y-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--muted-foreground)]">التصنيف</span>
                 <div className="flex items-center gap-2">
                   {selectedCategory && (
-                    <div className={`flex h-6 w-6 items-center justify-center rounded-lg ${selectedCategory.bg}`}>
+                    <div
+                      className={`flex h-6 w-6 items-center justify-center rounded-lg ${selectedCategory.bg}`}
+                    >
                       <selectedCategory.icon className={`h-3.5 w-3.5 ${selectedCategory.color}`} />
                     </div>
                   )}
@@ -799,7 +922,9 @@ function NewRequestPage() {
                 <>
                   <div className="h-px bg-[var(--border)]" />
                   <div>
-                    <span className="text-xs text-[var(--muted-foreground)]">الصور ({photos.length})</span>
+                    <span className="text-xs text-[var(--muted-foreground)]">
+                      الصور ({photos.length})
+                    </span>
                     <div className="mt-2 flex gap-2">
                       {photos.map((photo, i) => (
                         <div key={i} className="h-12 w-12 overflow-hidden rounded-lg">
@@ -822,15 +947,17 @@ function NewRequestPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft"
+                className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
               >
                 <div className="mb-3 flex items-center gap-2">
-                  <Scale className="h-5 w-5 text-brand-500" />
+                  <Scale className="text-brand-500 h-5 w-5" />
                   <h3 className="text-sm font-bold">المسؤولية المالية</h3>
                 </div>
 
                 <div className="mb-3 flex items-center gap-2">
-                  <span className={`rounded-full px-3 py-1 text-xs font-medium ${costColors[costResult.responsibility]}`}>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${costColors[costResult.responsibility]}`}
+                  >
                     المسؤول: {costResult.label}
                   </span>
                 </div>
@@ -872,7 +999,7 @@ function NewRequestPage() {
           whileTap={{ scale: canNext() ? 0.98 : 1 }}
           onClick={handleNext}
           disabled={!canNext()}
-          className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-brand-500 text-sm font-semibold text-white shadow-soft transition-all hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-brand-500 shadow-soft hover:bg-brand-600 flex h-12 flex-1 items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span>{step === 4 ? 'إرسال البلاغ' : 'التالي'}</span>
           {step < 4 && <ArrowLeft className="h-4 w-4" />}

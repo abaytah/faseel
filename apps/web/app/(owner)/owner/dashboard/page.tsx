@@ -40,17 +40,17 @@ import {
   getHOAFeesByUnit,
   getBuildingById,
   getUserById,
-  statusLabels,
-  statusColors,
-  priorityLabels,
-  priorityColors,
+  statusLabels as mockStatusLabels,
+  statusColors as mockStatusColors,
+  priorityLabels as mockPriorityLabels,
+  priorityColors as mockPriorityColors,
   costLabels,
   costColors,
   formatSAR,
   formatDate,
   formatDateTime,
   getRelativeTime,
-  categoryLabels,
+  categoryLabels as mockCategoryLabels,
   getContractsByOwner,
   getOwnerMonthlyFinances,
   ejarContractStatusLabels,
@@ -58,6 +58,19 @@ import {
   office,
   type MaintenanceRequest,
 } from '@/lib/mock-data';
+import { trpc } from '@/lib/trpc';
+import {
+  statusLabels as apiStatusLabels,
+  statusColors as apiStatusColors,
+  categoryLabels as apiCategoryLabels,
+} from '@/lib/format-utils';
+
+// Merge label lookups: API uppercase first, then mock lowercase
+const statusLabels = { ...mockStatusLabels, ...apiStatusLabels };
+const statusColors = { ...mockStatusColors, ...apiStatusColors };
+const priorityLabels = mockPriorityLabels;
+const priorityColors = mockPriorityColors;
+const categoryLabels = { ...mockCategoryLabels, ...apiCategoryLabels };
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
 import { useToast } from '@/components/ui/toast-provider';
 
@@ -79,19 +92,31 @@ export default function OwnerDashboardPage() {
   const activeRequests = requests.filter((r) => !['completed', 'cancelled'].includes(r.status));
   const occupiedUnits = ownerUnits.filter((u) => u.status === 'occupied');
   const totalMonthlyIncome = occupiedUnits.reduce((sum, u) => sum + u.monthlyRent, 0);
-  const occupancyRate = ownerUnits.length > 0 ? Math.round((occupiedUnits.length / ownerUnits.length) * 100) : 0;
+  const occupancyRate =
+    ownerUnits.length > 0 ? Math.round((occupiedUnits.length / ownerUnits.length) * 100) : 0;
 
   // Costs
-  const ownerCostRequests = requests.filter((r) => r.costResponsibility === 'owner' && r.status !== 'cancelled');
-  const totalMaintenanceCost = ownerCostRequests.reduce((sum, r) => sum + (r.actualCost || r.estimatedCost || 0), 0);
+  const ownerCostRequests = requests.filter(
+    (r) => r.costResponsibility === 'owner' && r.status !== 'cancelled',
+  );
+  const totalMaintenanceCost = ownerCostRequests.reduce(
+    (sum, r) => sum + (r.actualCost || r.estimatedCost || 0),
+    0,
+  );
   const managementFeeRate = 0.07;
   const managementFee = Math.round(totalMonthlyIncome * managementFeeRate);
 
   // HOA
   const allHOAFees = ownerUnits.flatMap((u) => getHOAFeesByUnit(u.id));
-  const paidHOA = allHOAFees.filter((f) => f.status === 'paid').reduce((sum, f) => sum + f.amount, 0);
-  const overdueHOA = allHOAFees.filter((f) => f.status === 'overdue').reduce((sum, f) => sum + f.amount, 0);
-  const outstandingHOA = allHOAFees.filter((f) => f.status === 'outstanding').reduce((sum, f) => sum + f.amount, 0);
+  const paidHOA = allHOAFees
+    .filter((f) => f.status === 'paid')
+    .reduce((sum, f) => sum + f.amount, 0);
+  const overdueHOA = allHOAFees
+    .filter((f) => f.status === 'overdue')
+    .reduce((sum, f) => sum + f.amount, 0);
+  const outstandingHOA = allHOAFees
+    .filter((f) => f.status === 'outstanding')
+    .reduce((sum, f) => sum + f.amount, 0);
   const totalHOACost = paidHOA + overdueHOA + outstandingHOA;
 
   // Net income
@@ -100,7 +125,10 @@ export default function OwnerDashboardPage() {
   // Monthly finances
   const monthlyFinances = getOwnerMonthlyFinances(owner.id);
   const ytdIncome = monthlyFinances.reduce((sum, m) => sum + m.income, 0);
-  const ytdExpenses = monthlyFinances.reduce((sum, m) => sum + m.maintenance + m.hoaFees + m.managementFee, 0);
+  const ytdExpenses = monthlyFinances.reduce(
+    (sum, m) => sum + m.maintenance + m.hoaFees + m.managementFee,
+    0,
+  );
   const ytdNet = ytdIncome - ytdExpenses;
 
   // Ejar contracts
@@ -108,21 +136,28 @@ export default function OwnerDashboardPage() {
   const expiringSoonContracts = contracts.filter((c) => c.status === 'expiring_soon');
 
   // Group units by building for per-building cards
-  const buildingGroups = ownerUnits.reduce((acc, unit) => {
-    if (!acc[unit.buildingId]) acc[unit.buildingId] = [];
-    acc[unit.buildingId].push(unit);
-    return acc;
-  }, {} as Record<string, typeof ownerUnits>);
+  const buildingGroups = ownerUnits.reduce(
+    (acc, unit) => {
+      if (!acc[unit.buildingId]) acc[unit.buildingId] = [];
+      acc[unit.buildingId].push(unit);
+      return acc;
+    },
+    {} as Record<string, typeof ownerUnits>,
+  );
 
   const toast = useToast();
 
   // Interactive state
   const [expandedBuilding, setExpandedBuilding] = useState<string | null>(null);
   const [approvalModal, setApprovalModal] = useState<MaintenanceRequest | null>(null);
-  const [approvedRequests, setApprovedRequests] = useState<Record<string, 'approved' | 'rejected'>>({});
+  const [approvedRequests, setApprovedRequests] = useState<Record<string, 'approved' | 'rejected'>>(
+    {},
+  );
   const [reportToast, setReportToast] = useState(false);
   const [reportLoading, setReportLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'maintenance' | 'hoa' | 'contracts'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'maintenance' | 'hoa' | 'contracts'>(
+    'overview',
+  );
 
   // Load saved approval states from localStorage
   useEffect(() => {
@@ -156,14 +191,23 @@ export default function OwnerDashboardPage() {
 
   // Pending cost approvals (owner cost, not yet approved/rejected)
   const pendingApprovals = requests.filter(
-    (r) => r.costResponsibility === 'owner' && r.estimatedCost && !approvedRequests[r.id] && r.status !== 'cancelled'
+    (r) =>
+      r.costResponsibility === 'owner' &&
+      r.estimatedCost &&
+      !approvedRequests[r.id] &&
+      r.status !== 'cancelled',
   );
 
   // Max value for bar chart
   const maxMonthValue = Math.max(...monthlyFinances.map((m) => m.income));
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-4"
+    >
       {/* Header with WhatsApp */}
       <motion.div variants={itemVariants} className="flex items-center justify-between">
         <div>
@@ -179,7 +223,10 @@ export default function OwnerDashboardPage() {
       </motion.div>
 
       {/* Tab Navigation */}
-      <motion.div variants={itemVariants} className="flex gap-1 overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] p-1.5 shadow-soft">
+      <motion.div
+        variants={itemVariants}
+        className="shadow-soft flex gap-1 overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] p-1.5"
+      >
         {[
           { key: 'overview', label: 'نظرة عامة', icon: BarChart3 },
           { key: 'maintenance', label: 'الصيانة', icon: Wrench },
@@ -206,7 +253,10 @@ export default function OwnerDashboardPage() {
         <>
           {/* KPI Row */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+            >
               <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50 dark:bg-sky-900/20">
                 <Home className="h-4 w-4 text-sky-500" />
               </div>
@@ -214,7 +264,10 @@ export default function OwnerDashboardPage() {
               <p className="text-xs text-[var(--muted-foreground)]">وحدة</p>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+            >
               <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
                 <TrendingUp className="h-4 w-4 text-emerald-500" />
               </div>
@@ -222,7 +275,10 @@ export default function OwnerDashboardPage() {
               <p className="text-xs text-[var(--muted-foreground)]">الدخل الشهري</p>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+            >
               <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-violet-50 dark:bg-violet-900/20">
                 <Percent className="h-4 w-4 text-violet-500" />
               </div>
@@ -230,11 +286,16 @@ export default function OwnerDashboardPage() {
               <p className="text-xs text-[var(--muted-foreground)]">نسبة الإشغال</p>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+            >
               <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
                 <DollarSign className="h-4 w-4 text-emerald-500" />
               </div>
-              <p className={`text-xl font-bold ${netIncome >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+              <p
+                className={`text-xl font-bold ${netIncome >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}
+              >
                 {formatSAR(netIncome)}
               </p>
               <p className="text-xs text-[var(--muted-foreground)]">صافي الدخل</p>
@@ -242,19 +303,28 @@ export default function OwnerDashboardPage() {
           </div>
 
           {/* YTD Summary */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-4 text-sm font-bold">ملخص من بداية السنة</h3>
             <div className="grid grid-cols-3 gap-3">
-              <div className="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 p-3 text-center">
-                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">{formatSAR(ytdIncome)}</p>
+              <div className="rounded-xl bg-emerald-50 p-3 text-center dark:bg-emerald-900/20">
+                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                  {formatSAR(ytdIncome)}
+                </p>
                 <p className="text-[10px] text-emerald-600 dark:text-emerald-400">إجمالي الدخل</p>
               </div>
-              <div className="rounded-xl bg-red-50 dark:bg-red-900/20 p-3 text-center">
-                <p className="text-sm font-bold text-red-700 dark:text-red-300">{formatSAR(ytdExpenses)}</p>
+              <div className="rounded-xl bg-red-50 p-3 text-center dark:bg-red-900/20">
+                <p className="text-sm font-bold text-red-700 dark:text-red-300">
+                  {formatSAR(ytdExpenses)}
+                </p>
                 <p className="text-[10px] text-red-600 dark:text-red-400">إجمالي المصاريف</p>
               </div>
-              <div className="rounded-xl bg-sky-50 dark:bg-sky-900/20 p-3 text-center">
-                <p className={`text-sm font-bold ${ytdNet >= 0 ? 'text-sky-700 dark:text-sky-300' : 'text-red-700 dark:text-red-300'}`}>
+              <div className="rounded-xl bg-sky-50 p-3 text-center dark:bg-sky-900/20">
+                <p
+                  className={`text-sm font-bold ${ytdNet >= 0 ? 'text-sky-700 dark:text-sky-300' : 'text-red-700 dark:text-red-300'}`}
+                >
                   {formatSAR(ytdNet)}
                 </p>
                 <p className="text-[10px] text-sky-600 dark:text-sky-400">صافي الربح</p>
@@ -263,7 +333,10 @@ export default function OwnerDashboardPage() {
           </motion.div>
 
           {/* Income vs Expenses Chart */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-bold">الدخل مقابل المصاريف</h3>
               <div className="flex items-center gap-3 text-[10px]">
@@ -284,7 +357,10 @@ export default function OwnerDashboardPage() {
                 const expenseHeight = maxMonthValue > 0 ? (totalExpense / maxMonthValue) * 120 : 0;
                 return (
                   <div key={m.month} className="flex flex-1 flex-col items-center gap-1">
-                    <div className="flex w-full items-end justify-center gap-0.5" style={{ height: 120 }}>
+                    <div
+                      className="flex w-full items-end justify-center gap-0.5"
+                      style={{ height: 120 }}
+                    >
                       <motion.div
                         initial={{ height: 0 }}
                         animate={{ height: incomeHeight }}
@@ -300,7 +376,9 @@ export default function OwnerDashboardPage() {
                         title={`${formatSAR(totalExpense)}`}
                       />
                     </div>
-                    <span className="text-[9px] text-[var(--muted-foreground)]">{m.monthLabel}</span>
+                    <span className="text-[9px] text-[var(--muted-foreground)]">
+                      {m.monthLabel}
+                    </span>
                   </div>
                 );
               })}
@@ -308,14 +386,25 @@ export default function OwnerDashboardPage() {
           </motion.div>
 
           {/* Expense Breakdown */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-4 text-sm font-bold">تفصيل المصاريف</h3>
             {(() => {
               const currentMonth = monthlyFinances[monthlyFinances.length - 1];
               const expenses = [
                 { label: 'الصيانة', amount: currentMonth.maintenance, color: 'bg-orange-500' },
-                { label: 'رسوم اتحاد الملاك', amount: currentMonth.hoaFees, color: 'bg-violet-500' },
-                { label: `عمولة الإدارة (${managementFeeRate * 100}%)`, amount: currentMonth.managementFee, color: 'bg-sky-500' },
+                {
+                  label: 'رسوم اتحاد الملاك',
+                  amount: currentMonth.hoaFees,
+                  color: 'bg-violet-500',
+                },
+                {
+                  label: `عمولة الإدارة (${managementFeeRate * 100}%)`,
+                  amount: currentMonth.managementFee,
+                  color: 'bg-sky-500',
+                },
               ];
               const totalExpense = expenses.reduce((s, e) => s + e.amount, 0);
 
@@ -346,7 +435,11 @@ export default function OwnerDashboardPage() {
                   </div>
                   <div className="flex items-center gap-1.5 text-[10px] text-[var(--muted-foreground)]">
                     <Scale className="h-3 w-3" />
-                    <span>عمولة الإدارة = {managementFeeRate * 100}% من إجمالي الإيجار المحصّل ({formatSAR(totalMonthlyIncome)} x {managementFeeRate * 100}% = {formatSAR(managementFee)})</span>
+                    <span>
+                      عمولة الإدارة = {managementFeeRate * 100}% من إجمالي الإيجار المحصّل (
+                      {formatSAR(totalMonthlyIncome)} x {managementFeeRate * 100}% ={' '}
+                      {formatSAR(managementFee)})
+                    </span>
                   </div>
                 </div>
               );
@@ -354,10 +447,16 @@ export default function OwnerDashboardPage() {
           </motion.div>
 
           {/* Per-Building Cards */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-bold">العقارات ({Object.keys(buildingGroups).length})</h3>
-              <Link href="/owner/properties" className="flex items-center gap-1 text-[10px] font-medium text-brand-500 hover:text-brand-600">
+              <Link
+                href="/owner/properties"
+                className="text-brand-500 hover:text-brand-600 flex items-center gap-1 text-[10px] font-medium"
+              >
                 <span>عرض الكل</span>
                 <ArrowUpRight className="h-3 w-3" />
               </Link>
@@ -369,16 +468,20 @@ export default function OwnerDashboardPage() {
                 const bOccupied = bUnits.filter((u) => u.status === 'occupied');
                 const bRent = bOccupied.reduce((sum, u) => sum + u.monthlyRent, 0);
                 const bRequests = requests.filter((r) => r.buildingId === buildingId);
-                const bActiveRequests = bRequests.filter((r) => !['completed', 'cancelled'].includes(r.status));
+                const bActiveRequests = bRequests.filter(
+                  (r) => !['completed', 'cancelled'].includes(r.status),
+                );
                 const bHOA = bUnits.flatMap((u) => getHOAFeesByUnit(u.id));
-                const bOverdueHOA = bHOA.filter((f) => f.status === 'overdue').reduce((s, f) => s + f.amount, 0);
+                const bOverdueHOA = bHOA
+                  .filter((f) => f.status === 'overdue')
+                  .reduce((s, f) => s + f.amount, 0);
                 const isExpanded = expandedBuilding === buildingId;
 
                 return (
                   <motion.div
                     key={buildingId}
                     layout
-                    className="rounded-xl border border-[var(--border)] bg-[var(--secondary)] overflow-hidden"
+                    className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--secondary)]"
                   >
                     <button
                       onClick={() => setExpandedBuilding(isExpanded ? null : buildingId)}
@@ -386,12 +489,14 @@ export default function OwnerDashboardPage() {
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-900/20">
-                            <Building2 className="h-5 w-5 text-brand-500" />
+                          <div className="bg-brand-50 dark:bg-brand-900/20 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
+                            <Building2 className="text-brand-500 h-5 w-5" />
                           </div>
                           <div>
                             <p className="text-sm font-bold">{building.name}</p>
-                            <p className="text-xs text-[var(--muted-foreground)]">{building.district}</p>
+                            <p className="text-xs text-[var(--muted-foreground)]">
+                              {building.district}
+                            </p>
                           </div>
                         </div>
                         {isExpanded ? (
@@ -403,7 +508,9 @@ export default function OwnerDashboardPage() {
 
                       <div className="mt-3 grid grid-cols-4 gap-2 text-center">
                         <div>
-                          <p className="text-xs font-bold">{bOccupied.length}/{bUnits.length}</p>
+                          <p className="text-xs font-bold">
+                            {bOccupied.length}/{bUnits.length}
+                          </p>
                           <p className="text-[9px] text-[var(--muted-foreground)]">مشغولة</p>
                         </div>
                         <div>
@@ -411,11 +518,15 @@ export default function OwnerDashboardPage() {
                           <p className="text-[9px] text-[var(--muted-foreground)]">الإيجار</p>
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-orange-600 dark:text-orange-400">{bActiveRequests.length}</p>
+                          <p className="text-xs font-bold text-orange-600 dark:text-orange-400">
+                            {bActiveRequests.length}
+                          </p>
                           <p className="text-[9px] text-[var(--muted-foreground)]">طلبات</p>
                         </div>
                         <div>
-                          <p className={`text-xs font-bold ${bOverdueHOA > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                          <p
+                            className={`text-xs font-bold ${bOverdueHOA > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}
+                          >
                             {bOverdueHOA > 0 ? formatSAR(bOverdueHOA) : 'مسدد'}
                           </p>
                           <p className="text-[9px] text-[var(--muted-foreground)]">رسوم الملاك</p>
@@ -436,29 +547,54 @@ export default function OwnerDashboardPage() {
                             {bUnits.map((unit) => {
                               const tenant = unit.tenantId ? getUserById(unit.tenantId) : null;
                               const unitReqs = requests.filter((r) => r.unitId === unit.id);
-                              const unitActive = unitReqs.filter((r) => !['completed', 'cancelled'].includes(r.status));
+                              const unitActive = unitReqs.filter(
+                                (r) => !['completed', 'cancelled'].includes(r.status),
+                              );
                               return (
-                                <div key={unit.id} className="rounded-lg bg-[var(--card)] p-3 border border-[var(--border)]">
-                                  <div className="flex items-center justify-between mb-1">
+                                <div
+                                  key={unit.id}
+                                  className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-3"
+                                >
+                                  <div className="mb-1 flex items-center justify-between">
                                     <p className="text-xs font-bold">{unit.unitNumber}</p>
-                                    <span className={`rounded-full px-2 py-0.5 text-[9px] font-medium ${
-                                      unit.status === 'occupied' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300' :
-                                      unit.status === 'vacant' ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300' :
-                                      'bg-amber-50 text-amber-700 dark:bg-amber-900 dark:text-amber-300'
-                                    }`}>
-                                      {unit.status === 'occupied' ? 'مشغولة' : unit.status === 'vacant' ? 'شاغرة' : 'صيانة'}
+                                    <span
+                                      className={`rounded-full px-2 py-0.5 text-[9px] font-medium ${
+                                        unit.status === 'occupied'
+                                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300'
+                                          : unit.status === 'vacant'
+                                            ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                                            : 'bg-amber-50 text-amber-700 dark:bg-amber-900 dark:text-amber-300'
+                                      }`}
+                                    >
+                                      {unit.status === 'occupied'
+                                        ? 'مشغولة'
+                                        : unit.status === 'vacant'
+                                          ? 'شاغرة'
+                                          : 'صيانة'}
                                     </span>
                                   </div>
                                   <div className="grid grid-cols-3 gap-1 text-[10px] text-[var(--muted-foreground)]">
-                                    <span>الإيجار: <span className="font-medium text-[var(--foreground)]">{formatSAR(unit.monthlyRent)}</span></span>
-                                    <span>{unit.area} م² · {unit.rooms} غرف</span>
+                                    <span>
+                                      الإيجار:{' '}
+                                      <span className="font-medium text-[var(--foreground)]">
+                                        {formatSAR(unit.monthlyRent)}
+                                      </span>
+                                    </span>
+                                    <span>
+                                      {unit.area} م² · {unit.rooms} غرف
+                                    </span>
                                     {unitActive.length > 0 && (
-                                      <span className="text-orange-600 dark:text-orange-400">{unitActive.length} طلب نشط</span>
+                                      <span className="text-orange-600 dark:text-orange-400">
+                                        {unitActive.length} طلب نشط
+                                      </span>
                                     )}
                                   </div>
                                   {tenant && (
                                     <p className="mt-1 text-[10px] text-[var(--muted-foreground)]">
-                                      المستأجر: <span className="font-medium text-[var(--foreground)]">{tenant.name.split(' ').slice(0, 3).join(' ')}</span>
+                                      المستأجر:{' '}
+                                      <span className="font-medium text-[var(--foreground)]">
+                                        {tenant.name.split(' ').slice(0, 3).join(' ')}
+                                      </span>
                                     </p>
                                   )}
                                 </div>
@@ -477,7 +613,7 @@ export default function OwnerDashboardPage() {
           {/* Quick Links Row */}
           <motion.div variants={itemVariants} className="flex gap-3">
             {expiringSoonContracts.length > 0 && (
-              <div className="flex flex-1 items-center gap-2 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-3 text-xs">
+              <div className="flex flex-1 items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs dark:border-amber-800 dark:bg-amber-900/20">
                 <CalendarClock className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <span className="text-amber-800 dark:text-amber-300">
                   {expiringSoonContracts.length} عقد ينتهي خلال ٦٠ يوم
@@ -485,7 +621,7 @@ export default function OwnerDashboardPage() {
               </div>
             )}
             {pendingApprovals.length > 0 && (
-              <div className="flex flex-1 items-center gap-2 rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-3 text-xs">
+              <div className="flex flex-1 items-center gap-2 rounded-2xl border border-red-200 bg-red-50 p-3 text-xs dark:border-red-800 dark:bg-red-900/20">
                 <AlertTriangle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
                 <span className="text-red-800 dark:text-red-300">
                   {pendingApprovals.length} موافقة تكلفة معلقة
@@ -499,7 +635,7 @@ export default function OwnerDashboardPage() {
             <button
               onClick={handleDownloadReport}
               disabled={reportLoading}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft text-sm font-medium hover:bg-[var(--secondary)] transition-colors disabled:opacity-60"
+              className="shadow-soft flex w-full items-center justify-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm font-medium transition-colors hover:bg-[var(--secondary)] disabled:opacity-60"
             >
               {reportLoading ? (
                 <>
@@ -522,22 +658,34 @@ export default function OwnerDashboardPage() {
         <>
           {/* Pending Cost Approvals */}
           {pendingApprovals.length > 0 && (
-            <motion.div variants={itemVariants} className="rounded-2xl border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-5 shadow-soft">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border-2 border-amber-300 bg-amber-50 p-5 dark:border-amber-700 dark:bg-amber-900/20"
+            >
               <div className="mb-3 flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                <h3 className="text-sm font-bold text-amber-800 dark:text-amber-300">موافقات معلقة ({pendingApprovals.length})</h3>
+                <h3 className="text-sm font-bold text-amber-800 dark:text-amber-300">
+                  موافقات معلقة ({pendingApprovals.length})
+                </h3>
               </div>
               <div className="space-y-3">
                 {pendingApprovals.map((req) => {
                   const building = getBuildingById(req.buildingId);
                   return (
-                    <div key={req.id} className="rounded-xl bg-[var(--card)] p-4 border border-[var(--border)]">
-                      <div className="flex items-start justify-between mb-2">
+                    <div
+                      key={req.id}
+                      className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4"
+                    >
+                      <div className="mb-2 flex items-start justify-between">
                         <div>
                           <p className="text-sm font-bold">{req.title}</p>
-                          <p className="text-xs text-[var(--muted-foreground)]">{building?.name} · {req.locationLabel}</p>
+                          <p className="text-xs text-[var(--muted-foreground)]">
+                            {building?.name} · {req.locationLabel}
+                          </p>
                         </div>
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${priorityColors[req.priority]}`}>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${priorityColors[req.priority]}`}
+                        >
                           {priorityLabels[req.priority]}
                         </span>
                       </div>
@@ -575,7 +723,10 @@ export default function OwnerDashboardPage() {
           )}
 
           {/* All Maintenance Requests */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-4 text-sm font-bold">جميع طلبات الصيانة ({requests.length})</h3>
             <div className="space-y-3">
               {requests.map((request, index) => {
@@ -589,25 +740,35 @@ export default function OwnerDashboardPage() {
                     transition={{ delay: 0.1 + index * 0.04 }}
                     className="rounded-xl border border-[var(--border)] bg-[var(--secondary)] p-4"
                   >
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="mb-2 flex items-start justify-between">
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium">{request.title}</p>
-                        <p className="text-xs text-[var(--muted-foreground)]">{building?.name} · {categoryLabels[request.category]}</p>
+                        <p className="text-xs text-[var(--muted-foreground)]">
+                          {building?.name} · {categoryLabels[request.category]}
+                        </p>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${statusColors[request.status]}`}>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${statusColors[request.status]}`}
+                        >
                           {statusLabels[request.status]}
                         </span>
                       </div>
                     </div>
 
-                    <p className="mb-2 line-clamp-2 text-xs text-[var(--muted-foreground)]">{request.description}</p>
+                    <p className="mb-2 line-clamp-2 text-xs text-[var(--muted-foreground)]">
+                      {request.description}
+                    </p>
 
                     <div className="flex flex-wrap items-center gap-2 text-[10px]">
-                      <span className={`rounded-full px-2 py-0.5 font-medium ${costColors[request.costResponsibility]}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 font-medium ${costColors[request.costResponsibility]}`}
+                      >
                         {costLabels[request.costResponsibility]}
                       </span>
-                      <span className={`rounded-full px-2 py-0.5 font-medium ${priorityColors[request.priority]}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 font-medium ${priorityColors[request.priority]}`}
+                      >
                         {priorityLabels[request.priority]}
                       </span>
                       {request.estimatedCost && (
@@ -616,18 +777,20 @@ export default function OwnerDashboardPage() {
                         </span>
                       )}
                       {decision && (
-                        <span className={`rounded-full px-2 py-0.5 font-medium ${
-                          decision === 'approved'
-                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300'
-                            : 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-300'
-                        }`}>
+                        <span
+                          className={`rounded-full px-2 py-0.5 font-medium ${
+                            decision === 'approved'
+                              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300'
+                              : 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-300'
+                          }`}
+                        >
                           {decision === 'approved' ? 'تمت الموافقة' : 'مرفوض'}
                         </span>
                       )}
                     </div>
 
                     <div className="mt-2 text-[10px] text-[var(--muted-foreground)]">
-                      <Scale className="inline h-2.5 w-2.5 ml-1" />
+                      <Scale className="ml-1 inline h-2.5 w-2.5" />
                       {request.costLegalBasis.slice(0, 80)}...
                     </div>
 
@@ -646,30 +809,39 @@ export default function OwnerDashboardPage() {
       {activeTab === 'hoa' && (
         <>
           {/* HOA Summary */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-4 text-sm font-bold">ملخص رسوم اتحاد الملاك</h3>
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 p-3 text-center">
-                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">{formatSAR(paidHOA)}</p>
+            <div className="mb-4 grid grid-cols-3 gap-3">
+              <div className="rounded-xl bg-emerald-50 p-3 text-center dark:bg-emerald-900/20">
+                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                  {formatSAR(paidHOA)}
+                </p>
                 <p className="text-[10px] text-emerald-600 dark:text-emerald-400">مدفوع</p>
               </div>
-              <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 p-3 text-center">
-                <p className="text-sm font-bold text-amber-700 dark:text-amber-300">{formatSAR(outstandingHOA)}</p>
+              <div className="rounded-xl bg-amber-50 p-3 text-center dark:bg-amber-900/20">
+                <p className="text-sm font-bold text-amber-700 dark:text-amber-300">
+                  {formatSAR(outstandingHOA)}
+                </p>
                 <p className="text-[10px] text-amber-600 dark:text-amber-400">مستحق</p>
               </div>
-              <div className="rounded-xl bg-red-50 dark:bg-red-900/20 p-3 text-center">
-                <p className="text-sm font-bold text-red-700 dark:text-red-300">{formatSAR(overdueHOA)}</p>
+              <div className="rounded-xl bg-red-50 p-3 text-center dark:bg-red-900/20">
+                <p className="text-sm font-bold text-red-700 dark:text-red-300">
+                  {formatSAR(overdueHOA)}
+                </p>
                 <p className="text-[10px] text-red-600 dark:text-red-400">متأخر</p>
               </div>
             </div>
 
             {/* HOA Fund Balance Indicator */}
             <div className="mb-4 rounded-xl bg-[var(--secondary)] p-3">
-              <div className="flex items-center justify-between text-xs mb-2">
+              <div className="mb-2 flex items-center justify-between text-xs">
                 <span className="text-[var(--muted-foreground)]">إجمالي الرسوم هذا العام</span>
                 <span className="font-bold">{formatSAR(totalHOACost)}</span>
               </div>
-              <div className="h-3 rounded-full bg-[var(--card)] overflow-hidden">
+              <div className="h-3 overflow-hidden rounded-full bg-[var(--card)]">
                 <div className="flex h-full">
                   <div
                     className="bg-emerald-500 transition-all"
@@ -677,26 +849,35 @@ export default function OwnerDashboardPage() {
                   />
                   <div
                     className="bg-amber-400 transition-all"
-                    style={{ width: `${totalHOACost > 0 ? (outstandingHOA / totalHOACost) * 100 : 0}%` }}
+                    style={{
+                      width: `${totalHOACost > 0 ? (outstandingHOA / totalHOACost) * 100 : 0}%`,
+                    }}
                   />
                   <div
                     className="bg-red-500 transition-all"
-                    style={{ width: `${totalHOACost > 0 ? (overdueHOA / totalHOACost) * 100 : 0}%` }}
+                    style={{
+                      width: `${totalHOACost > 0 ? (overdueHOA / totalHOACost) * 100 : 0}%`,
+                    }}
                   />
                 </div>
               </div>
             </div>
 
             {overdueHOA > 0 && (
-              <div className="flex items-center gap-2 rounded-xl bg-red-50 dark:bg-red-900/20 p-3 text-xs text-red-700 dark:text-red-300">
+              <div className="flex items-center gap-2 rounded-xl bg-red-50 p-3 text-xs text-red-700 dark:bg-red-900/20 dark:text-red-300">
                 <AlertTriangle className="h-4 w-4" />
-                <span>لديك رسوم متأخرة بمبلغ {formatSAR(overdueHOA)} -- يرجى السداد لتجنب الغرامات</span>
+                <span>
+                  لديك رسوم متأخرة بمبلغ {formatSAR(overdueHOA)} -- يرجى السداد لتجنب الغرامات
+                </span>
               </div>
             )}
           </motion.div>
 
           {/* Per-Unit HOA Detail */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-4 text-sm font-bold">تفصيل حسب الوحدة</h3>
             <div className="space-y-3">
               {ownerUnits.map((unit) => {
@@ -704,11 +885,16 @@ export default function OwnerDashboardPage() {
                 const building = getBuildingById(unit.buildingId);
                 if (unitFees.length === 0) return null;
                 return (
-                  <div key={unit.id} className="rounded-xl border border-[var(--border)] bg-[var(--secondary)] p-3">
-                    <div className="flex items-center justify-between mb-2">
+                  <div
+                    key={unit.id}
+                    className="rounded-xl border border-[var(--border)] bg-[var(--secondary)] p-3"
+                  >
+                    <div className="mb-2 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-bold">{unit.unitNumber}</p>
-                        <p className="text-[10px] text-[var(--muted-foreground)]">{building?.name}</p>
+                        <p className="text-[10px] text-[var(--muted-foreground)]">
+                          {building?.name}
+                        </p>
                       </div>
                     </div>
                     <div className="space-y-1.5">
@@ -717,12 +903,20 @@ export default function OwnerDashboardPage() {
                           <span className="text-[var(--muted-foreground)]">{fee.period}</span>
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{formatSAR(fee.amount)}</span>
-                            <span className={`rounded-full px-1.5 py-0.5 font-medium ${
-                              fee.status === 'paid' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300' :
-                              fee.status === 'outstanding' ? 'bg-amber-50 text-amber-700 dark:bg-amber-900 dark:text-amber-300' :
-                              'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-300'
-                            }`}>
-                              {fee.status === 'paid' ? 'مدفوع' : fee.status === 'outstanding' ? 'مستحق' : 'متأخر'}
+                            <span
+                              className={`rounded-full px-1.5 py-0.5 font-medium ${
+                                fee.status === 'paid'
+                                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300'
+                                  : fee.status === 'outstanding'
+                                    ? 'bg-amber-50 text-amber-700 dark:bg-amber-900 dark:text-amber-300'
+                                    : 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-300'
+                              }`}
+                            >
+                              {fee.status === 'paid'
+                                ? 'مدفوع'
+                                : fee.status === 'outstanding'
+                                  ? 'مستحق'
+                                  : 'متأخر'}
                             </span>
                           </div>
                         </div>
@@ -741,8 +935,11 @@ export default function OwnerDashboardPage() {
         <>
           {/* Expiring Soon Highlight */}
           {expiringSoonContracts.length > 0 && (
-            <motion.div variants={itemVariants} className="rounded-2xl border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-4 shadow-soft">
-              <div className="flex items-center gap-2 mb-2">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border-2 border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20"
+            >
+              <div className="mb-2 flex items-center gap-2">
                 <CalendarClock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <h3 className="text-sm font-bold text-amber-800 dark:text-amber-300">
                   عقود تنتهي خلال ٦٠ يوم ({expiringSoonContracts.length})
@@ -754,17 +951,24 @@ export default function OwnerDashboardPage() {
                   const tenant = getUserById(c.tenantId);
                   const building = getBuildingById(c.buildingId);
                   return (
-                    <div key={c.id} className="flex items-center justify-between rounded-xl bg-[var(--card)] p-3 border border-[var(--border)]">
+                    <div
+                      key={c.id}
+                      className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--card)] p-3"
+                    >
                       <div>
-                        <p className="text-xs font-bold">{unit?.unitNumber} · {building?.name}</p>
+                        <p className="text-xs font-bold">
+                          {unit?.unitNumber} · {building?.name}
+                        </p>
                         <p className="text-[10px] text-[var(--muted-foreground)]">{tenant?.name}</p>
                       </div>
                       <div className="text-end">
-                        <p className="text-[10px] text-amber-700 dark:text-amber-300 font-medium">{formatDate(c.endDate)}</p>
+                        <p className="text-[10px] font-medium text-amber-700 dark:text-amber-300">
+                          {formatDate(c.endDate)}
+                        </p>
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="mt-1 flex items-center gap-1 rounded-lg bg-brand-500 px-3 py-1 text-[10px] font-medium text-white"
+                          className="bg-brand-500 mt-1 flex items-center gap-1 rounded-lg px-3 py-1 text-[10px] font-medium text-white"
                         >
                           <RefreshCw className="h-2.5 w-2.5" />
                           تجديد
@@ -778,10 +982,16 @@ export default function OwnerDashboardPage() {
           )}
 
           {/* All Contracts */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-bold">عقود إيجار ({contracts.length})</h3>
-              <Link href="/owner/contracts" className="flex items-center gap-1 text-[10px] font-medium text-brand-500 hover:text-brand-600">
+              <Link
+                href="/owner/contracts"
+                className="text-brand-500 hover:text-brand-600 flex items-center gap-1 text-[10px] font-medium"
+              >
                 <span>عرض الكل</span>
                 <ArrowUpRight className="h-3 w-3" />
               </Link>
@@ -799,18 +1009,20 @@ export default function OwnerDashboardPage() {
                     transition={{ delay: 0.1 + index * 0.04 }}
                     className={`rounded-xl border p-4 ${
                       contract.status === 'expiring_soon'
-                        ? 'border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-900/10'
+                        ? 'border-amber-300 bg-amber-50/50 dark:border-amber-700 dark:bg-amber-900/10'
                         : contract.status === 'expired'
-                        ? 'border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-900/10'
-                        : 'border-[var(--border)] bg-[var(--secondary)]'
+                          ? 'border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-900/10'
+                          : 'border-[var(--border)] bg-[var(--secondary)]'
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="mb-2 flex items-start justify-between">
                       <div>
                         <p className="text-sm font-bold">{unit?.unitNumber}</p>
                         <p className="text-xs text-[var(--muted-foreground)]">{building?.name}</p>
                       </div>
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${ejarContractStatusColors[contract.status]}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${ejarContractStatusColors[contract.status]}`}
+                      >
                         {ejarContractStatusLabels[contract.status]}
                       </span>
                     </div>
@@ -822,7 +1034,9 @@ export default function OwnerDashboardPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         <DollarSign className="h-2.5 w-2.5" />
-                        <span className="font-medium text-[var(--foreground)]">{formatSAR(contract.monthlyRent)}/شهر</span>
+                        <span className="font-medium text-[var(--foreground)]">
+                          {formatSAR(contract.monthlyRent)}/شهر
+                        </span>
                       </div>
                       <div className="flex items-center gap-1">
                         <FileText className="h-2.5 w-2.5" />
@@ -839,7 +1053,7 @@ export default function OwnerDashboardPage() {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand-500 py-2 text-xs font-medium text-white"
+                          className="bg-brand-500 flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-medium text-white"
                         >
                           <RefreshCw className="h-3 w-3" />
                           طلب تجديد العقد
@@ -859,7 +1073,10 @@ export default function OwnerDashboardPage() {
           </motion.div>
 
           {/* Owner Report */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-3 text-sm font-bold">معاينة التقرير الشهري</h3>
             <div className="space-y-2 rounded-xl bg-[var(--secondary)] p-3 text-xs text-[var(--muted-foreground)]">
               <p>يتضمن التقرير:</p>
@@ -900,7 +1117,7 @@ export default function OwnerDashboardPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
             onClick={() => setApprovalModal(null)}
           >
             <motion.div
@@ -908,7 +1125,7 @@ export default function OwnerDashboardPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm rounded-2xl bg-[var(--card)] p-5 shadow-xl border border-[var(--border)]"
+              className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-xl"
             >
               <div className="mb-4 flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-emerald-500" />
@@ -919,7 +1136,9 @@ export default function OwnerDashboardPage() {
                 <p className="text-sm font-medium">{approvalModal.title}</p>
                 <div className="rounded-xl bg-[var(--secondary)] p-3 text-xs">
                   <p className="mb-1 font-bold">التكلفة المقدرة:</p>
-                  <p className="text-lg font-bold text-[var(--foreground)]">{formatSAR(approvalModal.estimatedCost || 0)}</p>
+                  <p className="text-lg font-bold text-[var(--foreground)]">
+                    {formatSAR(approvalModal.estimatedCost || 0)}
+                  </p>
                 </div>
                 <div className="rounded-xl bg-[var(--secondary)] p-3 text-xs">
                   <p className="mb-1 font-bold">الأساس النظامي:</p>

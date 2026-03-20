@@ -2,9 +2,72 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { eq, and, gte, desc } from 'drizzle-orm';
 import { router, publicProcedure, protectedProcedure } from '../trpc';
-import { users, userRoles, otpCodes, refreshTokens } from '@faseel/db';
+import {
+  users,
+  userRoles,
+  otpCodes,
+  refreshTokens,
+  subscriptions,
+  subscriptionPlans,
+} from '@faseel/db';
 import { createSmsService } from '../services/sms';
 import { generateAccessToken, generateRefreshToken, hashToken } from '../services/jwt';
+
+/**
+ * Auto-create a 30-day trial subscription when a new OFFICE_ADMIN signs up.
+ */
+async function ensureTrialForOffice(db: import('@faseel/db').Database, officeId: string) {
+  // Check if office already has a subscription
+  const [existingSub] = await db
+    .select()
+    .from(subscriptions)
+    .where(eq(subscriptions.officeId, officeId))
+    .limit(1);
+
+  if (existingSub) return; // Already has a subscription
+
+  // Find or create a trial plan
+  const [plan] = await db
+    .select()
+    .from(subscriptionPlans)
+    .where(and(eq(subscriptionPlans.isActive, true), eq(subscriptionPlans.roleType, 'office')))
+    .limit(1);
+
+  let planId: string;
+
+  if (plan) {
+    planId = plan.id;
+  } else {
+    // Create a default trial plan
+    const [newPlan] = await db
+      .insert(subscriptionPlans)
+      .values({
+        nameAr: 'تجريبي',
+        nameEn: 'Trial',
+        roleType: 'office',
+        maxBuildings: 5,
+        maxUnits: 75,
+        maxAdmins: 3,
+        priceSar: 0,
+        isActive: true,
+      })
+      .returning();
+    planId = newPlan!.id;
+  }
+
+  const now = new Date();
+  const periodEnd = new Date(now);
+  periodEnd.setDate(periodEnd.getDate() + 30);
+
+  await db.insert(subscriptions).values({
+    officeId,
+    planId,
+    stripeSubscriptionId: null,
+    status: 'ACTIVE',
+    currentPeriodStart: now,
+    currentPeriodEnd: periodEnd,
+  });
+}
 
 const smsService = createSmsService();
 
@@ -157,6 +220,15 @@ export const authRouter = router({
 
       const primaryRole = roles[0];
       const roleName = mapRoleToSession(primaryRole?.role ?? 'TENANT');
+
+      // If user is OFFICE_ADMIN with an officeId, ensure trial subscription exists
+      if (primaryRole?.role === 'OFFICE_ADMIN' && primaryRole.officeId) {
+        try {
+          await ensureTrialForOffice(ctx.db, primaryRole.officeId);
+        } catch {
+          // Non-critical; don't block login if trial creation fails
+        }
+      }
 
       // Generate tokens
       const accessToken = generateAccessToken({

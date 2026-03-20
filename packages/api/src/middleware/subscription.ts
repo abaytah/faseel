@@ -4,7 +4,79 @@ import { middleware } from '../trpc';
 import { subscriptions, subscriptionPlans, buildings, units } from '@faseel/db';
 
 /**
+ * Trial configuration: Growth plan limits for 30-day trial.
+ */
+const TRIAL_DURATION_DAYS = 30;
+const TRIAL_PLAN_LIMITS = {
+  maxBuildings: 5,
+  maxUnits: 75,
+  maxAdmins: 3,
+};
+
+/**
+ * Auto-creates a 30-day trial subscription for an office that has no subscription.
+ * Trial = Growth plan limits, stripeSubscriptionId: null, status: ACTIVE.
+ * Returns the newly created trial subscription.
+ */
+async function autoCreateTrial(db: import('@faseel/db').Database, officeId: string) {
+  // Find the Growth plan (or the first active office plan to use as trial plan)
+  const plans = await db
+    .select()
+    .from(subscriptionPlans)
+    .where(and(eq(subscriptionPlans.isActive, true), eq(subscriptionPlans.roleType, 'office')));
+
+  // Prefer a plan named "Growth" or with matching limits; otherwise use first available
+  let trialPlan = plans.find(
+    (p) =>
+      (p.nameEn?.toLowerCase().includes('growth') || p.nameAr?.includes('نمو')) &&
+      p.maxBuildings === TRIAL_PLAN_LIMITS.maxBuildings,
+  );
+
+  if (!trialPlan) {
+    // Fallback: pick any active office plan, preferring one with the right limits
+    trialPlan = plans.find((p) => p.maxBuildings === TRIAL_PLAN_LIMITS.maxBuildings) ?? plans[0];
+  }
+
+  if (!trialPlan) {
+    // No plans exist at all; create a minimal trial plan
+    const [newPlan] = await db
+      .insert(subscriptionPlans)
+      .values({
+        nameAr: 'تجريبي',
+        nameEn: 'Trial',
+        roleType: 'office',
+        maxBuildings: TRIAL_PLAN_LIMITS.maxBuildings,
+        maxUnits: TRIAL_PLAN_LIMITS.maxUnits,
+        maxAdmins: TRIAL_PLAN_LIMITS.maxAdmins,
+        priceSar: 0,
+        isActive: true,
+      })
+      .returning();
+    trialPlan = newPlan!;
+  }
+
+  const now = new Date();
+  const periodEnd = new Date(now);
+  periodEnd.setDate(periodEnd.getDate() + TRIAL_DURATION_DAYS);
+
+  const [trial] = await db
+    .insert(subscriptions)
+    .values({
+      officeId,
+      planId: trialPlan.id,
+      stripeSubscriptionId: null, // null = trial (no Stripe billing)
+      status: 'ACTIVE',
+      currentPeriodStart: now,
+      currentPeriodEnd: periodEnd,
+    })
+    .returning();
+
+  return trial!;
+}
+
+/**
  * Middleware that checks the office has an active subscription.
+ * If no subscription exists, auto-creates a 30-day trial.
  * Attach to procedures that require a paid plan.
  */
 export const requireActiveSubscription = middleware(async ({ ctx, next }) => {
@@ -24,21 +96,35 @@ export const requireActiveSubscription = middleware(async ({ ctx, next }) => {
     });
   }
 
-  const [activeSub] = await ctx.db
+  let [activeSub] = await ctx.db
     .select()
     .from(subscriptions)
     .where(and(eq(subscriptions.officeId, officeId), eq(subscriptions.status, 'ACTIVE')))
     .limit(1);
 
+  // Auto-create trial if no subscription exists at all
   if (!activeSub) {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: JSON.stringify({
-        message: 'An active subscription is required. Please subscribe to continue.',
-        messageAr: 'يلزم وجود اشتراك فعال. يرجى الاشتراك للمتابعة.',
-        code: 'SUBSCRIPTION_REQUIRED',
-      }),
-    });
+    // Check if there was ever any subscription (expired, cancelled, etc.)
+    const [anySub] = await ctx.db
+      .select()
+      .from(subscriptions)
+      .where(eq(subscriptions.officeId, officeId))
+      .limit(1);
+
+    if (!anySub) {
+      // First time: auto-create trial
+      activeSub = await autoCreateTrial(ctx.db, officeId);
+    } else {
+      // Had a subscription before but it's no longer active
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: JSON.stringify({
+          message: 'An active subscription is required. Please subscribe to continue.',
+          messageAr: 'يلزم وجود اشتراك فعال. يرجى الاشتراك للمتابعة.',
+          code: 'SUBSCRIPTION_REQUIRED',
+        }),
+      });
+    }
   }
 
   // Check if subscription period has ended

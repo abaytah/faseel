@@ -15,18 +15,28 @@ import {
   owners,
   getRequestsByOwner,
   getBuildingById,
-  statusLabels,
-  statusColors,
+  statusLabels as mockStatusLabels,
+  statusColors as mockStatusColors,
   priorityLabels,
   priorityColors,
   costLabels,
   costColors,
-  categoryLabels,
+  categoryLabels as mockCategoryLabels,
   formatSAR,
   getRelativeTime,
   office,
   type MaintenanceRequest,
 } from '@/lib/mock-data';
+import { trpc } from '@/lib/trpc';
+import {
+  statusLabels as apiStatusLabels,
+  statusColors as apiStatusColors,
+  categoryLabels as apiCategoryLabels,
+} from '@/lib/format-utils';
+
+const statusLabels = { ...mockStatusLabels, ...apiStatusLabels };
+const statusColors = { ...mockStatusColors, ...apiStatusColors };
+const categoryLabels = { ...mockCategoryLabels, ...apiCategoryLabels };
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
 import { useToast } from '@/components/ui/toast-provider';
 
@@ -48,7 +58,9 @@ export default function OwnerRequestsPage() {
   const toast = useToast();
 
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
-  const [approvedRequests, setApprovedRequests] = useState<Record<string, 'approved' | 'rejected'>>({});
+  const [approvedRequests, setApprovedRequests] = useState<Record<string, 'approved' | 'rejected'>>(
+    {},
+  );
   const [approvalModal, setApprovalModal] = useState<MaintenanceRequest | null>(null);
   const [rejectionModal, setRejectionModal] = useState<MaintenanceRequest | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
@@ -101,9 +113,11 @@ export default function OwnerRequestsPage() {
       r.costResponsibility === 'owner' &&
       r.status === 'reviewed' &&
       r.estimatedCost &&
-      !approvedRequests[r.id]
+      !approvedRequests[r.id],
   ).length;
-  const activeCount = allRequests.filter((r) => !['completed', 'cancelled'].includes(r.status)).length;
+  const activeCount = allRequests.filter(
+    (r) => !['completed', 'cancelled'].includes(r.status),
+  ).length;
   const completedCount = allRequests.filter((r) => r.status === 'completed').length;
 
   const filterTabs: { key: FilterTab; label: string; count: number }[] = [
@@ -114,7 +128,12 @@ export default function OwnerRequestsPage() {
   ];
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-4"
+    >
       {/* Page Header */}
       <motion.div variants={itemVariants} className="flex items-center justify-between">
         <div>
@@ -134,24 +153,26 @@ export default function OwnerRequestsPage() {
       {/* Filter Tabs */}
       <motion.div
         variants={itemVariants}
-        className="flex gap-1 overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] p-1.5 shadow-soft"
+        className="shadow-soft flex gap-1 overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] p-1.5"
       >
         {filterTabs.map(({ key, label, count }) => (
           <button
             key={key}
             onClick={() => setActiveFilter(key)}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-all whitespace-nowrap ${
+            className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-medium transition-all ${
               activeFilter === key
                 ? 'bg-[var(--foreground)] text-[var(--background)] shadow-sm'
                 : 'text-[var(--muted-foreground)] hover:bg-[var(--secondary)]'
             }`}
           >
             <span>{label}</span>
-            <span className={`rounded-full px-1.5 py-0.5 text-[9px] ${
-              activeFilter === key
-                ? 'bg-[var(--background)]/20 text-[var(--background)]'
-                : 'bg-[var(--secondary)] text-[var(--muted-foreground)]'
-            }`}>
+            <span
+              className={`rounded-full px-1.5 py-0.5 text-[9px] ${
+                activeFilter === key
+                  ? 'bg-[var(--background)]/20 text-[var(--background)]'
+                  : 'bg-[var(--secondary)] text-[var(--muted-foreground)]'
+              }`}
+            >
               {count}
             </span>
           </button>
@@ -162,7 +183,7 @@ export default function OwnerRequestsPage() {
       {pendingApprovalCount > 0 && activeFilter !== 'pending_approval' && (
         <motion.div
           variants={itemVariants}
-          className="flex items-center gap-2 rounded-2xl border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-3 text-xs"
+          className="flex items-center gap-2 rounded-2xl border-2 border-amber-300 bg-amber-50 p-3 text-xs dark:border-amber-700 dark:bg-amber-900/20"
         >
           <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
           <span className="text-amber-800 dark:text-amber-300">
@@ -170,7 +191,7 @@ export default function OwnerRequestsPage() {
           </span>
           <button
             onClick={() => setActiveFilter('pending_approval')}
-            className="mr-auto rounded-lg bg-amber-200 dark:bg-amber-800 px-2 py-1 text-[10px] font-medium text-amber-800 dark:text-amber-200"
+            className="mr-auto rounded-lg bg-amber-200 px-2 py-1 text-[10px] font-medium text-amber-800 dark:bg-amber-800 dark:text-amber-200"
           >
             عرض
           </button>
@@ -182,7 +203,7 @@ export default function OwnerRequestsPage() {
         {filteredRequests.length === 0 && (
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center shadow-soft"
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center"
           >
             <Filter className="mx-auto mb-2 h-8 w-8 text-[var(--muted-foreground)]" />
             <p className="text-sm text-[var(--muted-foreground)]">لا توجد طلبات في هذا التصنيف</p>
@@ -202,36 +223,44 @@ export default function OwnerRequestsPage() {
             <motion.div
               key={request.id}
               variants={itemVariants}
-              className={`rounded-2xl border p-4 shadow-soft ${
+              className={`shadow-soft rounded-2xl border p-4 ${
                 isPendingApproval
-                  ? 'border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-900/10'
+                  ? 'border-amber-300 bg-amber-50/50 dark:border-amber-700 dark:bg-amber-900/10'
                   : 'border-[var(--border)] bg-[var(--card)]'
               }`}
             >
               {/* Header */}
-              <div className="flex items-start justify-between mb-2">
+              <div className="mb-2 flex items-start justify-between">
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-bold">{request.title}</p>
                   <p className="text-xs text-[var(--muted-foreground)]">
                     {building?.name} · {categoryLabels[request.category]}
                   </p>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${statusColors[request.status]}`}>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${statusColors[request.status]}`}
+                  >
                     {statusLabels[request.status]}
                   </span>
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${priorityColors[request.priority]}`}>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${priorityColors[request.priority]}`}
+                  >
                     {priorityLabels[request.priority]}
                   </span>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="mb-2 line-clamp-2 text-xs text-[var(--muted-foreground)]">{request.description}</p>
+              <p className="mb-2 line-clamp-2 text-xs text-[var(--muted-foreground)]">
+                {request.description}
+              </p>
 
               {/* Cost & Responsibility */}
-              <div className="flex flex-wrap items-center gap-2 mb-2 text-[10px]">
-                <span className={`rounded-full px-2 py-0.5 font-medium ${costColors[request.costResponsibility]}`}>
+              <div className="mb-2 flex flex-wrap items-center gap-2 text-[10px]">
+                <span
+                  className={`rounded-full px-2 py-0.5 font-medium ${costColors[request.costResponsibility]}`}
+                >
                   {costLabels[request.costResponsibility]}
                 </span>
                 {request.estimatedCost && (
@@ -254,14 +283,14 @@ export default function OwnerRequestsPage() {
 
               {/* Legal Basis */}
               <div className="mb-3 rounded-lg bg-[var(--secondary)] p-2 text-[10px] text-[var(--muted-foreground)]">
-                <Scale className="mb-0.5 inline h-3 w-3 ml-1" />
+                <Scale className="mb-0.5 ml-1 inline h-3 w-3" />
                 {request.costLegalBasis}
               </div>
 
               {/* Actions */}
               <div className="flex items-center justify-between">
                 <span className="text-[10px] text-[var(--muted-foreground)]">
-                  <Clock className="inline h-2.5 w-2.5 ml-0.5" />
+                  <Clock className="ml-0.5 inline h-2.5 w-2.5" />
                   {getRelativeTime(request.updatedAt)}
                 </span>
 
@@ -311,7 +340,7 @@ export default function OwnerRequestsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
             onClick={() => setApprovalModal(null)}
           >
             <motion.div
@@ -319,7 +348,7 @@ export default function OwnerRequestsPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm rounded-2xl bg-[var(--card)] p-5 shadow-xl border border-[var(--border)]"
+              className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-xl"
             >
               <div className="mb-4 flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-emerald-500" />
@@ -371,15 +400,18 @@ export default function OwnerRequestsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
-            onClick={() => { setRejectionModal(null); setRejectionReason(''); }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
+            onClick={() => {
+              setRejectionModal(null);
+              setRejectionReason('');
+            }}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm rounded-2xl bg-[var(--card)] p-5 shadow-xl border border-[var(--border)]"
+              className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-xl"
             >
               <div className="mb-4 flex items-center gap-2">
                 <XCircle className="h-5 w-5 text-red-500" />
@@ -396,7 +428,7 @@ export default function OwnerRequestsPage() {
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="اكتب سبب الرفض..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--secondary)] p-3 text-sm placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="focus:ring-brand-500 w-full rounded-xl border border-[var(--border)] bg-[var(--secondary)] p-3 text-sm placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2"
                   rows={3}
                   dir="rtl"
                 />
@@ -415,7 +447,10 @@ export default function OwnerRequestsPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => { setRejectionModal(null); setRejectionReason(''); }}
+                  onClick={() => {
+                    setRejectionModal(null);
+                    setRejectionReason('');
+                  }}
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[var(--secondary)] py-3 text-sm font-medium"
                 >
                   إلغاء

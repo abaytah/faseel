@@ -36,8 +36,25 @@ import {
   CalendarDays,
 } from 'lucide-react';
 import {
+  statusLabels as mockStatusLabels,
+  statusColors as mockStatusColors,
+  priorityLabels as mockPriorityLabels,
+  priorityColors as mockPriorityColors,
+  categoryLabels as mockCategoryLabels,
+  formatSAR as mockFormatSAR,
+  formatDate as mockFormatDate,
+  getRelativeTime as mockGetRelativeTime,
+  getBuildingById,
+  getUnitById,
+  getUserById,
+  office,
   serviceProviders,
   getRequestsByProvider,
+  type MaintenanceRequest,
+  type RequestCategory,
+} from '@/lib/mock-data';
+import { trpc } from '@/lib/trpc';
+import {
   statusLabels,
   statusColors,
   priorityLabels,
@@ -46,13 +63,19 @@ import {
   formatSAR,
   formatDate,
   getRelativeTime,
-  getBuildingById,
-  getUnitById,
-  getUserById,
-  office,
-  type MaintenanceRequest,
-  type RequestCategory,
-} from '@/lib/mock-data';
+} from '@/lib/format-utils';
+
+// Use API labels, fall back to mock labels for lowercase statuses
+const getStatusLabel = (s: string) =>
+  statusLabels[s] ?? (mockStatusLabels as Record<string, string>)[s] ?? s;
+const getStatusColor = (s: string) =>
+  statusColors[s] ?? (mockStatusColors as Record<string, string>)[s] ?? '';
+const getPriorityLabel = (s: string) =>
+  priorityLabels[s] ?? (mockPriorityLabels as Record<string, string>)[s] ?? s;
+const getPriorityColor = (s: string) =>
+  priorityColors[s] ?? (mockPriorityColors as Record<string, string>)[s] ?? '';
+const getCategoryLabel = (s: string) =>
+  categoryLabels[s] ?? (mockCategoryLabels as Record<string, string>)[s] ?? s;
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
 import { useToast } from '@/components/ui/toast-provider';
 
@@ -67,18 +90,33 @@ const itemVariants = {
 };
 
 // Map category to icon component for the provider
-const CategoryIcon = ({ category, className }: { category: RequestCategory; className?: string }) => {
+const CategoryIcon = ({
+  category,
+  className,
+}: {
+  category: RequestCategory;
+  className?: string;
+}) => {
   const cls = className || 'h-7 w-7';
   switch (category) {
-    case 'plumbing': return <Droplets className={cls} />;
-    case 'electrical': return <Zap className={cls} />;
-    case 'hvac': return <Wind className={cls} />;
-    case 'structural': return <Hammer className={cls} />;
-    case 'fire_safety': return <ShieldAlert className={cls} />;
-    case 'elevator': return <ArrowUpDown className={cls} />;
-    case 'generator': return <Power className={cls} />;
-    case 'cosmetic': return <Paintbrush className={cls} />;
-    default: return <Wrench className={cls} />;
+    case 'plumbing':
+      return <Droplets className={cls} />;
+    case 'electrical':
+      return <Zap className={cls} />;
+    case 'hvac':
+      return <Wind className={cls} />;
+    case 'structural':
+      return <Hammer className={cls} />;
+    case 'fire_safety':
+      return <ShieldAlert className={cls} />;
+    case 'elevator':
+      return <ArrowUpDown className={cls} />;
+    case 'generator':
+      return <Power className={cls} />;
+    case 'cosmetic':
+      return <Paintbrush className={cls} />;
+    default:
+      return <Wrench className={cls} />;
   }
 };
 
@@ -99,7 +137,14 @@ const categoryBgColors: Record<string, string> = {
 // Types for enhanced state
 // ============================================================
 
-type ProviderJobStatus = 'pending' | 'accepted' | 'on_the_way' | 'arrived' | 'working' | 'completed' | 'declined';
+type ProviderJobStatus =
+  | 'pending'
+  | 'accepted'
+  | 'on_the_way'
+  | 'arrived'
+  | 'working'
+  | 'completed'
+  | 'declined';
 
 interface ProviderJobState {
   status: ProviderJobStatus;
@@ -158,10 +203,19 @@ export default function ProviderDashboardPage() {
   const myJobs = getRequestsByProvider(provider.id);
   const toast = useToast();
 
+  // Wire status updates to the API when available
+  const updateStatusMutation = trpc.maintenance.updateStatus.useMutation({
+    onError: () => {
+      // Silently fail; local state is already updated for demo
+    },
+  });
+
   // Provider-level job states (persisted)
   const [jobStates, setJobStates] = useState<Record<string, ProviderJobState>>({});
   const [invoices, setInvoices] = useState<InvoiceData[]>([]);
-  const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'earnings' | 'schedule' | 'profile'>('active');
+  const [activeTab, setActiveTab] = useState<
+    'active' | 'completed' | 'earnings' | 'schedule' | 'profile'
+  >('active');
 
   // UI state
   const [declineDialogJob, setDeclineDialogJob] = useState<string | null>(null);
@@ -218,7 +272,9 @@ export default function ProviderDashboardPage() {
 
   const activeJobs = myJobs.filter((r) => {
     const s = getEffectiveStatus(r);
-    return !['completed', 'declined'].includes(s) && r.status !== 'completed' && r.status !== 'cancelled';
+    return (
+      !['completed', 'declined'].includes(s) && r.status !== 'completed' && r.status !== 'cancelled'
+    );
   });
 
   const completedJobs = myJobs.filter((r) => {
@@ -242,7 +298,7 @@ export default function ProviderDashboardPage() {
   // Priority sort for active jobs
   const priorityOrder: Record<string, number> = { urgent: 0, high: 1, medium: 2, low: 3 };
   const sortedActiveJobs = [...activeJobs].sort(
-    (a, b) => (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3)
+    (a, b) => (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3),
   );
 
   // ============================================================
@@ -277,6 +333,8 @@ export default function ProviderDashboardPage() {
   function handleStartWork(jobId: string) {
     updateJobState(jobId, { status: 'working' });
     toast.success('تم تحديث الحالة: جاري العمل');
+    // Also update via API
+    updateStatusMutation.mutate({ id: jobId, status: 'IN_PROGRESS' });
   }
 
   function openCompletionDialog(jobId: string) {
@@ -297,6 +355,12 @@ export default function ProviderDashboardPage() {
       completedAt: new Date().toISOString(),
     });
     toast.success('تم إتمام المهمة بنجاح');
+    // Also update via API
+    updateStatusMutation.mutate({
+      id: jobId,
+      status: 'COMPLETED',
+      notes: completionNotes || undefined,
+    });
     setCompletionDialogJob(null);
     setWhatsappNotifJob(jobId);
     setTimeout(() => setWhatsappNotifJob(null), 3000);
@@ -409,12 +473,18 @@ export default function ProviderDashboardPage() {
   function getStatusMessage(job: MaintenanceRequest): string {
     const status = getEffectiveStatus(job);
     switch (status) {
-      case 'accepted': return 'تم قبول المهمة.';
-      case 'on_the_way': return 'أنا في الطريق للموقع.';
-      case 'arrived': return 'وصلت الموقع.';
-      case 'working': return 'جاري العمل حالياً.';
-      case 'completed': return 'تم إنجاز المهمة بنجاح.';
-      default: return 'تحديث على حالة المهمة.';
+      case 'accepted':
+        return 'تم قبول المهمة.';
+      case 'on_the_way':
+        return 'أنا في الطريق للموقع.';
+      case 'arrived':
+        return 'وصلت الموقع.';
+      case 'working':
+        return 'جاري العمل حالياً.';
+      case 'completed':
+        return 'تم إنجاز المهمة بنجاح.';
+      default:
+        return 'تحديث على حالة المهمة.';
     }
   }
 
@@ -436,13 +506,20 @@ export default function ProviderDashboardPage() {
   function getStepIndex(job: MaintenanceRequest): number {
     const status = getEffectiveStatus(job);
     switch (status) {
-      case 'pending': return -1;
-      case 'accepted': return 0;
-      case 'on_the_way': return 1;
-      case 'arrived': return 2;
-      case 'working': return 3;
-      case 'completed': return 4;
-      default: return -1;
+      case 'pending':
+        return -1;
+      case 'accepted':
+        return 0;
+      case 'on_the_way':
+        return 1;
+      case 'arrived':
+        return 2;
+      case 'working':
+        return 3;
+      case 'completed':
+        return 4;
+      default:
+        return -1;
     }
   }
 
@@ -451,11 +528,19 @@ export default function ProviderDashboardPage() {
   // ============================================================
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-4"
+    >
       {/* Provider Profile Card */}
-      <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+      <motion.div
+        variants={itemVariants}
+        className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+      >
         <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand-50 dark:bg-brand-900/20 text-brand-500 text-xl font-bold">
+          <div className="bg-brand-50 dark:bg-brand-900/20 text-brand-500 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-bold">
             {provider.name[0]}
           </div>
           <div className="min-w-0 flex-1">
@@ -486,16 +571,34 @@ export default function ProviderDashboardPage() {
       {/* Tab Navigation — 5 tabs with large touch targets */}
       <motion.div variants={itemVariants} className="grid grid-cols-5 gap-1.5">
         {[
-          { key: 'active', label: 'المهام', icon: Wrench, count: activeJobs.length, color: 'text-orange-500' },
-          { key: 'completed', label: 'المكتملة', icon: CheckCircle2, count: completedJobs.length, color: 'text-emerald-500' },
+          {
+            key: 'active',
+            label: 'المهام',
+            icon: Wrench,
+            count: activeJobs.length,
+            color: 'text-orange-500',
+          },
+          {
+            key: 'completed',
+            label: 'المكتملة',
+            icon: CheckCircle2,
+            count: completedJobs.length,
+            color: 'text-emerald-500',
+          },
           { key: 'earnings', label: 'الأرباح', icon: Banknote, count: null, color: 'text-sky-500' },
-          { key: 'schedule', label: 'جدولي', icon: CalendarDays, count: null, color: 'text-indigo-500' },
+          {
+            key: 'schedule',
+            label: 'جدولي',
+            icon: CalendarDays,
+            count: null,
+            color: 'text-indigo-500',
+          },
           { key: 'profile', label: 'ملفي', icon: User, count: null, color: 'text-violet-500' },
         ].map(({ key, label, icon: Icon, count, color }) => (
           <button
             key={key}
             onClick={() => setActiveTab(key as typeof activeTab)}
-            className={`flex flex-col items-center justify-center gap-1 rounded-2xl border p-2.5 min-h-[64px] transition-all ${
+            className={`flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-2xl border p-2.5 transition-all ${
               activeTab === key
                 ? 'border-[var(--foreground)] bg-[var(--foreground)] text-[var(--background)] shadow-sm'
                 : 'border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:bg-[var(--secondary)]'
@@ -517,7 +620,7 @@ export default function ProviderDashboardPage() {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 rounded-2xl bg-[#25D366] text-white px-6 py-4 shadow-lg flex items-center gap-3"
+            className="fixed left-1/2 top-20 z-50 flex -translate-x-1/2 items-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-white shadow-lg"
           >
             <MessageCircle className="h-6 w-6" />
             <span className="text-sm font-bold">تم إرسال إشعار واتساب للمستأجر والمكتب</span>
@@ -529,13 +632,18 @@ export default function ProviderDashboardPage() {
       {activeTab === 'active' && (
         <>
           {sortedActiveJobs.length === 0 ? (
-            <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 shadow-soft">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8"
+            >
               <div className="flex flex-col items-center text-center">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-900/20">
                   <CheckCircle2 className="h-8 w-8 text-emerald-500" />
                 </div>
                 <p className="text-base font-bold">لا توجد مهام نشطة</p>
-                <p className="mt-1 text-sm text-[var(--muted-foreground)]">سيتم إشعارك عند وصول مهمة جديدة</p>
+                <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                  سيتم إشعارك عند وصول مهمة جديدة
+                </p>
               </div>
             </motion.div>
           ) : (
@@ -551,61 +659,85 @@ export default function ProviderDashboardPage() {
                     key={job.id}
                     variants={itemVariants}
                     layout
-                    className={`overflow-hidden rounded-2xl border-2 shadow-soft ${
+                    className={`shadow-soft overflow-hidden rounded-2xl border-2 ${
                       job.priority === 'urgent'
                         ? 'border-red-400 dark:border-red-600'
                         : job.priority === 'high'
-                        ? 'border-orange-300 dark:border-orange-700'
-                        : 'border-[var(--border)]'
+                          ? 'border-orange-300 dark:border-orange-700'
+                          : 'border-[var(--border)]'
                     } bg-[var(--card)]`}
                   >
                     {/* Priority indicator bar */}
-                    <div className={`h-1.5 ${
-                      job.priority === 'urgent' ? 'bg-red-500 animate-pulse' :
-                      job.priority === 'high' ? 'bg-orange-500' :
-                      job.priority === 'medium' ? 'bg-sky-500' : 'bg-slate-300 dark:bg-slate-600'
-                    }`} />
+                    <div
+                      className={`h-1.5 ${
+                        job.priority === 'urgent'
+                          ? 'animate-pulse bg-red-500'
+                          : job.priority === 'high'
+                            ? 'bg-orange-500'
+                            : job.priority === 'medium'
+                              ? 'bg-sky-500'
+                              : 'bg-slate-300 dark:bg-slate-600'
+                      }`}
+                    />
 
                     <div className="p-4">
                       {/* Header: Building + Unit */}
-                      <div className="flex items-start gap-3 mb-3">
-                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${categoryBgColors[job.category] || categoryBgColors.general}`}>
+                      <div className="mb-3 flex items-start gap-3">
+                        <div
+                          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${categoryBgColors[job.category] || categoryBgColors.general}`}
+                        >
                           <CategoryIcon category={job.category} className="h-6 w-6" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-base font-bold leading-tight">{building?.name}</p>
-                          <p className="text-sm text-[var(--muted-foreground)]">{job.locationLabel}</p>
+                          <p className="text-sm text-[var(--muted-foreground)]">
+                            {job.locationLabel}
+                          </p>
                         </div>
-                        <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold ${priorityColors[job.priority]}`}>
+                        <span
+                          className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold ${priorityColors[job.priority]}`}
+                        >
                           {priorityLabels[job.priority]}
                         </span>
                       </div>
 
                       {/* Issue description */}
                       <p className="mb-3 text-sm font-medium">{job.title}</p>
-                      <p className="mb-3 line-clamp-2 text-xs text-[var(--muted-foreground)]">{job.description}</p>
+                      <p className="mb-3 line-clamp-2 text-xs text-[var(--muted-foreground)]">
+                        {job.description}
+                      </p>
 
                       {/* Meta row */}
                       <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px]">
-                        <span className={`rounded-full px-2.5 py-0.5 font-medium ${statusColors[job.status]}`}>
+                        <span
+                          className={`rounded-full px-2.5 py-0.5 font-medium ${statusColors[job.status]}`}
+                        >
                           {statusLabels[job.status]}
                         </span>
-                        <span className="text-[var(--muted-foreground)]">{categoryLabels[job.category]}</span>
-                        <span className="text-[var(--muted-foreground)]">{getRelativeTime(job.updatedAt)}</span>
+                        <span className="text-[var(--muted-foreground)]">
+                          {categoryLabels[job.category]}
+                        </span>
+                        <span className="text-[var(--muted-foreground)]">
+                          {getRelativeTime(job.updatedAt)}
+                        </span>
                       </div>
 
                       {/* Contact (tenant) — phone call */}
                       {reporter && (
                         <a
                           href={`tel:${reporter.phone}`}
-                          className="mb-3 flex items-center gap-3 rounded-xl bg-[var(--secondary)] p-3 min-h-[44px] active:bg-[var(--accent)] transition-colors"
+                          className="mb-3 flex min-h-[44px] items-center gap-3 rounded-xl bg-[var(--secondary)] p-3 transition-colors active:bg-[var(--accent)]"
                         >
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
                             <Phone className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs font-medium">{reporter.name.split(' ').slice(0, 3).join(' ')}</p>
-                            <p className="text-[10px] text-[var(--muted-foreground)]">{reporter.phone}</p>
+                            <p className="text-xs font-medium">
+                              {reporter.name.split(' ').slice(0, 3).join(' ')}
+                            </p>
+                            <p className="text-[10px] text-[var(--muted-foreground)]">
+                              {reporter.phone}
+                            </p>
                           </div>
                           <Phone className="h-5 w-5 text-emerald-500" />
                         </a>
@@ -637,7 +769,7 @@ export default function ProviderDashboardPage() {
                           href={getGoogleMapsUrl(job)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-1.5 rounded-xl bg-blue-500 text-white min-h-[48px] text-xs font-medium transition-transform hover:scale-[1.02] active:scale-[0.98] shadow-sm"
+                          className="flex min-h-[48px] items-center justify-center gap-1.5 rounded-xl bg-blue-500 text-xs font-medium text-white shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
                         >
                           <MapPin className="h-4 w-4" />
                           <span>الاتجاهات</span>
@@ -660,28 +792,29 @@ export default function ProviderDashboardPage() {
                       {/* ============================================================ */}
                       <div className="space-y-2">
                         {/* Pending — Accept/Decline */}
-                        {effectiveStatus === 'pending' && (job.status === 'assigned' || job.status === 'in_progress') && (
-                          <div className="grid grid-cols-2 gap-2">
-                            <motion.button
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.97 }}
-                              onClick={() => handleAccept(job.id)}
-                              className="flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3.5 min-h-[48px] text-sm font-bold text-white shadow-sm"
-                            >
-                              <CheckCircle2 className="h-5 w-5" />
-                              <span>قبول</span>
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.97 }}
-                              onClick={() => setDeclineDialogJob(job.id)}
-                              className="flex items-center justify-center gap-2 rounded-xl bg-red-500 py-3.5 min-h-[48px] text-sm font-bold text-white shadow-sm"
-                            >
-                              <X className="h-5 w-5" />
-                              <span>رفض</span>
-                            </motion.button>
-                          </div>
-                        )}
+                        {effectiveStatus === 'pending' &&
+                          (job.status === 'assigned' || job.status === 'in_progress') && (
+                            <div className="grid grid-cols-2 gap-2">
+                              <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.97 }}
+                                onClick={() => handleAccept(job.id)}
+                                className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3.5 text-sm font-bold text-white shadow-sm"
+                              >
+                                <CheckCircle2 className="h-5 w-5" />
+                                <span>قبول</span>
+                              </motion.button>
+                              <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.97 }}
+                                onClick={() => setDeclineDialogJob(job.id)}
+                                className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-red-500 py-3.5 text-sm font-bold text-white shadow-sm"
+                              >
+                                <X className="h-5 w-5" />
+                                <span>رفض</span>
+                              </motion.button>
+                            </div>
+                          )}
 
                         {/* Accepted — On my way button */}
                         {effectiveStatus === 'accepted' && (
@@ -689,7 +822,7 @@ export default function ProviderDashboardPage() {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.97 }}
                             onClick={() => handleOnTheWay(job.id)}
-                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-sky-500 py-3.5 min-h-[48px] text-sm font-bold text-white shadow-sm"
+                            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-sky-500 py-3.5 text-sm font-bold text-white shadow-sm"
                           >
                             <Navigation className="h-5 w-5" />
                             <span>في الطريق</span>
@@ -699,7 +832,7 @@ export default function ProviderDashboardPage() {
                         {/* On the way — Arrived button */}
                         {effectiveStatus === 'on_the_way' && (
                           <>
-                            <div className="flex items-center gap-2 rounded-xl bg-sky-50 dark:bg-sky-900/20 p-3 text-xs text-sky-700 dark:text-sky-300">
+                            <div className="flex items-center gap-2 rounded-xl bg-sky-50 p-3 text-xs text-sky-700 dark:bg-sky-900/20 dark:text-sky-300">
                               <Navigation className="h-4 w-4 animate-pulse" />
                               <span className="font-medium">في الطريق للموقع...</span>
                             </div>
@@ -707,7 +840,7 @@ export default function ProviderDashboardPage() {
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.97 }}
                               onClick={() => handleArrived(job.id)}
-                              className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-500 py-3.5 min-h-[48px] text-sm font-bold text-white shadow-sm"
+                              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-violet-500 py-3.5 text-sm font-bold text-white shadow-sm"
                             >
                               <MapPin className="h-5 w-5" />
                               <span>وصلت الموقع</span>
@@ -721,7 +854,7 @@ export default function ProviderDashboardPage() {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.97 }}
                             onClick={() => handleStartWork(job.id)}
-                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 py-3.5 min-h-[48px] text-sm font-bold text-white shadow-sm"
+                            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-amber-500 py-3.5 text-sm font-bold text-white shadow-sm"
                           >
                             <Play className="h-5 w-5" />
                             <span>بدأت العمل</span>
@@ -731,7 +864,7 @@ export default function ProviderDashboardPage() {
                         {/* Working — Complete button */}
                         {effectiveStatus === 'working' && (
                           <div className="space-y-2">
-                            <div className="flex items-center gap-2 rounded-xl bg-amber-50 dark:bg-amber-900/20 p-3 text-xs text-amber-700 dark:text-amber-300">
+                            <div className="flex items-center gap-2 rounded-xl bg-amber-50 p-3 text-xs text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
                               <Clock className="h-4 w-4 animate-pulse" />
                               <span className="font-medium">جاري العمل...</span>
                             </div>
@@ -739,7 +872,7 @@ export default function ProviderDashboardPage() {
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.97 }}
                               onClick={() => openCompletionDialog(job.id)}
-                              className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3.5 min-h-[48px] text-sm font-bold text-white shadow-sm"
+                              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3.5 text-sm font-bold text-white shadow-sm"
                             >
                               <CheckCircle2 className="h-5 w-5" />
                               <span>إتمام المهمة</span>
@@ -749,9 +882,11 @@ export default function ProviderDashboardPage() {
 
                         {/* Completed */}
                         {effectiveStatus === 'completed' && (
-                          <div className="flex items-center justify-center gap-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 p-3 min-h-[48px]">
+                          <div className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-emerald-50 p-3 dark:bg-emerald-900/20">
                             <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                            <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">تم إنهاء المهمة</span>
+                            <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                              تم إنهاء المهمة
+                            </span>
                           </div>
                         )}
                       </div>
@@ -762,11 +897,18 @@ export default function ProviderDashboardPage() {
                           const filled = i <= stepIndex;
                           const isCurrent = i === stepIndex;
                           return (
-                            <div key={step.key} className="flex flex-1 flex-col items-center gap-0.5">
-                              <div className={`h-1.5 w-full rounded-full transition-all duration-500 ${
-                                filled ? 'bg-emerald-500' : 'bg-[var(--border)]'
-                              } ${isCurrent ? 'animate-pulse' : ''}`} />
-                              <span className={`text-[8px] ${filled ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-[var(--muted-foreground)]'}`}>
+                            <div
+                              key={step.key}
+                              className="flex flex-1 flex-col items-center gap-0.5"
+                            >
+                              <div
+                                className={`h-1.5 w-full rounded-full transition-all duration-500 ${
+                                  filled ? 'bg-emerald-500' : 'bg-[var(--border)]'
+                                } ${isCurrent ? 'animate-pulse' : ''}`}
+                              />
+                              <span
+                                className={`text-[8px] ${filled ? 'font-medium text-emerald-600 dark:text-emerald-400' : 'text-[var(--muted-foreground)]'}`}
+                              >
                                 {step.label}
                               </span>
                             </div>
@@ -789,7 +931,7 @@ export default function ProviderDashboardPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-4"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center"
             onClick={() => setDeclineDialogJob(null)}
           >
             <motion.div
@@ -797,9 +939,9 @@ export default function ProviderDashboardPage() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md rounded-2xl bg-[var(--card)] border border-[var(--border)] p-6 shadow-xl"
+              className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl"
             >
-              <h3 className="text-base font-bold mb-4">سبب الرفض</h3>
+              <h3 className="mb-4 text-base font-bold">سبب الرفض</h3>
               <div className="space-y-2">
                 {DECLINE_REASONS.map((reason) => (
                   <motion.button
@@ -807,7 +949,7 @@ export default function ProviderDashboardPage() {
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleDecline(declineDialogJob, reason.label)}
-                    className="flex w-full items-center gap-3 rounded-xl bg-[var(--secondary)] p-4 min-h-[48px] text-sm font-medium hover:bg-[var(--accent)] transition-colors"
+                    className="flex min-h-[48px] w-full items-center gap-3 rounded-xl bg-[var(--secondary)] p-4 text-sm font-medium transition-colors hover:bg-[var(--accent)]"
                   >
                     <CircleDot className="h-4 w-4 text-[var(--muted-foreground)]" />
                     <span>{reason.label}</span>
@@ -817,7 +959,7 @@ export default function ProviderDashboardPage() {
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setDeclineDialogJob(null)}
-                className="mt-4 flex w-full items-center justify-center rounded-xl bg-[var(--secondary)] py-3 min-h-[48px] text-sm font-medium"
+                className="mt-4 flex min-h-[48px] w-full items-center justify-center rounded-xl bg-[var(--secondary)] py-3 text-sm font-medium"
               >
                 إلغاء
               </motion.button>
@@ -833,7 +975,7 @@ export default function ProviderDashboardPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-4"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center"
             onClick={() => setCompletionDialogJob(null)}
           >
             <motion.div
@@ -841,13 +983,15 @@ export default function ProviderDashboardPage() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md rounded-2xl bg-[var(--card)] border border-[var(--border)] p-6 shadow-xl max-h-[80vh] overflow-y-auto"
+              className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl"
             >
-              <h3 className="text-base font-bold mb-4">إتمام المهمة</h3>
+              <h3 className="mb-4 text-base font-bold">إتمام المهمة</h3>
 
               {/* Photo Upload */}
               <div className="mb-4">
-                <label className="text-xs font-medium text-[var(--muted-foreground)] mb-2 block">صورة بعد الإنجاز</label>
+                <label className="mb-2 block text-xs font-medium text-[var(--muted-foreground)]">
+                  صورة بعد الإنجاز
+                </label>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -857,11 +1001,15 @@ export default function ProviderDashboardPage() {
                   className="hidden"
                 />
                 {completionPhoto ? (
-                  <div className="relative rounded-xl overflow-hidden">
-                    <img src={completionPhoto} alt="صورة الإنجاز" className="w-full h-48 object-cover rounded-xl" />
+                  <div className="relative overflow-hidden rounded-xl">
+                    <img
+                      src={completionPhoto}
+                      alt="صورة الإنجاز"
+                      className="h-48 w-full rounded-xl object-cover"
+                    />
                     <button
                       onClick={() => setCompletionPhoto(null)}
-                      className="absolute top-2 end-2 bg-black/50 text-white rounded-full p-1"
+                      className="absolute end-2 top-2 rounded-full bg-black/50 p-1 text-white"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -870,7 +1018,7 @@ export default function ProviderDashboardPage() {
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[var(--border)] p-6 min-h-[48px] text-sm text-[var(--muted-foreground)] hover:bg-[var(--secondary)] transition-colors"
+                    className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[var(--border)] p-6 text-sm text-[var(--muted-foreground)] transition-colors hover:bg-[var(--secondary)]"
                   >
                     <Camera className="h-6 w-6" />
                     <span>رفع صورة</span>
@@ -880,26 +1028,30 @@ export default function ProviderDashboardPage() {
 
               {/* Cost entry */}
               <div className="mb-4">
-                <label className="text-xs font-medium text-[var(--muted-foreground)] mb-2 block">التكلفة الفعلية (ر.س)</label>
+                <label className="mb-2 block text-xs font-medium text-[var(--muted-foreground)]">
+                  التكلفة الفعلية (ر.س)
+                </label>
                 <input
                   type="number"
                   value={completionCost}
                   onChange={(e) => setCompletionCost(e.target.value)}
                   placeholder="0"
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--secondary)] px-4 py-3 min-h-[48px] text-lg font-bold text-center focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="focus:ring-brand-500 min-h-[48px] w-full rounded-xl border border-[var(--border)] bg-[var(--secondary)] px-4 py-3 text-center text-lg font-bold focus:outline-none focus:ring-2"
                   dir="ltr"
                 />
               </div>
 
               {/* Notes */}
               <div className="mb-4">
-                <label className="text-xs font-medium text-[var(--muted-foreground)] mb-2 block">ملاحظات (وصف العمل)</label>
+                <label className="mb-2 block text-xs font-medium text-[var(--muted-foreground)]">
+                  ملاحظات (وصف العمل)
+                </label>
                 <textarea
                   value={completionNotes}
                   onChange={(e) => setCompletionNotes(e.target.value)}
                   placeholder="وصف مختصر للعمل المنجز..."
                   rows={3}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--secondary)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+                  className="focus:ring-brand-500 w-full resize-none rounded-xl border border-[var(--border)] bg-[var(--secondary)] px-4 py-3 text-sm focus:outline-none focus:ring-2"
                 />
               </div>
 
@@ -907,7 +1059,7 @@ export default function ProviderDashboardPage() {
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setCompletionDialogJob(null)}
-                  className="flex items-center justify-center rounded-xl bg-[var(--secondary)] py-3 min-h-[48px] text-sm font-medium"
+                  className="flex min-h-[48px] items-center justify-center rounded-xl bg-[var(--secondary)] py-3 text-sm font-medium"
                 >
                   إلغاء
                 </motion.button>
@@ -915,7 +1067,7 @@ export default function ProviderDashboardPage() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleComplete(completionDialogJob)}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 min-h-[48px] text-sm font-bold text-white shadow-sm"
+                  className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-sm font-bold text-white shadow-sm"
                 >
                   <CheckCircle2 className="h-5 w-5" />
                   <span>إتمام المهمة</span>
@@ -931,21 +1083,21 @@ export default function ProviderDashboardPage() {
         <>
           {/* Completed Stats */}
           <motion.div variants={itemVariants} className="grid grid-cols-3 gap-3">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft text-center">
+            <div className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 text-center">
               <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/30">
                 <Trophy className="h-5 w-5 text-emerald-500" />
               </div>
               <p className="text-2xl font-bold">{completedJobs.length}</p>
               <p className="text-[10px] text-[var(--muted-foreground)]">مهمة مكتملة</p>
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft text-center">
+            <div className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 text-center">
               <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30">
                 <Star className="h-5 w-5 text-amber-500" />
               </div>
               <p className="text-2xl font-bold">{avgRating}</p>
               <p className="text-[10px] text-[var(--muted-foreground)]">التقييم</p>
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft text-center">
+            <div className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 text-center">
               <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100 dark:bg-sky-900/30">
                 <DollarSign className="h-5 w-5 text-sky-500" />
               </div>
@@ -955,10 +1107,15 @@ export default function ProviderDashboardPage() {
           </motion.div>
 
           {/* Completed Jobs List */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-4 text-sm font-bold">سجل المهام المكتملة ({completedJobs.length})</h3>
             {completedJobs.length === 0 ? (
-              <div className="py-8 text-center text-sm text-[var(--muted-foreground)]">لا توجد مهام مكتملة بعد</div>
+              <div className="py-8 text-center text-sm text-[var(--muted-foreground)]">
+                لا توجد مهام مكتملة بعد
+              </div>
             ) : (
               <div className="space-y-3">
                 {completedJobs.map((job, index) => {
@@ -977,7 +1134,9 @@ export default function ProviderDashboardPage() {
                       className="rounded-xl border border-[var(--border)] bg-[var(--secondary)] p-4"
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${categoryBgColors[job.category] || categoryBgColors.general}`}>
+                        <div
+                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${categoryBgColors[job.category] || categoryBgColors.general}`}
+                        >
                           <CategoryIcon category={job.category} className="h-5 w-5" />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -986,7 +1145,11 @@ export default function ProviderDashboardPage() {
                           <div className="mt-2 flex flex-wrap items-center gap-3 text-[10px] text-[var(--muted-foreground)]">
                             <span className="flex items-center gap-0.5">
                               <Calendar className="h-3 w-3" />
-                              {state?.completedAt ? formatDate(state.completedAt) : job.completedAt ? formatDate(job.completedAt) : '-'}
+                              {state?.completedAt
+                                ? formatDate(state.completedAt)
+                                : job.completedAt
+                                  ? formatDate(job.completedAt)
+                                  : '-'}
                             </span>
                             <span className="flex items-center gap-0.5">
                               <Wrench className="h-3 w-3" />
@@ -1004,7 +1167,9 @@ export default function ProviderDashboardPage() {
 
                           {/* Completion notes */}
                           {state?.completionNotes && (
-                            <p className="mt-2 text-[10px] text-[var(--muted-foreground)] italic">{state.completionNotes}</p>
+                            <p className="mt-2 text-[10px] italic text-[var(--muted-foreground)]">
+                              {state.completionNotes}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -1014,14 +1179,16 @@ export default function ProviderDashboardPage() {
                         {existingInvoice ? (
                           <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
                             <FileText className="h-4 w-4" />
-                            <span className="font-medium">فاتورة: {existingInvoice.invoiceNumber}</span>
+                            <span className="font-medium">
+                              فاتورة: {existingInvoice.invoiceNumber}
+                            </span>
                           </div>
                         ) : (
                           <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.97 }}
                             onClick={() => openInvoiceDialog(job.id)}
-                            className="flex items-center gap-2 rounded-xl bg-brand-50 dark:bg-brand-900/20 px-4 py-2.5 min-h-[48px] text-xs font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/30 transition-colors"
+                            className="bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/30 flex min-h-[48px] items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-colors"
                           >
                             <FileText className="h-4 w-4" />
                             <span>إصدار فاتورة</span>
@@ -1050,113 +1217,126 @@ export default function ProviderDashboardPage() {
 
       {/* === INVOICE DIALOG === */}
       <AnimatePresence>
-        {invoiceDialogJob && (() => {
-          const job = myJobs.find((j) => j.id === invoiceDialogJob);
-          if (!job) return null;
-          const building = getBuildingById(job.buildingId);
-          const unit = job.unitId ? getUnitById(job.unitId) : null;
+        {invoiceDialogJob &&
+          (() => {
+            const job = myJobs.find((j) => j.id === invoiceDialogJob);
+            if (!job) return null;
+            const building = getBuildingById(job.buildingId);
+            const unit = job.unitId ? getUnitById(job.unitId) : null;
 
-          return (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-4"
-              onClick={() => setInvoiceDialogJob(null)}
-            >
+            return (
               <motion.div
-                initial={{ y: 100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 100, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-md rounded-2xl bg-[var(--card)] border border-[var(--border)] p-6 shadow-xl max-h-[80vh] overflow-y-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center"
+                onClick={() => setInvoiceDialogJob(null)}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-900/20">
-                    <FileText className="h-5 w-5 text-brand-500" />
-                  </div>
-                  <h3 className="text-base font-bold">إصدار فاتورة</h3>
-                </div>
-
-                {/* Invoice Preview */}
-                <div className="space-y-3 mb-4">
-                  <div className="rounded-xl bg-[var(--secondary)] p-3">
-                    <p className="text-[10px] text-[var(--muted-foreground)]">المزود</p>
-                    <p className="text-sm font-bold">{provider.name}</p>
-                    <p className="text-[10px] text-[var(--muted-foreground)]">سجل: {provider.licenseNumber}</p>
-                  </div>
-                  <div className="rounded-xl bg-[var(--secondary)] p-3">
-                    <p className="text-[10px] text-[var(--muted-foreground)]">العميل</p>
-                    <p className="text-sm font-bold">{building?.name}</p>
-                    {unit && <p className="text-[10px] text-[var(--muted-foreground)]">وحدة {unit.unitNumber}</p>}
-                  </div>
-                  <div className="rounded-xl bg-[var(--secondary)] p-3">
-                    <p className="text-[10px] text-[var(--muted-foreground)]">الخدمة</p>
-                    <p className="text-sm font-bold">{job.title}</p>
-                    <p className="text-[10px] text-[var(--muted-foreground)]">{categoryLabels[job.category]}</p>
+                <motion.div
+                  initial={{ y: 100, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 100, opacity: 0 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl"
+                >
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="bg-brand-50 dark:bg-brand-900/20 flex h-10 w-10 items-center justify-center rounded-xl">
+                      <FileText className="text-brand-500 h-5 w-5" />
+                    </div>
+                    <h3 className="text-base font-bold">إصدار فاتورة</h3>
                   </div>
 
-                  {/* Cost breakdown — editable */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between rounded-xl bg-[var(--secondary)] p-3">
-                      <span className="text-xs">أجور العمل</span>
-                      <input
-                        type="number"
-                        value={invoiceLaborCost}
-                        onChange={(e) => setInvoiceLaborCost(parseInt(e.target.value) || 0)}
-                        className="w-24 rounded-lg border border-[var(--border)] bg-[var(--card)] px-2 py-1 text-sm font-bold text-end focus:outline-none focus:ring-2 focus:ring-brand-500"
-                        dir="ltr"
-                      />
+                  {/* Invoice Preview */}
+                  <div className="mb-4 space-y-3">
+                    <div className="rounded-xl bg-[var(--secondary)] p-3">
+                      <p className="text-[10px] text-[var(--muted-foreground)]">المزود</p>
+                      <p className="text-sm font-bold">{provider.name}</p>
+                      <p className="text-[10px] text-[var(--muted-foreground)]">
+                        سجل: {provider.licenseNumber}
+                      </p>
                     </div>
-                    <div className="flex items-center justify-between rounded-xl bg-[var(--secondary)] p-3">
-                      <span className="text-xs">قطع غيار</span>
-                      <input
-                        type="number"
-                        value={invoicePartsCost}
-                        onChange={(e) => setInvoicePartsCost(parseInt(e.target.value) || 0)}
-                        className="w-24 rounded-lg border border-[var(--border)] bg-[var(--card)] px-2 py-1 text-sm font-bold text-end focus:outline-none focus:ring-2 focus:ring-brand-500"
-                        dir="ltr"
-                      />
+                    <div className="rounded-xl bg-[var(--secondary)] p-3">
+                      <p className="text-[10px] text-[var(--muted-foreground)]">العميل</p>
+                      <p className="text-sm font-bold">{building?.name}</p>
+                      {unit && (
+                        <p className="text-[10px] text-[var(--muted-foreground)]">
+                          وحدة {unit.unitNumber}
+                        </p>
+                      )}
                     </div>
-                    <div className="flex items-center justify-between rounded-xl bg-emerald-50 dark:bg-emerald-900/20 p-3 border border-emerald-200 dark:border-emerald-800">
-                      <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">الإجمالي</span>
-                      <span className="text-lg font-bold text-emerald-700 dark:text-emerald-300">{formatSAR(invoiceLaborCost + invoicePartsCost)}</span>
+                    <div className="rounded-xl bg-[var(--secondary)] p-3">
+                      <p className="text-[10px] text-[var(--muted-foreground)]">الخدمة</p>
+                      <p className="text-sm font-bold">{job.title}</p>
+                      <p className="text-[10px] text-[var(--muted-foreground)]">
+                        {categoryLabels[job.category]}
+                      </p>
+                    </div>
+
+                    {/* Cost breakdown — editable */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between rounded-xl bg-[var(--secondary)] p-3">
+                        <span className="text-xs">أجور العمل</span>
+                        <input
+                          type="number"
+                          value={invoiceLaborCost}
+                          onChange={(e) => setInvoiceLaborCost(parseInt(e.target.value) || 0)}
+                          className="focus:ring-brand-500 w-24 rounded-lg border border-[var(--border)] bg-[var(--card)] px-2 py-1 text-end text-sm font-bold focus:outline-none focus:ring-2"
+                          dir="ltr"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between rounded-xl bg-[var(--secondary)] p-3">
+                        <span className="text-xs">قطع غيار</span>
+                        <input
+                          type="number"
+                          value={invoicePartsCost}
+                          onChange={(e) => setInvoicePartsCost(parseInt(e.target.value) || 0)}
+                          className="focus:ring-brand-500 w-24 rounded-lg border border-[var(--border)] bg-[var(--card)] px-2 py-1 text-end text-sm font-bold focus:outline-none focus:ring-2"
+                          dir="ltr"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-800 dark:bg-emerald-900/20">
+                        <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                          الإجمالي
+                        </span>
+                        <span className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
+                          {formatSAR(invoiceLaborCost + invoicePartsCost)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <motion.button
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => setInvoiceDialogJob(null)}
-                    className="flex items-center justify-center rounded-xl bg-[var(--secondary)] py-3 min-h-[48px] text-sm font-medium"
-                  >
-                    إلغاء
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => handleGenerateInvoice(invoiceDialogJob)}
-                    disabled={invoiceGenerating}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-brand-500 py-3 min-h-[48px] text-sm font-bold text-white shadow-sm disabled:opacity-50"
-                  >
-                    {invoiceGenerating ? (
-                      <>
-                        <Clock className="h-4 w-4 animate-spin" />
-                        <span>جاري الإصدار...</span>
-                      </>
-                    ) : (
-                      <>
-                        <FileText className="h-4 w-4" />
-                        <span>إصدار الفاتورة</span>
-                      </>
-                    )}
-                  </motion.button>
-                </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <motion.button
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => setInvoiceDialogJob(null)}
+                      className="flex min-h-[48px] items-center justify-center rounded-xl bg-[var(--secondary)] py-3 text-sm font-medium"
+                    >
+                      إلغاء
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleGenerateInvoice(invoiceDialogJob)}
+                      disabled={invoiceGenerating}
+                      className="bg-brand-500 flex min-h-[48px] items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-white shadow-sm disabled:opacity-50"
+                    >
+                      {invoiceGenerating ? (
+                        <>
+                          <Clock className="h-4 w-4 animate-spin" />
+                          <span>جاري الإصدار...</span>
+                        </>
+                      ) : (
+                        <>
+                          <FileText className="h-4 w-4" />
+                          <span>إصدار الفاتورة</span>
+                        </>
+                      )}
+                    </motion.button>
+                  </div>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          );
-        })()}
+            );
+          })()}
       </AnimatePresence>
 
       {/* === EARNINGS TAB === */}
@@ -1164,52 +1344,70 @@ export default function ProviderDashboardPage() {
         <>
           {/* Earnings Summary Cards */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+            >
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/30">
                   <Banknote className="h-6 w-6 text-emerald-500" />
                 </div>
                 <div>
                   <p className="text-[10px] text-[var(--muted-foreground)]">هذا الشهر</p>
-                  <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{formatSAR(paidOut)}</p>
+                  <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                    {formatSAR(paidOut)}
+                  </p>
                 </div>
               </div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+            >
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30">
                   <Clock className="h-6 w-6 text-amber-500" />
                 </div>
                 <div>
                   <p className="text-[10px] text-[var(--muted-foreground)]">مستحقات معلقة</p>
-                  <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{formatSAR(pendingPayments)}</p>
+                  <p className="text-xl font-bold text-amber-600 dark:text-amber-400">
+                    {formatSAR(pendingPayments)}
+                  </p>
                 </div>
               </div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+            <motion.div
+              variants={itemVariants}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+            >
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-100 dark:bg-sky-900/30">
                   <CreditCard className="h-6 w-6 text-sky-500" />
                 </div>
                 <div>
                   <p className="text-[10px] text-[var(--muted-foreground)]">تم الصرف</p>
-                  <p className="text-xl font-bold text-sky-600 dark:text-sky-400">{formatSAR(paidOut)}</p>
+                  <p className="text-xl font-bold text-sky-600 dark:text-sky-400">
+                    {formatSAR(paidOut)}
+                  </p>
                 </div>
               </div>
             </motion.div>
           </div>
 
           {/* Payment History */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
-            <div className="flex items-center justify-between mb-4">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
+            <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-bold">سجل المدفوعات</h3>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => toast.success('تم تصدير كشف الحساب')}
-                className="flex items-center gap-1.5 rounded-xl bg-[var(--secondary)] px-3 py-2 min-h-[40px] text-[10px] font-medium hover:bg-[var(--accent)] transition-colors"
+                className="flex min-h-[40px] items-center gap-1.5 rounded-xl bg-[var(--secondary)] px-3 py-2 text-[10px] font-medium transition-colors hover:bg-[var(--accent)]"
               >
                 <Download className="h-3.5 w-3.5" />
                 <span>تصدير كشف حساب</span>
@@ -1221,51 +1419,72 @@ export default function ProviderDashboardPage() {
                 const state = jobStates[job.id];
                 const cost = state?.actualCost || job.actualCost || job.estimatedCost || 0;
                 return (
-                  <div key={job.id} className="flex items-center justify-between rounded-xl bg-[var(--secondary)] p-3 min-h-[48px]">
+                  <div
+                    key={job.id}
+                    className="flex min-h-[48px] items-center justify-between rounded-xl bg-[var(--secondary)] p-3"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${categoryBgColors[job.category] || categoryBgColors.general}`}>
+                      <div
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${categoryBgColors[job.category] || categoryBgColors.general}`}
+                      >
                         <CategoryIcon category={job.category} className="h-4 w-4" />
                       </div>
                       <div>
                         <p className="text-xs font-medium">{job.title}</p>
-                        <p className="text-[10px] text-[var(--muted-foreground)]">{building?.name} · {state?.completedAt ? formatDate(state.completedAt) : job.completedAt ? formatDate(job.completedAt) : ''}</p>
+                        <p className="text-[10px] text-[var(--muted-foreground)]">
+                          {building?.name} ·{' '}
+                          {state?.completedAt
+                            ? formatDate(state.completedAt)
+                            : job.completedAt
+                              ? formatDate(job.completedAt)
+                              : ''}
+                        </p>
                       </div>
                     </div>
                     <div className="text-end">
                       <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                         +{formatSAR(cost)}
                       </p>
-                      <span className="text-[9px] rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 font-medium">
+                      <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
                         مدفوع
                       </span>
                     </div>
                   </div>
                 );
               })}
-              {activeJobs.filter((j) => j.estimatedCost).map((job) => {
-                const building = getBuildingById(job.buildingId);
-                return (
-                  <div key={job.id} className="flex items-center justify-between rounded-xl bg-[var(--secondary)] p-3 min-h-[48px] opacity-70">
-                    <div className="flex items-center gap-3">
-                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${categoryBgColors[job.category] || categoryBgColors.general}`}>
-                        <CategoryIcon category={job.category} className="h-4 w-4" />
+              {activeJobs
+                .filter((j) => j.estimatedCost)
+                .map((job) => {
+                  const building = getBuildingById(job.buildingId);
+                  return (
+                    <div
+                      key={job.id}
+                      className="flex min-h-[48px] items-center justify-between rounded-xl bg-[var(--secondary)] p-3 opacity-70"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${categoryBgColors[job.category] || categoryBgColors.general}`}
+                        >
+                          <CategoryIcon category={job.category} className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium">{job.title}</p>
+                          <p className="text-[10px] text-[var(--muted-foreground)]">
+                            {building?.name}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs font-medium">{job.title}</p>
-                        <p className="text-[10px] text-[var(--muted-foreground)]">{building?.name}</p>
+                      <div className="text-end">
+                        <p className="text-sm font-bold text-amber-600 dark:text-amber-400">
+                          {formatSAR(job.estimatedCost || 0)}
+                        </p>
+                        <span className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[9px] font-medium text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+                          معلق
+                        </span>
                       </div>
                     </div>
-                    <div className="text-end">
-                      <p className="text-sm font-bold text-amber-600 dark:text-amber-400">
-                        {formatSAR(job.estimatedCost || 0)}
-                      </p>
-                      <span className="text-[9px] rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 font-medium">
-                        معلق
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </motion.div>
         </>
@@ -1274,8 +1493,11 @@ export default function ProviderDashboardPage() {
       {/* === SCHEDULE TAB === */}
       {activeTab === 'schedule' && (
         <>
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
-            <h3 className="mb-4 text-sm font-bold flex items-center gap-2">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-bold">
               <CalendarDays className="h-5 w-5 text-indigo-500" />
               جدول الأسبوع
             </h3>
@@ -1284,7 +1506,10 @@ export default function ProviderDashboardPage() {
             <div className="grid grid-cols-7 gap-1">
               {/* Day headers */}
               {ARABIC_DAYS.map((day) => (
-                <div key={day} className="text-center text-[10px] font-bold text-[var(--muted-foreground)] py-1">
+                <div
+                  key={day}
+                  className="py-1 text-center text-[10px] font-bold text-[var(--muted-foreground)]"
+                >
                   {day}
                 </div>
               ))}
@@ -1296,35 +1521,42 @@ export default function ProviderDashboardPage() {
                 return (
                   <div
                     key={idx}
-                    className={`rounded-xl p-1.5 min-h-[90px] border transition-colors ${
+                    className={`min-h-[90px] rounded-xl border p-1.5 transition-colors ${
                       today
                         ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-900/10'
                         : 'border-[var(--border)] bg-[var(--secondary)]'
                     }`}
                   >
-                    <p className={`text-center text-xs font-bold mb-1 ${
-                      today ? 'text-brand-600 dark:text-brand-400' : ''
-                    }`}>
+                    <p
+                      className={`mb-1 text-center text-xs font-bold ${
+                        today ? 'text-brand-600 dark:text-brand-400' : ''
+                      }`}
+                    >
                       {date.getDate()}
                     </p>
                     {dayJobs.slice(0, 3).map((job) => (
                       <div
                         key={job.id}
-                        className={`mb-0.5 rounded-lg px-1 py-0.5 text-[7px] font-medium truncate ${
+                        className={`mb-0.5 truncate rounded-lg px-1 py-0.5 text-[7px] font-medium ${
                           job.priority === 'urgent'
-                            ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                            ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                             : job.priority === 'high'
-                            ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
-                            : 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
+                              ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300'
+                              : 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300'
                         }`}
                         title={job.title}
                       >
-                        <CategoryIcon category={job.category} className="h-2.5 w-2.5 inline-block me-0.5" />
+                        <CategoryIcon
+                          category={job.category}
+                          className="me-0.5 inline-block h-2.5 w-2.5"
+                        />
                         {getBuildingById(job.buildingId)?.name?.split(' ').slice(0, 2).join(' ')}
                       </div>
                     ))}
                     {dayJobs.length > 3 && (
-                      <p className="text-center text-[7px] text-[var(--muted-foreground)]">+{dayJobs.length - 3}</p>
+                      <p className="text-center text-[7px] text-[var(--muted-foreground)]">
+                        +{dayJobs.length - 3}
+                      </p>
                     )}
                   </div>
                 );
@@ -1333,7 +1565,10 @@ export default function ProviderDashboardPage() {
           </motion.div>
 
           {/* Today's Jobs Detail */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-3 text-sm font-bold">مهام اليوم</h3>
             {(() => {
               const todayJobs = getJobsForDate(new Date());
@@ -1350,20 +1585,30 @@ export default function ProviderDashboardPage() {
                     const building = getBuildingById(job.buildingId);
                     const status = getEffectiveStatus(job);
                     return (
-                      <div key={job.id} className="flex items-center gap-3 rounded-xl bg-[var(--secondary)] p-3 min-h-[48px]">
-                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${categoryBgColors[job.category] || categoryBgColors.general}`}>
+                      <div
+                        key={job.id}
+                        className="flex min-h-[48px] items-center gap-3 rounded-xl bg-[var(--secondary)] p-3"
+                      >
+                        <div
+                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${categoryBgColors[job.category] || categoryBgColors.general}`}
+                        >
                           <CategoryIcon category={job.category} className="h-5 w-5" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-xs font-bold">{building?.name}</p>
                           <p className="text-[10px] text-[var(--muted-foreground)]">{job.title}</p>
                         </div>
-                        <span className={`text-[9px] rounded-full px-2 py-0.5 font-medium ${
-                          status === 'completed' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' :
-                          status === 'working' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' :
-                          'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
-                        }`}>
-                          {PROGRESS_STEPS.find((s) => s.key === status)?.label || statusLabels[job.status]}
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[9px] font-medium ${
+                            status === 'completed'
+                              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                              : status === 'working'
+                                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                                : 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300'
+                          }`}
+                        >
+                          {PROGRESS_STEPS.find((s) => s.key === status)?.label ||
+                            statusLabels[job.status]}
                         </span>
                       </div>
                     );
@@ -1379,19 +1624,58 @@ export default function ProviderDashboardPage() {
       {activeTab === 'profile' && (
         <>
           {/* Profile Details */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-4 text-sm font-bold">بيانات المزود</h3>
             <div className="space-y-3">
               {[
-                { icon: Wrench, label: 'التخصص', value: provider.specialty, color: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' },
-                { icon: Star, label: 'التقييم', value: `${provider.rating} / ٥`, color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' },
-                { icon: Clock, label: 'وقت الاستجابة', value: provider.responseTime, color: 'bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400' },
-                { icon: MapPin, label: 'منطقة الخدمة', value: provider.city, color: 'bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400' },
-                { icon: BadgeCheck, label: 'رقم السجل', value: provider.licenseNumber, color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' },
-                { icon: Phone, label: 'الهاتف', value: provider.phone, color: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' },
+                {
+                  icon: Wrench,
+                  label: 'التخصص',
+                  value: provider.specialty,
+                  color: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400',
+                },
+                {
+                  icon: Star,
+                  label: 'التقييم',
+                  value: `${provider.rating} / ٥`,
+                  color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400',
+                },
+                {
+                  icon: Clock,
+                  label: 'وقت الاستجابة',
+                  value: provider.responseTime,
+                  color: 'bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400',
+                },
+                {
+                  icon: MapPin,
+                  label: 'منطقة الخدمة',
+                  value: provider.city,
+                  color: 'bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400',
+                },
+                {
+                  icon: BadgeCheck,
+                  label: 'رقم السجل',
+                  value: provider.licenseNumber,
+                  color:
+                    'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',
+                },
+                {
+                  icon: Phone,
+                  label: 'الهاتف',
+                  value: provider.phone,
+                  color: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+                },
               ].map(({ icon: Icon, label, value, color }) => (
-                <div key={label} className="flex items-center gap-3 rounded-xl bg-[var(--secondary)] p-3 min-h-[48px]">
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${color}`}>
+                <div
+                  key={label}
+                  className="flex min-h-[48px] items-center gap-3 rounded-xl bg-[var(--secondary)] p-3"
+                >
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${color}`}
+                  >
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>
@@ -1404,7 +1688,10 @@ export default function ProviderDashboardPage() {
           </motion.div>
 
           {/* Performance Stats */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-4 text-sm font-bold">الأداء</h3>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-[var(--secondary)] p-4 text-center">
@@ -1427,9 +1714,12 @@ export default function ProviderDashboardPage() {
           </motion.div>
 
           {/* Rating Stars Visual */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-soft">
+          <motion.div
+            variants={itemVariants}
+            className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
+          >
             <h3 className="mb-3 text-sm font-bold">التقييم العام</h3>
-            <div className="flex items-center justify-center gap-1 mb-3">
+            <div className="mb-3 flex items-center justify-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
@@ -1438,7 +1728,9 @@ export default function ProviderDashboardPage() {
               ))}
             </div>
             <p className="text-center text-2xl font-bold">{avgRating}</p>
-            <p className="text-center text-xs text-[var(--muted-foreground)]">من ٥ — بناءً على {provider.completedJobs} مهمة</p>
+            <p className="text-center text-xs text-[var(--muted-foreground)]">
+              من ٥ — بناءً على {provider.completedJobs} مهمة
+            </p>
           </motion.div>
         </>
       )}

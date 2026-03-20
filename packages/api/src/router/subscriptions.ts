@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { router, publicProcedure, officeProcedure } from '../trpc';
-import { subscriptionPlans, offices } from '@faseel/db';
+import { subscriptionPlans, subscriptions, offices } from '@faseel/db';
 import {
   createCheckoutSession,
   createBillingPortalSession,
@@ -70,6 +70,59 @@ export const subscriptionsRouter = router({
         });
       }
     }),
+
+  /**
+   * Get current subscription for the authenticated user's office.
+   * Returns null if no subscription exists.
+   * Trial subscriptions have stripeSubscriptionId = null.
+   */
+  getCurrent: officeProcedure.query(async ({ ctx }) => {
+    if (!ctx.user.officeId) {
+      return null;
+    }
+
+    const [sub] = await ctx.db
+      .select({
+        id: subscriptions.id,
+        status: subscriptions.status,
+        stripeSubscriptionId: subscriptions.stripeSubscriptionId,
+        currentPeriodStart: subscriptions.currentPeriodStart,
+        currentPeriodEnd: subscriptions.currentPeriodEnd,
+        cancelAtPeriodEnd: subscriptions.cancelAtPeriodEnd,
+        planId: subscriptions.planId,
+      })
+      .from(subscriptions)
+      .where(and(eq(subscriptions.officeId, ctx.user.officeId), eq(subscriptions.status, 'ACTIVE')))
+      .limit(1);
+
+    if (!sub) return null;
+
+    // Get plan details
+    const [plan] = await ctx.db
+      .select({
+        nameAr: subscriptionPlans.nameAr,
+        nameEn: subscriptionPlans.nameEn,
+        maxBuildings: subscriptionPlans.maxBuildings,
+        maxUnits: subscriptionPlans.maxUnits,
+        maxAdmins: subscriptionPlans.maxAdmins,
+        priceSar: subscriptionPlans.priceSar,
+      })
+      .from(subscriptionPlans)
+      .where(eq(subscriptionPlans.id, sub.planId))
+      .limit(1);
+
+    const isTrial = !sub.stripeSubscriptionId;
+    const daysRemaining = sub.currentPeriodEnd
+      ? Math.ceil((new Date(sub.currentPeriodEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+      : null;
+
+    return {
+      ...sub,
+      isTrial,
+      daysRemaining,
+      plan: plan ?? null,
+    };
+  }),
 
   getUsage: officeProcedure
     .input(

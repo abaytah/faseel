@@ -24,6 +24,7 @@ import {
   ejarContractStatusColors,
   office,
 } from '@/lib/mock-data';
+// Note: No contract API exists yet. This page uses mock data as placeholder.
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
 import { useToast } from '@/components/ui/toast-provider';
 
@@ -60,14 +61,17 @@ export default function OwnerContractsPage() {
   }
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-4"
+    >
       {/* Page Header */}
       <motion.div variants={itemVariants} className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-bold">العقود</h1>
-          <p className="text-xs text-[var(--muted-foreground)]">
-            عقود إيجار الوحدات المملوكة
-          </p>
+          <p className="text-xs text-[var(--muted-foreground)]">عقود إيجار الوحدات المملوكة</p>
         </div>
         <WhatsAppButton
           phone={office.phone.replace(/-/g, '')}
@@ -79,7 +83,10 @@ export default function OwnerContractsPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft">
+        <motion.div
+          variants={itemVariants}
+          className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+        >
           <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50 dark:bg-sky-900/20">
             <FileText className="h-4 w-4 text-sky-500" />
           </div>
@@ -87,7 +94,10 @@ export default function OwnerContractsPage() {
           <p className="text-xs text-[var(--muted-foreground)]">إجمالي العقود</p>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft">
+        <motion.div
+          variants={itemVariants}
+          className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+        >
           <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
           </div>
@@ -95,7 +105,10 @@ export default function OwnerContractsPage() {
           <p className="text-xs text-[var(--muted-foreground)]">ساري</p>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft">
+        <motion.div
+          variants={itemVariants}
+          className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+        >
           <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-900/20">
             <CalendarClock className="h-4 w-4 text-amber-500" />
           </div>
@@ -103,7 +116,10 @@ export default function OwnerContractsPage() {
           <p className="text-xs text-[var(--muted-foreground)]">ينتهي قريباً</p>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-soft">
+        <motion.div
+          variants={itemVariants}
+          className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+        >
           <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 dark:bg-red-900/20">
             <XCircle className="h-4 w-4 text-red-500" />
           </div>
@@ -116,7 +132,7 @@ export default function OwnerContractsPage() {
       {expiringSoon > 0 && (
         <motion.div
           variants={itemVariants}
-          className="flex items-center gap-2 rounded-2xl border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-3 text-xs"
+          className="flex items-center gap-2 rounded-2xl border-2 border-amber-300 bg-amber-50 p-3 text-xs dark:border-amber-700 dark:bg-amber-900/20"
         >
           <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
           <span className="text-amber-800 dark:text-amber-300">
@@ -137,16 +153,16 @@ export default function OwnerContractsPage() {
             <motion.div
               key={contract.id}
               variants={itemVariants}
-              className={`rounded-2xl border p-4 shadow-soft ${
+              className={`shadow-soft rounded-2xl border p-4 ${
                 contract.status === 'expiring_soon'
-                  ? 'border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-900/10'
+                  ? 'border-amber-300 bg-amber-50/50 dark:border-amber-700 dark:bg-amber-900/10'
                   : contract.status === 'expired'
-                  ? 'border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-900/10'
-                  : 'border-[var(--border)] bg-[var(--card)]'
+                    ? 'border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-900/10'
+                    : 'border-[var(--border)] bg-[var(--card)]'
               }`}
             >
               {/* Header */}
-              <div className="flex items-start justify-between mb-3">
+              <div className="mb-3 flex items-start justify-between">
                 <div>
                   <p className="text-sm font-bold">{unit?.unitNumber}</p>
                   <p className="text-xs text-[var(--muted-foreground)]">{building?.name}</p>
@@ -159,7 +175,7 @@ export default function OwnerContractsPage() {
               </div>
 
               {/* Contract Details */}
-              <div className="grid grid-cols-2 gap-3 text-[10px] text-[var(--muted-foreground)] mb-3">
+              <div className="mb-3 grid grid-cols-2 gap-3 text-[10px] text-[var(--muted-foreground)]">
                 <div className="flex items-center gap-1">
                   <Users className="h-2.5 w-2.5" />
                   <span>{tenant?.name.split(' ').slice(0, 3).join(' ')}</span>
@@ -182,9 +198,13 @@ export default function OwnerContractsPage() {
 
               {/* Date range bar */}
               <div className="mb-3 rounded-lg bg-[var(--secondary)] p-2">
-                <div className="flex items-center justify-between text-[10px] mb-1">
-                  <span className="text-[var(--muted-foreground)]">{formatDate(contract.startDate)}</span>
-                  <span className="text-[var(--muted-foreground)]">{formatDate(contract.endDate)}</span>
+                <div className="mb-1 flex items-center justify-between text-[10px]">
+                  <span className="text-[var(--muted-foreground)]">
+                    {formatDate(contract.startDate)}
+                  </span>
+                  <span className="text-[var(--muted-foreground)]">
+                    {formatDate(contract.endDate)}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-[10px]">
                   <Clock className="h-2.5 w-2.5 text-[var(--muted-foreground)]" />
@@ -193,8 +213,8 @@ export default function OwnerContractsPage() {
                       daysRemaining <= 0
                         ? 'text-red-600 dark:text-red-400'
                         : daysRemaining <= 60
-                        ? 'text-amber-600 dark:text-amber-400'
-                        : 'text-emerald-600 dark:text-emerald-400'
+                          ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-emerald-600 dark:text-emerald-400'
                     }`}
                   >
                     {daysRemaining <= 0
@@ -217,8 +237,10 @@ export default function OwnerContractsPage() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => handleRenewalRequest(contract.ejarNumber, unit?.unitNumber || '')}
-                    className="flex items-center gap-1.5 rounded-xl bg-brand-500 px-4 py-2 text-xs font-medium text-white"
+                    onClick={() =>
+                      handleRenewalRequest(contract.ejarNumber, unit?.unitNumber || '')
+                    }
+                    className="bg-brand-500 flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-medium text-white"
                   >
                     <RefreshCw className="h-3 w-3" />
                     طلب تجديد
