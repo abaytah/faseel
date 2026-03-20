@@ -9,6 +9,7 @@ import {
   refreshTokens,
   subscriptions,
   subscriptionPlans,
+  offices,
 } from '@faseel/db';
 import { createSmsService } from '../services/sms';
 import { generateAccessToken, generateRefreshToken, hashToken } from '../services/jwt';
@@ -204,21 +205,46 @@ export const authRouter = router({
 
         existingUser = newUser!;
         needsOnboarding = true;
-
-        // Give default tenant role
-        await ctx.db.insert(userRoles).values({
-          userId: existingUser.id,
-          role: 'TENANT',
-        });
+        // No auto-assigned roles; user picks roles during onboarding
       }
 
-      // Get user roles
-      const roles = await ctx.db
+      // Get user roles with office names
+      const userRoleRows = await ctx.db
         .select()
         .from(userRoles)
         .where(eq(userRoles.userId, existingUser.id));
 
-      const primaryRole = roles[0];
+      // Enrich roles with office names where applicable
+      const enrichedRoles: Array<{
+        role: string;
+        officeId: string | null;
+        officeName: string | null;
+      }> = [];
+
+      for (const r of userRoleRows) {
+        let officeName: string | null = null;
+        if (r.officeId) {
+          const [office] = await ctx.db
+            .select({ nameAr: offices.nameAr })
+            .from(offices)
+            .where(eq(offices.id, r.officeId))
+            .limit(1);
+          officeName = office?.nameAr ?? null;
+        }
+        enrichedRoles.push({
+          role: r.role,
+          officeId: r.officeId,
+          officeName,
+        });
+      }
+
+      // For existing users with roles, mark onboarding as complete
+      if (!needsOnboarding && userRoleRows.length === 0) {
+        // Existing user record but no roles (edge case: cleanup)
+        needsOnboarding = true;
+      }
+
+      const primaryRole = userRoleRows[0];
       const roleName = mapRoleToSession(primaryRole?.role ?? 'TENANT');
 
       // If user is OFFICE_ADMIN with an officeId, ensure trial subscription exists
@@ -254,10 +280,7 @@ export const authRouter = router({
           nameAr: existingUser.nameAr,
           nameEn: existingUser.nameEn,
         },
-        roles: roles.map((r) => ({
-          role: r.role,
-          officeId: r.officeId,
-        })),
+        roles: enrichedRoles,
         needsOnboarding,
       };
     }),
