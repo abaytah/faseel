@@ -10,6 +10,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@faseel/api": "workspace:*",
+    "@tanstack/react-query": "^5.64.0",
+    "@trpc/client": "^11.1.0",
+    "@trpc/react-query": "^11.1.0",
+    "@trpc/server": "^11.1.0",
     "@base-ui/react": "^1.2.0",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.15",
