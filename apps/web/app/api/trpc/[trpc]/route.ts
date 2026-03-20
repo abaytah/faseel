@@ -1,6 +1,8 @@
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { appRouter, createContext } from '@faseel/api';
 
+export const dynamic = 'force-dynamic';
+
 function handler(req: Request) {
   return fetchRequestHandler({
     endpoint: '/api/trpc',

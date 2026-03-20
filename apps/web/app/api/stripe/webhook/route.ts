@@ -1,13 +1,21 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
-import { eq } from 'drizzle-orm';
-import { db } from '@faseel/db';
-import { subscriptions, invoices, offices } from '@faseel/db';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '');
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? '';
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!stripeSecretKey || !webhookSecret) {
+    return NextResponse.json({ error: 'Stripe is not configured yet' }, { status: 503 });
+  }
+
+  // Lazy imports to avoid build-time DB connection
+  const Stripe = (await import('stripe')).default;
+  const { eq } = await import('drizzle-orm');
+  const { db, subscriptions, invoices, offices } = await import('@faseel/db');
+
+  const stripe = new Stripe(stripeSecretKey);
   const body = await req.text();
   const signature = req.headers.get('stripe-signature');
 
@@ -15,7 +23,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 });
   }
 
-  let event: Stripe.Event;
+  let event: import('stripe').Stripe.Event;
 
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
@@ -38,7 +46,6 @@ export async function POST(req: Request) {
           break;
         }
 
-        // Link Stripe customer to office
         const customerId =
           typeof session.customer === 'string'
             ? session.customer
@@ -51,7 +58,6 @@ export async function POST(req: Request) {
             .where(eq(offices.id, officeId));
         }
 
-        // Get subscription details
         const stripeSubId =
           typeof session.subscription === 'string'
             ? session.subscription
@@ -72,7 +78,6 @@ export async function POST(req: Request) {
             currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
           });
         }
-
         break;
       }
 
@@ -104,7 +109,6 @@ export async function POST(req: Request) {
             .set({ status: 'ACTIVE' })
             .where(eq(subscriptions.id, sub.id));
         }
-
         break;
       }
 
@@ -135,7 +139,6 @@ export async function POST(req: Request) {
             .set({ status: 'PAST_DUE' })
             .where(eq(subscriptions.id, sub.id));
         }
-
         break;
       }
 
@@ -172,7 +175,6 @@ export async function POST(req: Request) {
             })
             .where(eq(subscriptions.id, sub.id));
         }
-
         break;
       }
 
@@ -183,7 +185,6 @@ export async function POST(req: Request) {
           .update(subscriptions)
           .set({ status: 'CANCELLED' })
           .where(eq(subscriptions.stripeSubscriptionId, stripeSub.id));
-
         break;
       }
 

@@ -1,11 +1,14 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle, type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
 export * from './schema';
 
-const connectionString = process.env.DATABASE_URL!;
+type DB = PostgresJsDatabase<typeof schema>;
 
-const client = postgres(connectionString);
-export const db = drizzle(client, { schema });
-export type Database = typeof db;
+const connectionString = process.env.DATABASE_URL ?? '';
+
+const client = connectionString ? postgres(connectionString) : null;
+export const db = client ? drizzle(client, { schema }) : (null as unknown as DB);
+
+export type Database = DB;

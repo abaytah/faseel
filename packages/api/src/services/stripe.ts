@@ -3,7 +3,13 @@ import { eq, and, count } from 'drizzle-orm';
 import type { Database } from '@faseel/db';
 import { offices, subscriptions, subscriptionPlans, buildings, units } from '@faseel/db';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '');
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error('STRIPE_SECRET_KEY is not configured');
+  }
+  return new Stripe(key);
+}
 
 export async function createCheckoutSession(
   db: Database,
@@ -31,7 +37,7 @@ export async function createCheckoutSession(
   let customerId = office.stripeCustomerId;
 
   if (!customerId) {
-    const customer = await stripe.customers.create({
+    const customer = await getStripe().customers.create({
       name: office.nameEn ?? office.nameAr,
       email: office.email ?? undefined,
       phone: office.phone ?? undefined,
@@ -42,7 +48,7 @@ export async function createCheckoutSession(
     await db.update(offices).set({ stripeCustomerId: customerId }).where(eq(offices.id, officeId));
   }
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer: customerId,
     mode: 'subscription',
     line_items: [{ price: plan.stripePriceId, quantity: 1 }],
@@ -58,7 +64,7 @@ export async function createBillingPortalSession(
   stripeCustomerId: string,
   returnUrl: string,
 ): Promise<string> {
-  const session = await stripe.billingPortal.sessions.create({
+  const session = await getStripe().billingPortal.sessions.create({
     customer: stripeCustomerId,
     return_url: returnUrl,
   });
@@ -115,4 +121,4 @@ export async function getSubscriptionUsage(
   };
 }
 
-export { stripe };
+export { getStripe };

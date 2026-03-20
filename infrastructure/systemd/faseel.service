@@ -11,7 +11,7 @@ ExecStart=/usr/bin/node .next/standalone/server.js
 Restart=on-failure
 RestartSec=5
 Environment=NODE_ENV=production
-Environment=PORT=3000
+Environment=PORT=3001
 EnvironmentFile=/root/faseel/.env
 
 # Resource limits

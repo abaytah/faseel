@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { Suspense, useState, useRef, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Home, RotateCw, Loader2 } from 'lucide-react';
@@ -9,6 +9,20 @@ import { trpc } from '@/lib/trpc';
 import { setTokens, setUser, getDashboardPath } from '@/lib/auth';
 
 export default function VerifyPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader2 className="text-brand-500 h-8 w-8 animate-spin" />
+        </div>
+      }
+    >
+      <VerifyPageContent />
+    </Suspense>
+  );
+}
+
+function VerifyPageContent() {
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
   const [countdown, setCountdown] = useState(60);
   const [error, setError] = useState('');

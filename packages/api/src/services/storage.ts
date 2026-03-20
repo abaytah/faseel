@@ -125,9 +125,7 @@ export async function getPresignedUploadUrl(
   // Using the @aws-sdk/s3-request-presigner approach
   try {
     // Dynamic imports: @aws-sdk packages are optional production dependencies
-    // @ts-expect-error -- Optional dependency, installed only when S3 is configured
     const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3');
-    // @ts-expect-error -- Optional dependency
     const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
 
     const client = new S3Client({
@@ -176,9 +174,7 @@ export async function getPresignedDownloadUrl(key: string): Promise<PresignedDow
   }
 
   try {
-    // @ts-expect-error -- Optional dependency, installed only when S3 is configured
     const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
-    // @ts-expect-error -- Optional dependency
     const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
 
     const client = new S3Client({

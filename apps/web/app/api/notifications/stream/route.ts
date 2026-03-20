@@ -1,4 +1,6 @@
 import type { NextRequest } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'faseel-dev-secret';
