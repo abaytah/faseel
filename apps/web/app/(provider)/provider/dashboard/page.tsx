@@ -168,6 +168,28 @@ export default function ProviderDashboardPage() {
       animate="visible"
       className="space-y-4"
     >
+      {/* Onboarding tip when zero jobs */}
+      {allJobs.length === 0 && (
+        <motion.div
+          variants={itemVariants}
+          className="shadow-soft rounded-2xl border border-purple-200 bg-purple-50 p-5 dark:border-purple-800 dark:bg-purple-950/30"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-purple-100 dark:bg-purple-900/40">
+              <Wrench className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+            </div>
+            <div>
+              <h3 className="mb-1 text-sm font-bold text-purple-900 dark:text-purple-100">
+                لا توجد مهام حالياً
+              </h3>
+              <p className="text-xs text-purple-700 dark:text-purple-400">
+                ستظهر هنا عندما يتم تعيينك لبلاغ صيانة. ستتلقى إشعاراً فور وصول مهمة جديدة.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Provider Header */}
       <motion.div
         variants={itemVariants}

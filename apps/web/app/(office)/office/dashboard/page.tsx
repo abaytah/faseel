@@ -219,6 +219,77 @@ export default function OfficeDashboardPage() {
       className="space-y-6"
     >
       {/* ============================================================ */}
+      {/* ONBOARDING: Welcome card when zero buildings                 */}
+      {/* ============================================================ */}
+      {totalBuildings === 0 && (
+        <motion.div
+          variants={itemVariants}
+          className="shadow-soft overflow-hidden rounded-2xl border border-emerald-200 bg-gradient-to-l from-emerald-50 to-teal-50 p-6 dark:border-emerald-800 dark:from-emerald-950/30 dark:to-teal-950/30"
+        >
+          <div className="mb-4 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/40">
+              <Building2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-emerald-900 dark:text-emerald-100">
+                مرحباً بك في فسيل!
+              </h3>
+              <p className="text-xs text-emerald-700 dark:text-emerald-400">
+                ابدأ بإعداد منصتك في 3 خطوات بسيطة
+              </p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 rounded-xl bg-white/60 p-3 dark:bg-gray-900/40">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-sm font-bold text-white">
+                ١
+              </div>
+              <div>
+                <p className="text-sm font-medium text-emerald-900 dark:text-emerald-100">
+                  أضف مبناك الأول
+                </p>
+                <p className="text-[10px] text-emerald-600 dark:text-emerald-400">
+                  أدخل بيانات المبنى والعنوان
+                </p>
+              </div>
+              <Link
+                href="/office/buildings/new"
+                className="ms-auto rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-600"
+              >
+                إضافة
+              </Link>
+            </div>
+            <div className="flex items-center gap-3 rounded-xl bg-white/40 p-3 dark:bg-gray-900/20">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-300 text-sm font-bold text-white dark:bg-gray-600">
+                ٢
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  أضف الوحدات والمستأجرين
+                </p>
+                <p className="text-[10px] text-gray-400 dark:text-gray-500">
+                  حدد الشقق وأضف بيانات المستأجرين
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-xl bg-white/40 p-3 dark:bg-gray-900/20">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-300 text-sm font-bold text-white dark:bg-gray-600">
+                ٣
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  ابدأ استقبال بلاغات الصيانة
+                </p>
+                <p className="text-[10px] text-gray-400 dark:text-gray-500">
+                  المستأجرون يمكنهم الإبلاغ عن المشاكل مباشرة
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ============================================================ */}
       {/* SECTION 1: KPI Cards                                         */}
       {/* ============================================================ */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">

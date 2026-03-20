@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { IBM_Plex_Sans_Arabic } from 'next/font/google';
 import { Providers } from '@/components/providers';
 import { AnalyticsProvider } from '@/components/analytics-provider';
+import { AIAssistant } from '@/components/ai-assistant';
 import './globals.css';
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
@@ -25,7 +26,10 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className={`${ibmPlexSansArabic.variable} font-sans`}>
         <Providers>
-          <AnalyticsProvider>{children}</AnalyticsProvider>
+          <AnalyticsProvider>
+            {children}
+            <AIAssistant />
+          </AnalyticsProvider>
         </Providers>
       </body>
     </html>

@@ -3,6 +3,7 @@
 const ACCESS_TOKEN_KEY = 'faseel-access-token';
 const REFRESH_TOKEN_KEY = 'faseel-refresh-token';
 const USER_KEY = 'faseel-user';
+const ROLES_KEY = 'faseel-roles';
 
 export interface StoredUser {
   id: string;
@@ -47,11 +48,31 @@ export function getUser(): StoredUser | null {
   }
 }
 
+export function setRoles(roles: StoredRole[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(ROLES_KEY, JSON.stringify(roles));
+}
+
+export function getRoles(): StoredRole[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(ROLES_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function getCurrentRole(): string | null {
+  return getUserRole();
+}
+
 export function clearTokens(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  localStorage.removeItem(ROLES_KEY);
 }
 
 export function isAuthenticated(): boolean {

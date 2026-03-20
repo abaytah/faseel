@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Home, RotateCw, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { trpc } from '@/lib/trpc';
-import { setTokens, setUser, getDashboardPath } from '@/lib/auth';
+import { setTokens, setUser, setRoles, getDashboardPath } from '@/lib/auth';
 
 export default function VerifyPage() {
   return (
@@ -52,8 +52,21 @@ function VerifyPageContent() {
     onSuccess: (data) => {
       setTokens(data.accessToken, data.refreshToken);
       setUser(data.user);
+      setRoles(data.roles);
 
-      // Determine redirect based on primary role
+      // 1. If new user, go to onboarding
+      if (data.needsOnboarding) {
+        router.push('/onboarding');
+        return;
+      }
+
+      // 2. If multiple roles, go to role picker
+      if (data.roles.length > 1) {
+        router.push('/role-select');
+        return;
+      }
+
+      // 3. Single role, go directly to dashboard
       const primaryRole = data.roles[0]?.role ?? 'TENANT';
       let sessionRole: string;
       switch (primaryRole) {

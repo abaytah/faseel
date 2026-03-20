@@ -5,7 +5,7 @@ import { AuthGuard } from '@/components/auth-guard';
 import { usePathname } from 'next/navigation';
 
 const pageTitles: Record<string, { title: string; subtitle?: string }> = {
-  '/tenant/dashboard': { title: 'الرئيسية', subtitle: 'مرحباً خالد' },
+  '/tenant/dashboard': { title: 'الرئيسية', subtitle: 'مرحباً' },
   '/tenant/requests/new': { title: 'بلّغ عن مشكلة', subtitle: 'أخبرنا بالمشكلة وسنتولى الباقي' },
   '/tenant/requests': { title: 'طلباتي', subtitle: 'جميع طلبات الصيانة' },
   '/tenant/contract': { title: 'تفاصيل العقد', subtitle: 'عقد الإيجار الخاص بك' },

@@ -939,6 +939,12 @@ export default function LandingPage() {
               التسعير
             </a>
             <a
+              href="/resources"
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+            >
+              الموارد
+            </a>
+            <a
               href="#portals"
               className="rounded-xl bg-gradient-to-l from-emerald-500 to-teal-600 px-5 py-2 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-emerald-500/25"
             >
@@ -978,6 +984,13 @@ export default function LandingPage() {
                   className="text-sm font-medium text-gray-600"
                 >
                   التسعير
+                </a>
+                <a
+                  href="/resources"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-medium text-gray-600"
+                >
+                  الموارد
                 </a>
                 <a
                   href="#portals"
@@ -1931,14 +1944,14 @@ export default function LandingPage() {
               {
                 value: 891,
                 suffix: 'M$',
-                label: 'سوق PropTech السعودي',
+                label: 'سوق التقنية العقارية السعودي',
                 sub: 'متوقع يوصل ٢.٥ مليار بحلول ٢٠٣٢',
               },
               {
                 value: 16,
                 suffix: '٪',
                 label: 'معدل النمو السنوي',
-                sub: 'CAGR لسوق PropTech — من الأسرع عالمياً',
+                sub: 'CAGR لسوق التقنية العقارية, من الأسرع عالمياً',
               },
               {
                 value: 15810,

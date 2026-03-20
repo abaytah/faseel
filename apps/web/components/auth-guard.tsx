@@ -2,17 +2,47 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAuthenticated, getUserRole } from '@/lib/auth';
+import { isAuthenticated, getUserRole, getRoles, setTokens, getDashboardPath } from '@/lib/auth';
+import { trpc } from '@/lib/trpc';
 
 interface AuthGuardProps {
   children: React.ReactNode;
   allowedRole: string;
 }
 
+function mapDbRoleToSession(dbRole: string): string {
+  switch (dbRole) {
+    case 'OFFICE_ADMIN':
+      return 'office';
+    case 'OWNER':
+      return 'owner';
+    case 'TENANT':
+      return 'tenant';
+    case 'SERVICE_PROVIDER':
+      return 'provider';
+    default:
+      return 'tenant';
+  }
+}
+
 export function AuthGuard({ children, allowedRole }: AuthGuardProps) {
   const router = useRouter();
   const [checked, setChecked] = useState(false);
   const [authorized, setAuthorized] = useState(false);
+  const [needsSwitch, setNeedsSwitch] = useState(false);
+
+  const switchRole = trpc.auth.switchRole.useMutation({
+    onSuccess: (data) => {
+      setTokens(data.accessToken, localStorage.getItem('faseel-refresh-token') ?? '');
+      setAuthorized(true);
+      setChecked(true);
+      setNeedsSwitch(false);
+    },
+    onError: () => {
+      // If switch fails, redirect to role-select
+      router.replace('/role-select');
+    },
+  });
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -21,14 +51,31 @@ export function AuthGuard({ children, allowedRole }: AuthGuardProps) {
     }
 
     const role = getUserRole();
-    if (role !== allowedRole) {
-      router.replace('/login');
+    if (role === allowedRole) {
+      setAuthorized(true);
+      setChecked(true);
       return;
     }
 
-    setAuthorized(true);
-    setChecked(true);
-  }, [router, allowedRole]);
+    // Role mismatch: check if user has this role stored
+    const storedRoles = getRoles();
+    const hasRole = storedRoles.some((r) => mapDbRoleToSession(r.role) === allowedRole);
+
+    if (hasRole) {
+      // User has the role, auto-switch
+      const matchingRole = storedRoles.find((r) => mapDbRoleToSession(r.role) === allowedRole);
+      if (matchingRole && !needsSwitch) {
+        setNeedsSwitch(true);
+        switchRole.mutate({
+          role: allowedRole as 'tenant' | 'office' | 'provider' | 'owner',
+          officeId: matchingRole.officeId ?? undefined,
+        });
+      }
+    } else {
+      // User does not have this role, go to role-select
+      router.replace('/role-select');
+    }
+  }, [router, allowedRole, needsSwitch]);
 
   if (!checked || !authorized) {
     return (

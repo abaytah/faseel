@@ -8,6 +8,9 @@ import { notificationsRouter } from './notifications';
 import { announcementsRouter } from './announcements';
 import { uploadsRouter } from './uploads';
 import { healthRouter } from './health';
+import { profileRouter } from './profile';
+import { assistantRouter } from './assistant';
+import { resourcesRouter } from './resources';
 
 export const appRouter = router({
   auth: authRouter,
@@ -19,6 +22,9 @@ export const appRouter = router({
   announcements: announcementsRouter,
   uploads: uploadsRouter,
   health: healthRouter,
+  profile: profileRouter,
+  assistant: assistantRouter,
+  resources: resourcesRouter,
 });
 
 export type AppRouter = typeof appRouter;

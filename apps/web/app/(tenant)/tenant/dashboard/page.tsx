@@ -78,6 +78,35 @@ export default function TenantDashboardPage() {
       animate="visible"
       className="space-y-4"
     >
+      {/* Onboarding tip when zero requests */}
+      {myRequests.length === 0 && !isLoading && (
+        <motion.div
+          variants={itemVariants}
+          className="shadow-soft rounded-2xl border border-sky-200 bg-sky-50 p-5 dark:border-sky-800 dark:bg-sky-950/30"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sky-100 dark:bg-sky-900/40">
+              <Wrench className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+            </div>
+            <div className="flex-1">
+              <h3 className="mb-1 text-sm font-bold text-sky-900 dark:text-sky-100">
+                لا توجد بلاغات حالياً
+              </h3>
+              <p className="mb-3 text-xs text-sky-700 dark:text-sky-400">
+                هل تواجه مشكلة في وحدتك؟ يمكنك الإبلاغ عنها بسهولة وسيتم التعامل معها بأسرع وقت.
+              </p>
+              <Link
+                href="/tenant/requests/new"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-sky-500 px-4 py-2 text-xs font-medium text-white hover:bg-sky-600"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                بلّغ الآن
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Quick Report FAB */}
       <motion.div variants={itemVariants}>
         <Link href="/tenant/requests/new">
