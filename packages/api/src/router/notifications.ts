@@ -1,10 +1,10 @@
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
+import { eq, and, desc, count } from 'drizzle-orm';
 import { router, protectedProcedure } from '../trpc';
+import { notifications } from '@faseel/db';
 
 export const notificationsRouter = router({
-  /**
-   * List notifications for the current user.
-   */
   list: protectedProcedure
     .input(
       z.object({
@@ -14,25 +14,42 @@ export const notificationsRouter = router({
       }),
     )
     .query(async ({ ctx, input }) => {
-      // TODO: Query notifications for ctx.user.id, optionally filter unread
-      void ctx.db;
-      void input;
+      const offset = (input.page - 1) * input.limit;
+
+      const conditions: ReturnType<typeof eq>[] = [eq(notifications.userId, ctx.user.id)];
+
+      if (input.unreadOnly) {
+        conditions.push(eq(notifications.isRead, false));
+      }
+
+      const whereClause = and(...conditions);
+
+      const items = await ctx.db
+        .select()
+        .from(notifications)
+        .where(whereClause)
+        .orderBy(desc(notifications.createdAt))
+        .limit(input.limit)
+        .offset(offset);
+
+      const [totalRow] = await ctx.db
+        .select({ value: count() })
+        .from(notifications)
+        .where(whereClause);
+
+      // Also get unread count for badge
+      const [unreadRow] = await ctx.db
+        .select({ value: count() })
+        .from(notifications)
+        .where(and(eq(notifications.userId, ctx.user.id), eq(notifications.isRead, false)));
+
       return {
-        items: [] as Array<{
-          id: string;
-          type: string;
-          title: string;
-          body: string;
-          read: boolean;
-          createdAt: Date;
-        }>,
-        total: 0,
+        items,
+        total: totalRow?.value ?? 0,
+        unreadCount: unreadRow?.value ?? 0,
       };
     }),
 
-  /**
-   * Mark a single notification as read.
-   */
   markRead: protectedProcedure
     .input(
       z.object({
@@ -40,18 +57,38 @@ export const notificationsRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // TODO: Update notification read status, verify ownership
-      void ctx.db;
-      void input;
+      // Verify notification belongs to user
+      const [notification] = await ctx.db
+        .select()
+        .from(notifications)
+        .where(and(eq(notifications.id, input.id), eq(notifications.userId, ctx.user.id)))
+        .limit(1);
+
+      if (!notification) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: JSON.stringify({
+            message: 'Notification not found.',
+            messageAr: 'الإشعار غير موجود.',
+            code: 'NOTIFICATION_NOT_FOUND',
+          }),
+        });
+      }
+
+      await ctx.db
+        .update(notifications)
+        .set({ isRead: true })
+        .where(eq(notifications.id, input.id));
+
       return { success: true };
     }),
 
-  /**
-   * Mark all notifications as read.
-   */
   markAllRead: protectedProcedure.mutation(async ({ ctx }) => {
-    // TODO: Bulk update all unread notifications for ctx.user.id
-    void ctx.db;
+    await ctx.db
+      .update(notifications)
+      .set({ isRead: true })
+      .where(and(eq(notifications.userId, ctx.user.id), eq(notifications.isRead, false)));
+
     return { success: true };
   }),
 });

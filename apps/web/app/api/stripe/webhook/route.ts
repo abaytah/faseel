@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { eq } from 'drizzle-orm';
+import { db } from '@faseel/db';
+import { subscriptions, invoices, offices } from '@faseel/db';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '');
-
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? '';
 
 export async function POST(req: Request) {
@@ -26,37 +28,166 @@ export async function POST(req: Request) {
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
-        // TODO: Activate subscription, link Stripe customer to office
-        const _session = event.data.object;
+        const session = event.data.object as unknown as Record<string, unknown>;
+        const metadata = session.metadata as Record<string, string> | undefined;
+        const officeId = metadata?.officeId;
+        const planId = metadata?.planId;
+
+        if (!officeId || !planId) {
+          console.error('Missing metadata in checkout session:', session.id);
+          break;
+        }
+
+        // Link Stripe customer to office
+        const customerId =
+          typeof session.customer === 'string'
+            ? session.customer
+            : (session.customer as { id: string } | null)?.id;
+
+        if (customerId) {
+          await db
+            .update(offices)
+            .set({ stripeCustomerId: customerId })
+            .where(eq(offices.id, officeId));
+        }
+
+        // Get subscription details
+        const stripeSubId =
+          typeof session.subscription === 'string'
+            ? session.subscription
+            : (session.subscription as { id: string } | null)?.id;
+
+        if (stripeSubId) {
+          const stripeSub = (await stripe.subscriptions.retrieve(stripeSubId)) as unknown as {
+            current_period_start: number;
+            current_period_end: number;
+          };
+
+          await db.insert(subscriptions).values({
+            officeId,
+            planId,
+            stripeSubscriptionId: stripeSubId,
+            status: 'ACTIVE',
+            currentPeriodStart: new Date(stripeSub.current_period_start * 1000),
+            currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
+          });
+        }
+
         break;
       }
 
       case 'invoice.paid': {
-        // TODO: Record payment, extend subscription period
-        const _invoice = event.data.object;
+        const invoice = event.data.object as unknown as Record<string, unknown>;
+        const subField = invoice.subscription;
+        const stripeSubId =
+          typeof subField === 'string' ? subField : (subField as { id: string } | null)?.id;
+
+        if (!stripeSubId) break;
+
+        const [sub] = await db
+          .select()
+          .from(subscriptions)
+          .where(eq(subscriptions.stripeSubscriptionId, stripeSubId))
+          .limit(1);
+
+        if (sub) {
+          await db.insert(invoices).values({
+            subscriptionId: sub.id,
+            stripeInvoiceId: invoice.id as string,
+            amountSar: (invoice.amount_paid as number) ?? 0,
+            status: 'PAID',
+            paidAt: new Date(),
+          });
+
+          await db
+            .update(subscriptions)
+            .set({ status: 'ACTIVE' })
+            .where(eq(subscriptions.id, sub.id));
+        }
+
         break;
       }
 
       case 'invoice.payment_failed': {
-        // TODO: Notify office of failed payment, mark subscription at risk
-        const _invoice = event.data.object;
+        const invoice = event.data.object as unknown as Record<string, unknown>;
+        const subField = invoice.subscription;
+        const stripeSubId =
+          typeof subField === 'string' ? subField : (subField as { id: string } | null)?.id;
+
+        if (!stripeSubId) break;
+
+        const [sub] = await db
+          .select()
+          .from(subscriptions)
+          .where(eq(subscriptions.stripeSubscriptionId, stripeSubId))
+          .limit(1);
+
+        if (sub) {
+          await db.insert(invoices).values({
+            subscriptionId: sub.id,
+            stripeInvoiceId: invoice.id as string,
+            amountSar: (invoice.amount_due as number) ?? 0,
+            status: 'OVERDUE',
+          });
+
+          await db
+            .update(subscriptions)
+            .set({ status: 'PAST_DUE' })
+            .where(eq(subscriptions.id, sub.id));
+        }
+
         break;
       }
 
       case 'customer.subscription.updated': {
-        // TODO: Sync plan changes (upgrade/downgrade)
-        const _subscription = event.data.object;
+        const stripeSub = event.data.object as unknown as {
+          id: string;
+          status: string;
+          current_period_start: number;
+          current_period_end: number;
+          cancel_at_period_end: boolean;
+        };
+
+        const [sub] = await db
+          .select()
+          .from(subscriptions)
+          .where(eq(subscriptions.stripeSubscriptionId, stripeSub.id))
+          .limit(1);
+
+        if (sub) {
+          const statusMap: Record<string, 'ACTIVE' | 'PAST_DUE' | 'CANCELLED' | 'TRIALING'> = {
+            active: 'ACTIVE',
+            past_due: 'PAST_DUE',
+            canceled: 'CANCELLED',
+            trialing: 'TRIALING',
+          };
+
+          await db
+            .update(subscriptions)
+            .set({
+              status: statusMap[stripeSub.status] ?? 'ACTIVE',
+              currentPeriodStart: new Date(stripeSub.current_period_start * 1000),
+              currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
+              cancelAtPeriodEnd: stripeSub.cancel_at_period_end,
+            })
+            .where(eq(subscriptions.id, sub.id));
+        }
+
         break;
       }
 
       case 'customer.subscription.deleted': {
-        // TODO: Deactivate subscription, restrict access
-        const _subscription = event.data.object;
+        const stripeSub = event.data.object as unknown as { id: string };
+
+        await db
+          .update(subscriptions)
+          .set({ status: 'CANCELLED' })
+          .where(eq(subscriptions.stripeSubscriptionId, stripeSub.id));
+
         break;
       }
 
       default:
-        // Unhandled event type, log for visibility
         console.log(`Unhandled Stripe event type: ${event.type}`);
     }
   } catch (err) {
