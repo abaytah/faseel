@@ -1,0 +1,94 @@
+{
+  "common": {
+    "appName": "بروبتك ١",
+    "loading": "جاري التحميل...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "search": "بحث",
+    "filter": "تصفية",
+    "noResults": "لا توجد نتائج",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "next": "التالي",
+    "submit": "إرسال",
+    "close": "إغلاق",
+    "yes": "نعم",
+    "no": "لا",
+    "all": "الكل",
+    "details": "التفاصيل",
+    "status": "الحالة",
+    "date": "التاريخ",
+    "actions": "الإجراءات"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "phone": "رقم الجوال",
+    "otp": "رمز التحقق",
+    "sendOtp": "إرسال رمز التحقق",
+    "verifyOtp": "تحقق من الرمز",
+    "welcome": "مرحباً بك",
+    "enterPhone": "أدخل رقم جوالك",
+    "otpSent": "تم إرسال رمز التحقق"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "buildings": "المباني",
+    "units": "الوحدات",
+    "requests": "طلبات الصيانة",
+    "providers": "مقدمي الخدمة",
+    "tenants": "المستأجرين",
+    "owners": "الملاك",
+    "settings": "الإعدادات",
+    "reports": "التقارير",
+    "costs": "التكاليف"
+  },
+  "maintenance": {
+    "newRequest": "طلب صيانة جديد",
+    "requestNumber": "رقم الطلب",
+    "category": "التصنيف",
+    "priority": "الأولوية",
+    "description": "وصف المشكلة",
+    "attachments": "المرفقات",
+    "assignProvider": "تعيين مقدم خدمة",
+    "estimatedCost": "التكلفة المتوقعة",
+    "actualCost": "التكلفة الفعلية",
+    "scheduledDate": "الموعد المحدد",
+    "priorities": {
+      "low": "منخفضة",
+      "medium": "متوسطة",
+      "high": "عالية",
+      "urgent": "عاجلة"
+    }
+  },
+  "building": {
+    "name": "اسم المبنى",
+    "city": "المدينة",
+    "district": "الحي",
+    "address": "العنوان",
+    "totalUnits": "عدد الوحدات",
+    "floors": "عدد الأدوار",
+    "yearBuilt": "سنة البناء",
+    "addBuilding": "إضافة مبنى",
+    "editBuilding": "تعديل المبنى"
+  },
+  "unit": {
+    "unitNumber": "رقم الوحدة",
+    "floor": "الدور",
+    "bedrooms": "غرف النوم",
+    "bathrooms": "دورات المياه",
+    "area": "المساحة (م²)",
+    "monthlyRent": "الإيجار الشهري",
+    "occupied": "مشغولة",
+    "vacant": "شاغرة"
+  },
+  "cost": {
+    "ownerShare": "حصة المالك",
+    "tenantShare": "حصة المستأجر",
+    "totalCost": "التكلفة الإجمالية",
+    "currency": "ريال سعودي"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "common": {
+    "appName": "PropTech1",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "noResults": "No results found",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "details": "Details",
+    "status": "Status",
+    "date": "Date",
+    "actions": "Actions"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "phone": "Phone number",
+    "otp": "Verification code",
+    "sendOtp": "Send verification code",
+    "verifyOtp": "Verify code",
+    "welcome": "Welcome",
+    "enterPhone": "Enter your phone number",
+    "otpSent": "Verification code sent"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "buildings": "Buildings",
+    "units": "Units",
+    "requests": "Maintenance Requests",
+    "providers": "Service Providers",
+    "tenants": "Tenants",
+    "owners": "Owners",
+    "settings": "Settings",
+    "reports": "Reports",
+    "costs": "Costs"
+  },
+  "maintenance": {
+    "newRequest": "New Maintenance Request",
+    "requestNumber": "Request Number",
+    "category": "Category",
+    "priority": "Priority",
+    "description": "Problem Description",
+    "attachments": "Attachments",
+    "assignProvider": "Assign Service Provider",
+    "estimatedCost": "Estimated Cost",
+    "actualCost": "Actual Cost",
+    "scheduledDate": "Scheduled Date",
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "urgent": "Urgent"
+    }
+  },
+  "building": {
+    "name": "Building Name",
+    "city": "City",
+    "district": "District",
+    "address": "Address",
+    "totalUnits": "Total Units",
+    "floors": "Floors",
+    "yearBuilt": "Year Built",
+    "addBuilding": "Add Building",
+    "editBuilding": "Edit Building"
+  },
+  "unit": {
+    "unitNumber": "Unit Number",
+    "floor": "Floor",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "area": "Area (sqm)",
+    "monthlyRent": "Monthly Rent",
+    "occupied": "Occupied",
+    "vacant": "Vacant"
+  },
+  "cost": {
+    "ownerShare": "Owner's Share",
+    "tenantShare": "Tenant's Share",
+    "totalCost": "Total Cost",
+    "currency": "SAR"
+  }
+}

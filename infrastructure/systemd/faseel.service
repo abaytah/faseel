@@ -1,0 +1,30 @@
+[Unit]
+Description=Faseel Next.js Application
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/faseel/apps/web
+ExecStart=/usr/bin/node .next/standalone/server.js
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/root/faseel/.env
+
+# Resource limits
+MemoryMax=1G
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=faseel
+
+[Install]
+WantedBy=multi-user.target
