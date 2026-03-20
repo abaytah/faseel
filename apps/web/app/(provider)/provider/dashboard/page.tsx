@@ -155,8 +155,42 @@ export default function ProviderDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[var(--muted-foreground)]" />
+      <div className="space-y-4">
+        {/* Skeleton Provider Header */}
+        <div className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+          <div className="flex items-start gap-4">
+            <div className="h-14 w-14 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700" />
+            <div className="flex-1 space-y-2">
+              <div className="h-5 w-32 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+              <div className="h-3 w-24 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-16 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+            ))}
+          </div>
+        </div>
+        {/* Skeleton Tabs */}
+        <div className="shadow-soft h-12 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700" />
+        {/* Skeleton Job Cards */}
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+            >
+              <div className="mb-3 flex items-start gap-3">
+                <div className="h-12 w-12 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-32 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-3 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+                </div>
+              </div>
+              <div className="h-10 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -239,7 +273,7 @@ export default function ProviderDashboardPage() {
           <button
             key={key}
             onClick={() => setActiveTab(key as typeof activeTab)}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-all ${
+            className={`flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-all ${
               activeTab === key
                 ? 'bg-[var(--foreground)] text-[var(--background)] shadow-sm'
                 : 'text-[var(--muted-foreground)] hover:bg-[var(--secondary)]'
@@ -321,9 +355,13 @@ export default function ProviderDashboardPage() {
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleStartWork(job.id)}
                             disabled={updateStatusMutation.isPending}
-                            className="bg-brand-500 flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-medium text-white"
+                            className="bg-brand-500 flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-medium text-white disabled:opacity-60"
                           >
-                            <Play className="h-3.5 w-3.5" />
+                            {updateStatusMutation.isPending ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Play className="h-3.5 w-3.5" />
+                            )}
                             بدء العمل
                           </motion.button>
                         )}
@@ -333,9 +371,14 @@ export default function ProviderDashboardPage() {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => openCompletionDialog(job.id)}
-                            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-500 py-2.5 text-xs font-medium text-white"
+                            disabled={updateStatusMutation.isPending}
+                            className="flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-500 py-2.5 text-xs font-medium text-white disabled:opacity-60"
                           >
-                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            {updateStatusMutation.isPending ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                            )}
                             إتمام المهمة
                           </motion.button>
                         )}
@@ -508,7 +551,11 @@ export default function ProviderDashboardPage() {
                   disabled={updateStatusMutation.isPending}
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-500 py-3 text-sm font-medium text-white disabled:opacity-60"
                 >
-                  <CheckCircle2 className="h-4 w-4" />
+                  {updateStatusMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="h-4 w-4" />
+                  )}
                   تأكيد الإتمام
                 </motion.button>
                 <motion.button

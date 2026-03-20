@@ -120,7 +120,7 @@ export function AIAssistant() {
         onClick={() => setIsOpen(true)}
         className={cn(
           'fixed bottom-6 start-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all',
-          'bg-gradient-to-br from-emerald-500 to-teal-600 text-white hover:shadow-xl hover:shadow-emerald-500/25',
+          'from-brand-500 to-brand-600 hover:shadow-brand-500/25 bg-gradient-to-br text-white hover:shadow-xl',
           isOpen && 'pointer-events-none opacity-0',
         )}
         whileHover={{ scale: 1.05 }}
@@ -141,7 +141,7 @@ export function AIAssistant() {
             className="fixed bottom-6 start-6 z-50 flex h-[520px] w-[380px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl sm:h-[560px] dark:border-gray-700 dark:bg-gray-900"
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-gray-100 bg-gradient-to-l from-emerald-500 to-teal-600 px-4 py-3 dark:border-gray-700">
+            <div className="from-brand-500 to-brand-600 flex items-center justify-between border-b border-gray-100 bg-gradient-to-l px-4 py-3 dark:border-gray-700">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
                   <Sparkles className="h-5 w-5 text-white" />
@@ -163,8 +163,8 @@ export function AIAssistant() {
             <div className="flex-1 overflow-y-auto px-4 py-3">
               {messages.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center">
-                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-900/20">
-                    <Bot className="h-8 w-8 text-emerald-500" />
+                  <div className="bg-brand-50 dark:bg-brand-900/20 mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
+                    <Bot className="text-brand-500 h-8 w-8" />
                   </div>
                   <p className="mb-1 text-center text-sm font-bold text-gray-900 dark:text-gray-100">
                     مرحباً! أنا مساعد فسيل الذكي
@@ -177,7 +177,7 @@ export function AIAssistant() {
                       <button
                         key={suggestion}
                         onClick={() => handleSuggestionClick(suggestion)}
-                        className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-start text-xs text-gray-700 transition-all hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-emerald-700 dark:hover:bg-emerald-900/20 dark:hover:text-emerald-400"
+                        className="hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 dark:hover:border-brand-700 dark:hover:bg-brand-900/20 dark:hover:text-brand-400 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-start text-xs text-gray-700 transition-all dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
                       >
                         {suggestion}
                       </button>
@@ -200,7 +200,7 @@ export function AIAssistant() {
                           'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg',
                           msg.role === 'user'
                             ? 'bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400'
-                            : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
+                            : 'bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400',
                         )}
                       >
                         {msg.role === 'user' ? (
@@ -224,8 +224,8 @@ export function AIAssistant() {
                         {/* Source Citation */}
                         {msg.source && (
                           <div className="mt-2 flex items-center gap-1 border-t border-gray-200/50 pt-1.5 dark:border-gray-600/50">
-                            <BookOpen className="h-3 w-3 text-emerald-500" />
-                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400">
+                            <BookOpen className="text-brand-500 h-3 w-3" />
+                            <span className="text-brand-600 dark:text-brand-400 text-[10px]">
                               المصدر: {msg.source}
                             </span>
                           </div>
@@ -241,7 +241,7 @@ export function AIAssistant() {
                               <button
                                 key={i}
                                 onClick={() => handleSuggestionClick(q)}
-                                className="block w-full rounded-lg bg-white/50 px-2 py-1 text-start text-[10px] text-emerald-600 transition-colors hover:bg-emerald-50 dark:bg-gray-700/50 dark:text-emerald-400 dark:hover:bg-emerald-900/20"
+                                className="text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-900/20 block w-full rounded-lg bg-white/50 px-2 py-1 text-start text-[10px] transition-colors dark:bg-gray-700/50"
                               >
                                 {q}
                               </button>
@@ -255,7 +255,7 @@ export function AIAssistant() {
                   {/* Typing Indicator */}
                   {isTyping && (
                     <div className="flex gap-2">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+                      <div className="bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg">
                         <Bot className="h-3.5 w-3.5" />
                       </div>
                       <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
@@ -292,7 +292,7 @@ export function AIAssistant() {
                   className={cn(
                     'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all',
                     input.trim()
-                      ? 'bg-emerald-500 text-white hover:bg-emerald-600'
+                      ? 'bg-brand-500 hover:bg-brand-600 text-white'
                       : 'text-gray-300 dark:text-gray-600',
                   )}
                 >

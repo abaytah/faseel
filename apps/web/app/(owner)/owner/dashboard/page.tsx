@@ -1,22 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
-  Home,
   Building2,
   Wrench,
-  Wallet,
-  TrendingUp,
-  AlertTriangle,
   CheckCircle2,
   Clock,
   FileText,
-  DollarSign,
   BarChart3,
-  CalendarClock,
-  Receipt,
   Loader2,
   ArrowUpRight,
   AlertCircle,
@@ -42,9 +35,7 @@ const itemVariants = {
 };
 
 export default function OwnerDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'maintenance' | 'hoa' | 'contracts'>(
-    'overview',
-  );
+  const [activeTab, setActiveTab] = useState<'overview' | 'maintenance'>('overview');
 
   const { data: requestsData, isLoading } = trpc.maintenance.list.useQuery({
     page: 1,
@@ -57,8 +48,38 @@ export default function OwnerDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[var(--muted-foreground)]" />
+      <div className="space-y-4">
+        {/* Skeleton Header */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="h-5 w-24 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+            <div className="h-3 w-16 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+          </div>
+        </div>
+        {/* Skeleton Tabs */}
+        <div className="shadow-soft h-12 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700" />
+        {/* Skeleton KPI Row */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+            >
+              <div className="mb-2 h-9 w-9 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
+              <div className="mb-1 h-6 w-12 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+              <div className="h-3 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+            </div>
+          ))}
+        </div>
+        {/* Skeleton Financial */}
+        <div className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+          <div className="mb-4 h-4 w-24 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+          <div className="grid grid-cols-3 gap-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-16 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -81,18 +102,16 @@ export default function OwnerDashboardPage() {
       {/* Tab Navigation */}
       <motion.div
         variants={itemVariants}
-        className="shadow-soft flex gap-1 overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] p-1.5"
+        className="shadow-soft scrollbar-hide flex gap-1 overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] p-1.5"
       >
         {[
           { key: 'overview', label: 'نظرة عامة', icon: BarChart3 },
           { key: 'maintenance', label: 'الصيانة', icon: Wrench },
-          { key: 'hoa', label: 'اتحاد الملاك', icon: Receipt },
-          { key: 'contracts', label: 'العقود', icon: FileText },
         ].map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setActiveTab(key as typeof activeTab)}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-all ${
+            className={`flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-all ${
               activeTab === key
                 ? 'bg-[var(--foreground)] text-[var(--background)] shadow-sm'
                 : 'text-[var(--muted-foreground)] hover:bg-[var(--secondary)]'
@@ -269,59 +288,6 @@ export default function OwnerDashboardPage() {
             )}
           </motion.div>
         </>
-      )}
-
-      {/* === HOA TAB === */}
-      {activeTab === 'hoa' && (
-        <motion.div
-          variants={itemVariants}
-          className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center"
-        >
-          <div className="mb-4 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-50 dark:bg-violet-900/20">
-              <Receipt className="h-8 w-8 text-violet-500" />
-            </div>
-          </div>
-          <h3 className="mb-2 text-base font-bold">رسوم اتحاد الملاك</h3>
-          <p className="mb-4 text-sm text-[var(--muted-foreground)]">
-            قريبا ستتمكن من عرض ومتابعة رسوم اتحاد الملاك، حالة السداد، والمبالغ المستحقة لكل وحدة.
-          </p>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-4 py-2 text-xs font-medium text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
-            <AlertCircle className="h-3.5 w-3.5" />
-            قريبا
-          </div>
-        </motion.div>
-      )}
-
-      {/* === CONTRACTS TAB === */}
-      {activeTab === 'contracts' && (
-        <motion.div
-          variants={itemVariants}
-          className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center"
-        >
-          <div className="mb-4 flex justify-center">
-            <div className="bg-brand-50 dark:bg-brand-900/20 flex h-16 w-16 items-center justify-center rounded-2xl">
-              <FileText className="text-brand-500 h-8 w-8" />
-            </div>
-          </div>
-          <h3 className="mb-2 text-base font-bold">إدارة العقود</h3>
-          <p className="mb-4 text-sm text-[var(--muted-foreground)]">
-            قريبا ستتمكن من عرض جميع عقود الإيجار، تواريخ الانتهاء، وطلب التجديد إلكترونيا.
-          </p>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-4 py-2 text-xs font-medium text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
-            <AlertCircle className="h-3.5 w-3.5" />
-            قريبا
-          </div>
-          <div className="mt-4">
-            <Link
-              href="/owner/contracts"
-              className="text-brand-500 hover:text-brand-600 inline-flex items-center gap-1 text-xs font-medium"
-            >
-              <span>عرض صفحة العقود</span>
-              <ArrowUpRight className="h-3 w-3" />
-            </Link>
-          </div>
-        </motion.div>
       )}
     </motion.div>
   );

@@ -215,6 +215,7 @@ function VerifyPageContent() {
               onChange={(e) => handleInput(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               disabled={verifying}
+              aria-label={`رقم التحقق ${index + 1} من 6`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + index * 0.05 }}
@@ -254,7 +255,7 @@ function VerifyPageContent() {
           className="mb-6 text-center"
         >
           {countdown > 0 ? (
-            <p className="text-sm text-[var(--muted-foreground)]">
+            <p className="text-sm text-[var(--muted-foreground)]" role="status" aria-live="polite">
               إعادة الإرسال خلال <span className="text-brand-500 font-bold">{countdown}</span> ثانية
             </p>
           ) : (

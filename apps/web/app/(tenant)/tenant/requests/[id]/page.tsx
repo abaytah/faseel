@@ -203,7 +203,11 @@ export default function TenantRequestDetailPage() {
                 className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900"
               >
                 {att.url ? (
-                  <img src={att.url} alt={`صورة ${i + 1}`} className="h-full w-full object-cover" />
+                  <img
+                    src={att.url}
+                    alt="صورة مرفقة بالبلاغ"
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
                   <Camera className="h-8 w-8 text-slate-300 dark:text-slate-600" />
                 )}
@@ -428,7 +432,8 @@ export default function TenantRequestDetailPage() {
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
                     onClick={() => setRating(star)}
-                    className="p-1"
+                    aria-label={`تقييم ${star} من 5 نجوم`}
+                    className="p-1.5"
                   >
                     <Star
                       className={`h-8 w-8 transition-colors ${

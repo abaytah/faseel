@@ -82,7 +82,7 @@ export default function ResourcesPage() {
       <nav className="fixed end-0 start-0 top-0 z-50 border-b border-gray-200/50 bg-white/80 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/80">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600">
+            <div className="from-brand-500 to-brand-600 flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br">
               <Sprout className="h-5 w-5 text-white" />
             </div>
             <span className="text-lg font-bold dark:text-white">فسيل</span>
@@ -104,7 +104,7 @@ export default function ResourcesPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 text-center"
         >
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600">
+          <div className="from-brand-500 to-brand-600 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br">
             <Globe className="h-7 w-7 text-white" />
           </div>
           <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl dark:text-white">
@@ -129,7 +129,7 @@ export default function ResourcesPage() {
               className={cn(
                 'flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-medium transition-all sm:text-sm',
                 activeCategory === key
-                  ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
+                  ? 'bg-brand-500 shadow-brand-500/20 text-white shadow-md'
                   : 'bg-white text-gray-600 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700',
               )}
             >
@@ -142,7 +142,7 @@ export default function ResourcesPage() {
         {/* Loading */}
         {isLoading && (
           <div className="flex items-center justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-500" />
+            <div className="border-brand-200 border-t-brand-500 h-8 w-8 animate-spin rounded-full border-4" />
           </div>
         )}
 
@@ -221,6 +221,7 @@ function ResourceCard({
       href={resource.url}
       target="_blank"
       rel="noopener noreferrer"
+      aria-label={`زيارة موقع ${resource.nameAr} (يفتح في نافذة جديدة)`}
       variants={itemVariants}
       whileHover={{ y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}
       className={cn(
@@ -232,7 +233,7 @@ function ResourceCard({
         <div className={cn('flex h-11 w-11 items-center justify-center rounded-xl', colors.bg)}>
           <CatIcon className={cn('h-5 w-5', colors.icon)} />
         </div>
-        <ExternalLink className="h-4 w-4 text-gray-300 transition-colors group-hover:text-emerald-500 dark:text-gray-600" />
+        <ExternalLink className="group-hover:text-brand-500 h-4 w-4 text-gray-300 transition-colors dark:text-gray-600" />
       </div>
       <h3 className="mb-0.5 text-sm font-bold text-gray-900 dark:text-white">{resource.nameAr}</h3>
       <p className="mb-0.5 text-[10px] font-medium text-gray-400 dark:text-gray-500">
@@ -241,7 +242,7 @@ function ResourceCard({
       <p className="mt-1 flex-1 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
         {resource.descriptionAr}
       </p>
-      <div className="mt-3 flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+      <div className="text-brand-600 dark:text-brand-400 mt-3 flex items-center gap-1.5">
         <span className="text-xs font-medium">زيارة الموقع</span>
         <ExternalLink className="h-3 w-3" />
       </div>

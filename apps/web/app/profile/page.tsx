@@ -145,6 +145,7 @@ export default function ProfilePage() {
   const updateProfile = trpc.profile.updateProfile.useMutation({
     onSuccess: () => {
       setSaved(true);
+      toast.success('تم حفظ التعديلات بنجاح');
       setTimeout(() => setSaved(false), 3000);
       if (profileQuery.data) {
         setUser({

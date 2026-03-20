@@ -253,9 +253,25 @@ function NewRequestPage() {
     const files = e.target.files;
     if (!files) return;
 
+    const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+    const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
+
     Array.from(files).forEach((file) => {
       if (photos.length >= 4) return;
-      if (!file.type.startsWith('image/')) return;
+
+      if (file.type.startsWith('video/')) {
+        if (file.size > MAX_VIDEO_SIZE) {
+          toast.error(`الملف "${file.name}" يتجاوز الحد الأقصى للفيديو (50 ميغابايت)`);
+          return;
+        }
+      } else if (file.type.startsWith('image/')) {
+        if (file.size > MAX_IMAGE_SIZE) {
+          toast.error(`الملف "${file.name}" يتجاوز الحد الأقصى للصورة (10 ميغابايت)`);
+          return;
+        }
+      } else {
+        return;
+      }
 
       const reader = new FileReader();
       reader.onload = (ev) => {
@@ -697,7 +713,7 @@ function NewRequestPage() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/*,video/*"
                 multiple
                 onChange={handlePhotoUpload}
                 className="hidden"

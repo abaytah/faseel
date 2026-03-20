@@ -192,7 +192,7 @@ export default function RequestDetailPage() {
 
   function renderStatusActions() {
     const buttonBase =
-      'flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all';
+      'flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all min-h-[44px]';
     const isPending = updateStatus.isPending || assignProvider.isPending;
 
     switch (request!.status) {
@@ -220,9 +220,14 @@ export default function RequestDetailPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`${buttonBase} bg-purple-500 text-white hover:bg-purple-600`}
+                disabled={isPending}
+                className={`${buttonBase} bg-purple-500 text-white hover:bg-purple-600 disabled:opacity-60`}
               >
-                <Wrench className="h-4 w-4" />
+                {isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Wrench className="h-4 w-4" />
+                )}
                 تعيين مقدم خدمة
               </motion.button>
             </Dialog.Trigger>
@@ -516,7 +521,11 @@ export default function RequestDetailPage() {
                   className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[var(--secondary)]"
                 >
                   {att.url ? (
-                    <img src={att.url} alt="" className="h-full w-full object-cover" />
+                    <img
+                      src={att.url}
+                      alt="صورة مرفقة بالبلاغ"
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
                     <Camera className="h-5 w-5 text-[var(--muted-foreground)]" />
                   )}

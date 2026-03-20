@@ -205,8 +205,55 @@ export default function OfficeDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-24">
-        <Loader2 className="text-brand-500 h-8 w-8 animate-spin" />
+      <div className="space-y-6">
+        {/* Skeleton KPI Cards */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
+            >
+              <div className="mb-3 h-10 w-10 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+              <div className="mb-2 h-6 w-16 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
+              <div className="mb-1 h-3 w-24 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+              <div className="h-3 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+            </div>
+          ))}
+        </div>
+        {/* Skeleton Quick Actions */}
+        <div className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+          <div className="mb-3 h-4 w-24 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-14 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+            ))}
+          </div>
+        </div>
+        {/* Skeleton List */}
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+          <div className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 lg:col-span-2">
+            <div className="mb-4 h-4 w-16 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-14 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700"
+                />
+              ))}
+            </div>
+          </div>
+          <div className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 lg:col-span-3">
+            <div className="mb-4 h-4 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+            <div className="space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="h-16 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

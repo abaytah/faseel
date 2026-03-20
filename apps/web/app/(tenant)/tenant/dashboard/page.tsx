@@ -71,6 +71,33 @@ export default function TenantDashboardPage() {
 
   const isLoading = requestsQuery.isLoading;
 
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {/* Skeleton Quick Report */}
+        <div className="h-28 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700" />
+        {/* Skeleton Emergency Shortcuts */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-24 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700" />
+          ))}
+        </div>
+        {/* Skeleton Requests Card */}
+        <div className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="h-4 w-16 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+            <div className="h-6 w-40 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
+          </div>
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-16 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       variants={containerVariants}
@@ -130,8 +157,11 @@ export default function TenantDashboardPage() {
       </motion.div>
 
       {/* Emergency Shortcuts */}
-      <motion.div variants={itemVariants} className="grid grid-cols-3 gap-3">
-        <Link href="/tenant/requests/new?category=PLUMBING&priority=URGENT">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <Link
+          href="/tenant/requests/new?category=PLUMBING&priority=URGENT"
+          aria-label="الإبلاغ عن تسريب مياه عاجل"
+        >
           <motion.div
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.97 }}
@@ -145,7 +175,10 @@ export default function TenantDashboardPage() {
             </span>
           </motion.div>
         </Link>
-        <Link href="/tenant/requests/new?category=ELECTRICAL&priority=URGENT">
+        <Link
+          href="/tenant/requests/new?category=ELECTRICAL&priority=URGENT"
+          aria-label="الإبلاغ عن انقطاع كهرباء"
+        >
           <motion.div
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.97 }}
@@ -159,7 +192,10 @@ export default function TenantDashboardPage() {
             </span>
           </motion.div>
         </Link>
-        <Link href="/tenant/requests/new?category=ELEVATOR&priority=URGENT">
+        <Link
+          href="/tenant/requests/new?category=ELEVATOR&priority=URGENT"
+          aria-label="الإبلاغ عن مصعد عالق"
+        >
           <motion.div
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.97 }}
@@ -191,7 +227,7 @@ export default function TenantDashboardPage() {
               <button
                 key={tab.key}
                 onClick={() => setRequestFilter(tab.key)}
-                className={`relative rounded-md px-3 py-1 text-[10px] font-medium transition-all ${
+                className={`relative flex min-h-[44px] items-center rounded-md px-3 py-2 text-[10px] font-medium transition-all ${
                   requestFilter === tab.key
                     ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm'
                     : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'

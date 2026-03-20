@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Phone, ArrowLeft, Home, Loader2 } from 'lucide-react';
+import { Phone, ArrowLeft, Home, Loader2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { trpc } from '@/lib/trpc';
 
@@ -50,6 +50,7 @@ export default function LoginPage() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 15 }}
           className="from-brand-500 to-brand-600 shadow-card mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br"
+          aria-label="شعار فسيل"
         >
           <Home className="h-8 w-8 text-white" />
         </motion.div>
@@ -80,16 +81,26 @@ export default function LoginPage() {
                 <span className="text-xs text-[var(--muted-foreground)]">SA</span>
               </div>
               {/* Phone input */}
-              <input
-                type="tel"
-                dir="ltr"
-                inputMode="numeric"
-                placeholder="5X XXX XXXX"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 9))}
-                className="focus:border-brand-500 focus:ring-brand-500/20 h-12 w-full flex-1 rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 text-base outline-none transition-colors focus:ring-2"
-                autoFocus
-              />
+              <div className="relative flex-1">
+                <input
+                  type="tel"
+                  dir="ltr"
+                  inputMode="numeric"
+                  placeholder="5X XXX XXXX"
+                  aria-label="رقم الجوال"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 9))}
+                  className={`focus:border-brand-500 focus:ring-brand-500/20 h-12 w-full rounded-xl border bg-[var(--background)] px-4 pe-10 text-base outline-none transition-colors focus:ring-2 ${
+                    phone.length > 0 && phone.length < 9
+                      ? 'border-red-400'
+                      : 'border-[var(--border)]'
+                  }`}
+                  autoFocus
+                />
+                {phone.length === 9 && (
+                  <CheckCircle2 className="absolute end-3 top-1/2 h-5 w-5 -translate-y-1/2 text-emerald-500" />
+                )}
+              </div>
             </div>
           </div>
 
@@ -127,8 +138,14 @@ export default function LoginPage() {
           transition={{ delay: 0.5 }}
           className="mt-6 text-center text-xs text-[var(--muted-foreground)]"
         >
-          بالمتابعة أنت توافق على <span className="text-brand-500">الشروط والأحكام</span> و{' '}
-          <span className="text-brand-500">سياسة الخصوصية</span>
+          بالمتابعة أنت توافق على{' '}
+          <Link href="/terms" className="text-brand-500 hover:underline">
+            الشروط والأحكام
+          </Link>{' '}
+          و{' '}
+          <Link href="/privacy" className="text-brand-500 hover:underline">
+            سياسة الخصوصية
+          </Link>
         </motion.p>
 
         <motion.div

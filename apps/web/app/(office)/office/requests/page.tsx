@@ -158,7 +158,7 @@ export default function OfficeRequestsPage() {
           <button
             key={filter.value}
             onClick={() => setStatusFilter(filter.value)}
-            className={`shrink-0 rounded-full px-4 py-2 text-xs font-medium transition-all ${
+            className={`flex min-h-[44px] shrink-0 items-center rounded-full px-4 py-2.5 text-xs font-medium transition-all ${
               statusFilter === filter.value
                 ? 'bg-brand-500 shadow-soft text-white'
                 : 'bg-[var(--secondary)] text-[var(--muted-foreground)] hover:bg-[var(--accent)]'
@@ -265,8 +265,20 @@ export default function OfficeRequestsPage() {
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--secondary)]">
                 <Search className="h-8 w-8 text-[var(--muted-foreground)]" />
               </div>
-              <p className="text-sm font-medium">لا توجد طلبات</p>
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]">جرب تغيير معايير البحث</p>
+              <p className="text-sm font-medium">لا توجد نتائج</p>
+              <p className="mt-1 text-xs text-[var(--muted-foreground)]">حاول تغيير الفلتر</p>
+              {(statusFilter !== 'all' || buildingFilter !== 'all' || searchQuery) && (
+                <button
+                  onClick={() => {
+                    setStatusFilter('all');
+                    setBuildingFilter('all');
+                    setSearchQuery('');
+                  }}
+                  className="text-brand-500 hover:text-brand-600 mt-3 text-sm font-medium transition-colors"
+                >
+                  إزالة الفلتر
+                </button>
+              )}
             </motion.div>
           )}
         </motion.div>

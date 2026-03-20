@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, Upload, FileText, AlertCircle } from 'lucide-react';
+import { ArrowRight, Upload, FileText, CheckCircle2, Brain, Link2, Shield } from 'lucide-react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -14,6 +13,39 @@ const itemVariants = {
   hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 20 } },
 };
+
+const upcomingFeatures = [
+  {
+    icon: Upload,
+    label: 'رفع ملفات PDF أو صور العقود',
+    color: 'text-sky-500',
+    bg: 'bg-sky-50 dark:bg-sky-900/20',
+  },
+  {
+    icon: Brain,
+    label: 'استخراج تلقائي لبيانات المستأجر والوحدة بالذكاء الاصطناعي',
+    color: 'text-violet-500',
+    bg: 'bg-violet-50 dark:bg-violet-900/20',
+  },
+  {
+    icon: FileText,
+    label: 'التعرف على رقم إيجار المرجعي',
+    color: 'text-amber-500',
+    bg: 'bg-amber-50 dark:bg-amber-900/20',
+  },
+  {
+    icon: Link2,
+    label: 'ربط العقد بالوحدة والمستأجر تلقائيا',
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-50 dark:bg-emerald-900/20',
+  },
+  {
+    icon: Shield,
+    label: 'دعم عقود المنصة الوطنية للتأجير (إيجار)',
+    color: 'text-blue-500',
+    bg: 'bg-blue-50 dark:bg-blue-900/20',
+  },
+];
 
 export default function ContractUploadPage() {
   return (
@@ -35,46 +67,36 @@ export default function ContractUploadPage() {
       </motion.div>
 
       {/* Header */}
-      <motion.div variants={itemVariants} className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-900/20">
-          <Upload className="h-5 w-5 text-amber-500" />
-        </div>
-        <h1 className="text-xl font-bold">رفع عقد إيجار</h1>
+      <motion.div variants={itemVariants}>
+        <h1 className="text-xl font-bold">رفع العقود</h1>
+        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+          ميزة رفع العقود وتحليلها بالذكاء الاصطناعي قادمة قريبا
+        </p>
       </motion.div>
 
-      {/* Coming Soon */}
+      {/* Features List */}
       <motion.div
         variants={itemVariants}
-        className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center"
+        className="shadow-soft rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
       >
-        <div className="mb-4 flex justify-center">
-          <motion.div
-            initial={{ y: 0 }}
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <FileText className="h-16 w-16 text-[var(--muted-foreground)]" />
-          </motion.div>
-        </div>
-        <h3 className="mb-2 text-base font-bold">رفع وتحليل العقود بالذكاء الاصطناعي</h3>
-        <p className="mb-4 text-sm text-[var(--muted-foreground)]">
-          قريبا ستتمكن من رفع عقود الإيجار بصيغة PDF أو صورة، وسيتم تحليلها واستخراج البيانات
-          تلقائيا باستخدام الذكاء الاصطناعي.
-        </p>
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-4 py-2 text-xs font-medium text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
-          <AlertCircle className="h-3.5 w-3.5" />
-          قريبا
-        </div>
-
-        <div className="mt-6 rounded-xl bg-[var(--secondary)] p-4 text-xs text-[var(--muted-foreground)]">
-          <p className="mb-2 font-medium text-[var(--foreground)]">المزايا القادمة:</p>
-          <ul className="mr-4 list-disc space-y-1 text-start">
-            <li>رفع ملفات PDF أو صور العقود</li>
-            <li>استخراج تلقائي لبيانات المستأجر والوحدة</li>
-            <li>التعرف على رقم إيجار المرجعي</li>
-            <li>ربط العقد بالوحدة والمستأجر تلقائيا</li>
-            <li>دعم عقود المنصة الوطنية للتأجير</li>
-          </ul>
+        <h3 className="mb-4 text-sm font-bold">المزايا القادمة</h3>
+        <div className="space-y-3">
+          {upcomingFeatures.map((feature) => (
+            <div
+              key={feature.label}
+              className="flex items-center gap-3 rounded-xl bg-[var(--secondary)] p-3"
+            >
+              <div
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${feature.bg}`}
+              >
+                <feature.icon className={`h-4 w-4 ${feature.color}`} />
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                <p className="text-xs font-medium">{feature.label}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </motion.div>
     </motion.div>
