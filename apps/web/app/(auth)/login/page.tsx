@@ -71,29 +71,25 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
           className="space-y-4"
         >
-          <div className="relative">
-            <label className="mb-2 block text-sm font-medium">رقم الجوال</label>
-            <div className="flex gap-2">
-              {/* Country code */}
-              <div className="flex h-12 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--secondary)] px-3 text-sm">
-                <span className="text-lg">🇸🇦</span>
-                <span className="font-medium" dir="ltr">
-                  +966
-                </span>
+          <div>
+            <label className="mb-2 block text-end text-sm font-medium">رقم الجوال</label>
+            <div className="flex gap-2" dir="ltr">
+              {/* Country code - always on left */}
+              <div className="flex h-12 shrink-0 items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--secondary)] px-3 text-sm">
+                <span className="font-medium">+966</span>
+                <span className="text-xs text-[var(--muted-foreground)]">SA</span>
               </div>
               {/* Phone input */}
-              <div className="relative flex-1">
-                <input
-                  type="tel"
-                  dir="ltr"
-                  placeholder="5X XXX XXXX"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 9))}
-                  className="focus:border-brand-500 focus:ring-brand-500/20 h-12 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 text-base outline-none transition-colors focus:ring-2"
-                  autoFocus
-                />
-                <Phone className="absolute end-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--muted-foreground)]" />
-              </div>
+              <input
+                type="tel"
+                dir="ltr"
+                inputMode="numeric"
+                placeholder="5X XXX XXXX"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 9))}
+                className="focus:border-brand-500 focus:ring-brand-500/20 h-12 w-full flex-1 rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 text-base outline-none transition-colors focus:ring-2"
+                autoFocus
+              />
             </div>
           </div>
 
