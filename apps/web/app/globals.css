@@ -1,0 +1,95 @@
+@import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Airbnb-inspired warm palette */
+    --color-bg: 255 255 255;
+    --color-bg-secondary: 247 247 247;
+    --color-bg-tertiary: 241 241 241;
+    --color-surface: 255 255 255;
+    --color-border: 221 221 221;
+    --color-border-strong: 176 176 176;
+
+    --color-text-primary: 34 34 34;
+    --color-text-secondary: 113 113 113;
+    --color-text-tertiary: 176 176 176;
+
+    --color-brand: 255 90 79;
+    --color-brand-hover: 230 62 51;
+    --color-brand-light: 255 241 240;
+
+    --color-success: 0 138 78;
+    --color-warning: 228 162 0;
+    --color-danger: 193 53 21;
+    --color-info: 0 120 212;
+
+    --radius-default: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+
+    /* shadcn variables */
+    --background: #ffffff;
+    --foreground: #222222;
+    --card: #ffffff;
+    --card-foreground: #222222;
+    --popover: #ffffff;
+    --popover-foreground: #222222;
+    --primary: #FF5A4F;
+    --primary-foreground: #ffffff;
+    --secondary: #f7f7f7;
+    --secondary-foreground: #222222;
+    --muted: #f1f1f1;
+    --muted-foreground: #717171;
+    --accent: #f7f7f7;
+    --accent-foreground: #222222;
+    --destructive: #C13515;
+    --border: #dddddd;
+    --input: #dddddd;
+    --ring: #FF5A4F;
+    --radius: 0.75rem;
+
+    --sidebar: #fafafa;
+    --sidebar-foreground: #222222;
+    --sidebar-primary: #FF5A4F;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #f7f7f7;
+    --sidebar-accent-foreground: #222222;
+    --sidebar-border: #eeeeee;
+    --sidebar-ring: #FF5A4F;
+  }
+
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  /* RTL-specific scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--color-bg-secondary));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-border-strong));
+    border-radius: var(--radius-full);
+  }
+}
+
+/* Custom utility classes */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
