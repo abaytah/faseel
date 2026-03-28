@@ -629,77 +629,72 @@ const steps = [
 
 const pricingPlans = [
   {
-    name: 'مبتدئ',
-    nameEn: 'Starter',
-    monthlyPrice: '٠',
-    annualPrice: '٠',
+    name: 'مجاني',
+    nameEn: 'Free',
+    price: '٠',
     period: 'للأبد',
     desc: 'ابدأ مجاناً — أثبت القيمة قبل ما تدفع',
-    buildings: '١ مبنى',
-    units: '١٠ وحدات',
+    buildings: '٣ مباني',
+    units: '٣٠ وحدة',
     gradient: 'from-gray-500 to-gray-600',
     bg: 'bg-gray-50',
     border: 'border-gray-200',
     popular: false,
     features: [
-      'طلبات صيانة أساسية',
-      'مشرف واحد',
-      'توجيه تكاليف يدوي',
-      'لوحة تحكم أساسية',
-      'بوابة المستأجر',
-    ],
-  },
-  {
-    name: 'نمو',
-    nameEn: 'Growth',
-    monthlyPrice: '١٤٩',
-    annualPrice: '١٢٤',
-    annualTotal: '١,٤٩٠',
-    period: 'شهرياً',
-    desc: 'للمكاتب الناشئة والمتنامية',
-    buildings: '٥ مباني',
-    units: '٧٥ وحدة',
-    gradient: 'from-emerald-500 to-teal-600',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-300',
-    popular: true,
-    features: [
-      '٣ مشرفين',
-      'إدارة مقدمي الخدمات',
-      'محرك التكاليف الذكي',
+      'إدارة طلبات الصيانة',
       'إشعارات واتساب',
+      'محرك التكاليف الأساسي',
+      'بوابة المستأجر',
       'تقارير أساسية',
-      'بوابة المالك',
     ],
   },
   {
-    name: 'احترافي',
-    nameEn: 'Pro',
-    monthlyPrice: '٣٩٩',
-    annualPrice: '٣٣٣',
-    annualTotal: '٣,٩٩٠',
+    name: 'أساسي',
+    nameEn: 'Essential',
+    price: '١٩٩',
     period: 'شهرياً',
-    desc: 'للمكاتب الكبيرة — كل شيء مؤتمت',
-    buildings: '٢٥ مبنى',
-    units: '٥٠٠ وحدة',
+    desc: 'للمكاتب الصغيرة والمتوسطة',
+    buildings: '١٥ مبنى',
+    units: '١٥٠ وحدة',
     gradient: 'from-sky-500 to-blue-600',
     bg: 'bg-sky-50',
     border: 'border-sky-200',
     popular: false,
     features: [
-      'مشرفين غير محدود',
+      'كل مميزات المجاني',
+      'إدارة مقدمي الخدمات',
+      'رسوم اتحاد الملاك',
       'بوابة المالك',
+      'تقارير شهرية تلقائية',
+      'دعم فني بالواتساب',
+    ],
+  },
+  {
+    name: 'احترافي',
+    nameEn: 'Pro',
+    price: '٤٩٩',
+    period: 'شهرياً',
+    desc: 'للمكاتب الكبيرة — كل شيء مؤتمت',
+    buildings: '٥٠ مبنى',
+    units: '٥٠٠ وحدة',
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-300',
+    popular: true,
+    features: [
+      'كل مميزات الأساسي',
+      'محرك التكاليف بالذكاء الاصطناعي',
+      'ربط مع إيجار وسداد',
       'تحليلات متقدمة',
-      'ربط مع إيجار',
       'تقارير P&L لكل مبنى',
+      'بوابة مقدم الخدمة',
       'أولوية في الدعم الفني',
     ],
   },
   {
     name: 'مؤسسي',
     nameEn: 'Enterprise',
-    monthlyPrice: 'حسب الطلب',
-    annualPrice: 'حسب الطلب',
+    price: 'حسب الطلب',
     period: '',
     desc: 'للشركات الكبرى وصناديق الاستثمار',
     buildings: 'غير محدود',
@@ -714,44 +709,9 @@ const pricingPlans = [
       'مدير حساب مخصص',
       'تدريب الفريق',
       'SLA مخصص',
-      'تكاملات مخصصة',
+      'تقارير مخصصة',
+      'بيئة منفصلة',
     ],
-  },
-];
-
-const otherPlans = [
-  {
-    name: 'إدارة ذاتية',
-    nameEn: 'Owner Self-Manage',
-    monthlyPrice: '٧٩',
-    annualPrice: '٦٦',
-    period: 'شهرياً',
-    desc: 'للملاك اللي يديرون عقاراتهم بنفسهم',
-    limit: '٥ مباني',
-    gradient: 'from-amber-500 to-orange-500',
-    icon: Home,
-  },
-  {
-    name: 'مزود+',
-    nameEn: 'Provider Pro',
-    monthlyPrice: '٩٩',
-    annualPrice: '٨٣',
-    period: 'شهرياً',
-    desc: 'لمقدمي خدمات الصيانة المحترفين',
-    limit: 'طلبات غير محدودة — أولوية في الظهور',
-    gradient: 'from-sky-500 to-blue-500',
-    icon: Wrench,
-  },
-  {
-    name: 'مستأجر',
-    nameEn: 'Tenant',
-    monthlyPrice: '٠',
-    annualPrice: '٠',
-    period: 'مجاني دائماً',
-    desc: 'المستأجر ما يدفع شيء — أبداً',
-    limit: 'بلاغات غير محدودة',
-    gradient: 'from-emerald-500 to-teal-500',
-    icon: User,
   },
 ];
 
@@ -906,7 +866,6 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isAnnual, setIsAnnual] = useState(false);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -937,12 +896,6 @@ export default function LandingPage() {
               className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
             >
               التسعير
-            </a>
-            <a
-              href="/resources"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
-            >
-              الموارد
             </a>
             <a
               href="#portals"
@@ -984,13 +937,6 @@ export default function LandingPage() {
                   className="text-sm font-medium text-gray-600"
                 >
                   التسعير
-                </a>
-                <a
-                  href="/resources"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-medium text-gray-600"
-                >
-                  الموارد
                 </a>
                 <a
                   href="#portals"
@@ -1740,173 +1686,74 @@ export default function LandingPage() {
             </motion.p>
             <motion.p
               variants={itemVariants}
-              className="mx-auto mb-8 max-w-xl text-xs text-gray-400"
+              className="mx-auto mb-14 max-w-xl text-xs text-gray-400"
             >
               جميع الأسعار بالريال السعودي ولا تشمل ضريبة القيمة المضافة
             </motion.p>
-
-            {/* Annual/Monthly Toggle */}
-            <motion.div
-              variants={itemVariants}
-              className="mb-14 flex items-center justify-center gap-3"
-            >
-              <span
-                className={`text-sm font-semibold ${!isAnnual ? 'text-gray-900' : 'text-gray-400'}`}
-              >
-                شهري
-              </span>
-              <button
-                onClick={() => setIsAnnual(!isAnnual)}
-                className={`relative h-7 w-14 rounded-full transition-colors ${isAnnual ? 'bg-emerald-500' : 'bg-gray-300'}`}
-              >
-                <div
-                  className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow-md transition-all ${isAnnual ? 'start-0.5' : 'start-[calc(100%-1.625rem)]'}`}
-                />
-              </button>
-              <span
-                className={`text-sm font-semibold ${isAnnual ? 'text-gray-900' : 'text-gray-400'}`}
-              >
-                سنوي
-              </span>
-              {isAnnual && (
-                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
-                  شهرين مجاناً
-                </span>
-              )}
-            </motion.div>
           </div>
-
-          {/* Office Plans Header */}
-          <motion.div variants={itemVariants} className="mb-6 text-center">
-            <h3 className="text-lg font-bold text-gray-800">باقات المكاتب العقارية</h3>
-          </motion.div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {pricingPlans.map((plan, i) => {
-              const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
-              const isCustom = price === 'حسب الطلب';
-              const isFree = price === '٠';
-              return (
-                <motion.div
-                  key={i}
-                  variants={itemVariants}
-                  whileHover={{ y: -4 }}
-                  className={`relative rounded-2xl border ${plan.popular ? plan.border + ' ring-2 ring-emerald-500/20' : 'border-gray-200'} bg-white p-6 shadow-sm transition-shadow hover:shadow-lg`}
+            {pricingPlans.map((plan, i) => (
+              <motion.div
+                key={i}
+                variants={itemVariants}
+                whileHover={{ y: -4 }}
+                className={`relative rounded-2xl border ${plan.popular ? plan.border + ' ring-2 ring-emerald-500/20' : 'border-gray-200'} bg-white p-6 shadow-sm transition-shadow hover:shadow-lg`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-3 start-1/2 -translate-x-1/2 rounded-full bg-gradient-to-l from-emerald-500 to-teal-600 px-4 py-1 text-xs font-bold text-white">
+                    الأكثر طلباً
+                  </div>
+                )}
+                <div
+                  className={`mb-4 inline-flex rounded-xl bg-gradient-to-br ${plan.gradient} px-3 py-1.5 text-xs font-bold text-white`}
                 >
-                  {plan.popular && (
-                    <div className="absolute -top-3 start-1/2 -translate-x-1/2 rounded-full bg-gradient-to-l from-emerald-500 to-teal-600 px-4 py-1 text-xs font-bold text-white">
-                      الأكثر شيوعاً
-                    </div>
+                  {plan.name}
+                </div>
+                <div className="mb-1">
+                  {plan.price === 'حسب الطلب' ? (
+                    <span className="text-2xl font-bold">{plan.price}</span>
+                  ) : (
+                    <>
+                      <span className="text-3xl font-bold">{plan.price}</span>
+                      <span className="mr-1 text-sm text-gray-500">ر.س/{plan.period}</span>
+                    </>
                   )}
-                  <div
-                    className={`mb-4 inline-flex rounded-xl bg-gradient-to-br ${plan.gradient} px-3 py-1.5 text-xs font-bold text-white`}
-                  >
-                    {plan.name}
-                  </div>
-                  <div className="mb-1">
-                    {isCustom ? (
-                      <span className="text-2xl font-bold">تواصل معنا</span>
-                    ) : isFree ? (
-                      <span className="text-3xl font-bold">مجاني</span>
-                    ) : (
-                      <>
-                        <span className="text-3xl font-bold">{price}</span>
-                        <span className="mr-1 text-sm text-gray-500">ر.س/شهرياً</span>
-                        {isAnnual && plan.annualTotal && (
-                          <div className="mt-1 text-xs text-gray-400">
-                            {plan.annualTotal} ر.س/سنوياً
-                          </div>
-                        )}
-                        {!isAnnual && plan.annualTotal && (
-                          <div className="mt-1 text-xs text-emerald-600">
-                            وفّر مع السنوي: {plan.annualTotal} ر.س/سنة
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                  <p className="mb-4 text-xs text-gray-500">{plan.desc}</p>
-                  <div className="mb-4 flex gap-2 text-xs">
-                    <span className={`rounded-lg ${plan.bg} px-2 py-1 font-medium`}>
-                      {plan.buildings}
-                    </span>
-                    <span className={`rounded-lg ${plan.bg} px-2 py-1 font-medium`}>
-                      {plan.units}
-                    </span>
-                  </div>
-                  <div className="mb-5 flex flex-col gap-2">
-                    {plan.features.map((feature, j) => (
-                      <div key={j} className="flex items-start gap-2 text-sm text-gray-600">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <a
-                    href="#portals"
-                    className={`block w-full rounded-xl py-2.5 text-center text-sm font-semibold transition-all ${
-                      plan.popular
-                        ? 'bg-gradient-to-l from-emerald-500 to-teal-600 text-white hover:shadow-lg hover:shadow-emerald-500/25'
-                        : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    {isFree ? 'ابدأ مجاناً' : isCustom ? 'تواصل معنا' : 'ابدأ الآن'}
-                  </a>
-                </motion.div>
-              );
-            })}
+                </div>
+                <p className="mb-4 text-xs text-gray-500">{plan.desc}</p>
+                <div className="mb-4 flex gap-2 text-xs">
+                  <span className={`rounded-lg ${plan.bg} px-2 py-1 font-medium`}>
+                    {plan.buildings}
+                  </span>
+                  <span className={`rounded-lg ${plan.bg} px-2 py-1 font-medium`}>
+                    {plan.units}
+                  </span>
+                </div>
+                <div className="mb-5 flex flex-col gap-2">
+                  {plan.features.map((feature, j) => (
+                    <div key={j} className="flex items-start gap-2 text-sm text-gray-600">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                <a
+                  href="#portals"
+                  className={`block w-full rounded-xl py-2.5 text-center text-sm font-semibold transition-all ${
+                    plan.popular
+                      ? 'bg-gradient-to-l from-emerald-500 to-teal-600 text-white hover:shadow-lg hover:shadow-emerald-500/25'
+                      : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {plan.price === '٠'
+                    ? 'ابدأ مجاناً'
+                    : plan.price === 'حسب الطلب'
+                      ? 'تواصل معنا'
+                      : 'ابدأ الآن'}
+                </a>
+              </motion.div>
+            ))}
           </div>
-
-          {/* Overage Note */}
-          <motion.p variants={itemVariants} className="mt-6 text-center text-xs text-gray-400">
-            تجاوزت الحد؟ +٦٠ ر.س/مبنى، +٦ ر.س/وحدة بعد تجاوز الحد
-          </motion.p>
-
-          {/* Other Plans */}
-          <motion.div variants={itemVariants} className="mt-16">
-            <div className="mb-6 text-center">
-              <h3 className="text-lg font-bold text-gray-800">باقات أخرى</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                للملاك المستقلين ومقدمي الخدمات والمستأجرين
-              </p>
-            </div>
-            <div className="mx-auto grid max-w-4xl gap-4 sm:grid-cols-3">
-              {otherPlans.map((plan, i) => {
-                const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
-                const isFree = price === '٠';
-                const PlanIcon = plan.icon;
-                return (
-                  <motion.div
-                    key={i}
-                    variants={itemVariants}
-                    whileHover={{ y: -4 }}
-                    className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-lg"
-                  >
-                    <div
-                      className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${plan.gradient}`}
-                    >
-                      <PlanIcon className="h-5 w-5 text-white" />
-                    </div>
-                    <div className="mb-1 text-sm font-bold text-gray-800">{plan.name}</div>
-                    <div className="mb-2">
-                      {isFree ? (
-                        <span className="text-xl font-bold text-emerald-600">مجاني</span>
-                      ) : (
-                        <>
-                          <span className="text-xl font-bold">{price}</span>
-                          <span className="mr-1 text-xs text-gray-500">ر.س/شهرياً</span>
-                        </>
-                      )}
-                    </div>
-                    <p className="mb-2 text-xs text-gray-500">{plan.desc}</p>
-                    <div className="rounded-lg bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600">
-                      {plan.limit}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
         </motion.div>
       </Section>
 
@@ -1944,14 +1791,14 @@ export default function LandingPage() {
               {
                 value: 891,
                 suffix: 'M$',
-                label: 'سوق التقنية العقارية السعودي',
+                label: 'سوق PropTech السعودي',
                 sub: 'متوقع يوصل ٢.٥ مليار بحلول ٢٠٣٢',
               },
               {
                 value: 16,
                 suffix: '٪',
                 label: 'معدل النمو السنوي',
-                sub: 'CAGR لسوق التقنية العقارية, من الأسرع عالمياً',
+                sub: 'CAGR لسوق PropTech — من الأسرع عالمياً',
               },
               {
                 value: 15810,
@@ -2014,7 +1861,7 @@ export default function LandingPage() {
         >
           <h2 className="mb-4 text-3xl font-bold sm:text-4xl">جاهز تنهي فوضى الصيانة؟</h2>
           <p className="mx-auto mb-8 max-w-xl text-lg text-white/80">
-            ابدأ مجاناً مع مبنى و ١٠ وحدات — بدون بطاقة ائتمان. شوف الفرق في أول أسبوع.
+            ابدأ مجاناً مع ٣ مباني و ٣٠ وحدة — بدون بطاقة ائتمان. شوف الفرق في أول أسبوع.
           </p>
           <a
             href="#portals"
@@ -2131,9 +1978,6 @@ export default function LandingPage() {
                 <a href="#cost-router" className="transition-colors hover:text-gray-700">
                   محرك التكاليف
                 </a>
-                <Link href="/resources" className="transition-colors hover:text-gray-700">
-                  الموارد والمنصات
-                </Link>
               </div>
             </div>
             <div>
@@ -2157,10 +2001,10 @@ export default function LandingPage() {
               <h4 className="mb-4 text-sm font-bold">تواصل معنا</h4>
               <div className="flex flex-col gap-2 text-sm text-gray-500">
                 <a
-                  href="mailto:ara@basamh.com"
+                  href="mailto:hello@faseel.sa"
                   className="flex items-center gap-2 transition-colors hover:text-gray-700"
                 >
-                  <Mail className="h-4 w-4" /> ara@basamh.com
+                  <Mail className="h-4 w-4" /> hello@faseel.sa
                 </a>
                 <span className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" /> جدة، المملكة العربية السعودية
@@ -2171,12 +2015,8 @@ export default function LandingPage() {
           {/* Bottom */}
           <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 sm:flex-row">
             <div className="flex items-center gap-6 text-xs text-gray-500">
-              <Link href="/privacy" className="transition-colors hover:text-gray-700">
-                سياسة الخصوصية
-              </Link>
-              <Link href="/terms" className="transition-colors hover:text-gray-700">
-                الشروط والأحكام
-              </Link>
+              <span className="cursor-pointer hover:text-gray-700">سياسة الخصوصية</span>
+              <span className="cursor-pointer hover:text-gray-700">الشروط والأحكام</span>
             </div>
             <p className="text-xs text-gray-400">صُنع بـ ❤️ في جدة — ٢٠٢٦</p>
           </div>
