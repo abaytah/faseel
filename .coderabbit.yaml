@@ -1,0 +1,102 @@
+# Faseel (فسيل) - CodeRabbit Configuration
+# Smart Building Management Platform for Saudi Arabia
+# Docs: https://docs.coderabbit.ai/guides/configure-coderabbit
+
+language: "en"
+
+reviews:
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+      - develop
+
+  profile: "assertive"
+  request_changes_workflow: true
+  high_level_summary: true
+  high_level_summary_placeholder: "@coderabbitai summary"
+  review_status: true
+  poem: false
+
+  path_instructions:
+    - path: "apps/web/app/**/*.{ts,tsx}"
+      instructions: |
+        This is a Next.js 14 App Router project (Arabic-first, bilingual).
+        Check for:
+        - Server Components by default; 'use client' only when needed
+        - generateMetadata() for SEO on page files
+        - RTL compliance: logical properties (margin-inline-start/end), dir attribute handling
+        - Arabic text uses proper plural forms (singular, dual for 2, plural for 3-10, singular form for 11+)
+        - All colors from theme/design tokens, no hardcoded hex values
+        - No console.log in production code
+        - Async/await over .then() chains
+        - TypeScript strict mode compliance
+        - Proper use of Radix UI primitives
+        - Framer Motion animations use layout props correctly
+
+    - path: "apps/web/app/**/*.css"
+      instructions: |
+        Check for:
+        - Logical properties: margin-inline-start/end, padding-inline-start/end (not margin-left/right)
+        - No hardcoded directional values; use logical properties for RTL support
+        - Dark mode CSS variables used, no hardcoded colors
+        - Tailwind utility classes preferred over custom CSS where possible
+
+    - path: "packages/api/src/router/**"
+      instructions: |
+        These are tRPC routers.
+        Check for:
+        - Zod validation on all procedure inputs
+        - protectedProcedure for auth-required endpoints
+        - No raw Drizzle queries in router files; use service layer in packages/api/src/services/
+        - Structured error responses with TRPCError
+        - Proper HTTP-like error codes (BAD_REQUEST, UNAUTHORIZED, NOT_FOUND)
+
+    - path: "packages/api/src/services/**"
+      instructions: |
+        These are service layer files called by tRPC routers.
+        Check for:
+        - Parameterized queries via Drizzle ORM, never string-interpolated user input
+        - Transactions (db.transaction()) for multi-step mutations
+        - No exposed stack traces or internal details in thrown errors
+        - Proper typing on return values
+
+    - path: "packages/db/src/schema/**"
+      instructions: |
+        These are Drizzle ORM schema definitions.
+        Check for:
+        - Proper index definitions for frequently queried columns
+        - Foreign key constraints with onDelete behavior
+        - Consistent naming conventions (snake_case for DB columns)
+        - Timestamp columns (createdAt, updatedAt) on all tables
+
+    - path: "packages/api/src/middleware/**"
+      instructions: |
+        Check for:
+        - Auth validation on every protected route
+        - JWT token verification
+        - Rate limiting on public endpoints
+        - No secrets or tokens logged
+
+    - path: "apps/web/app/api/**"
+      instructions: |
+        These are Next.js API routes (webhooks, Stripe, etc.).
+        Check for:
+        - Proper request validation
+        - Stripe webhook signature verification
+        - No exposed internal errors in responses
+
+  path_filters:
+    - "!**/*.lock"
+    - "!**/node_modules/**"
+    - "!**/.next/**"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/*.generated.*"
+    - "!**/migrations/**"
+    - "!pnpm-lock.yaml"
+    - "!**/turbo/**"
+
+chat:
+  auto_reply: true
