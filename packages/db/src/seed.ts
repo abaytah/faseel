@@ -1,3 +1,9 @@
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+// Load environment variables from the root .env file
+config({ path: resolve(__dirname, '../../../.env') });
+
 import { db } from './index';
 import {
   offices,
@@ -53,6 +59,10 @@ async function seed() {
     })
     .returning();
 
+  if (!office) {
+    throw new Error('Failed to create office');
+  }
+
   // ──────────────────────────────────────────────
   // 2. Users
   // ──────────────────────────────────────────────
@@ -96,6 +106,10 @@ async function seed() {
       email: 'sarah.qahtani@outlook.sa',
     })
     .returning();
+
+  if (!adminUser || !tenantUser || !providerUser || !ownerUser) {
+    throw new Error('Failed to create users');
+  }
 
   // ──────────────────────────────────────────────
   // 3. User Roles
@@ -150,6 +164,10 @@ async function seed() {
     })
     .returning();
 
+  if (!building1 || !building2) {
+    throw new Error('Failed to create buildings');
+  }
+
   // ──────────────────────────────────────────────
   // 5. Units
   // ──────────────────────────────────────────────
@@ -177,8 +195,8 @@ async function seed() {
 
   // Make sure unit 301 is occupied (tenant's unit)
   const tenantUnitIdx = building1Units.findIndex((u) => u.unitNumber === '301');
-  if (tenantUnitIdx !== -1) {
-    building1Units[tenantUnitIdx].status = 'OCCUPIED';
+  if (tenantUnitIdx !== -1 && building1Units[tenantUnitIdx]) {
+    building1Units[tenantUnitIdx]!.status = 'OCCUPIED';
   }
 
   const insertedBuilding1Units = await db.insert(units).values(building1Units).returning();
@@ -205,7 +223,10 @@ async function seed() {
   await db.insert(units).values(building2Units).returning();
 
   // Get tenant's unit for maintenance requests
-  const tenantUnit = insertedBuilding1Units.find((u) => u.unitNumber === '301')!;
+  const tenantUnit = insertedBuilding1Units.find((u) => u.unitNumber === '301');
+  if (!tenantUnit) {
+    throw new Error('Failed to find tenant unit 301');
+  }
 
   // ──────────────────────────────────────────────
   // 6. Service Provider profile
@@ -222,6 +243,10 @@ async function seed() {
       bio: 'فني سباكة وتكييف معتمد، خبرة أكثر من ١٠ سنوات في جدة',
     })
     .returning();
+
+  if (!provider) {
+    throw new Error('Failed to create service provider');
+  }
 
   await db.insert(providerOfficeLinks).values({
     providerId: provider.id,
@@ -256,6 +281,10 @@ async function seed() {
     })
     .returning();
 
+  if (!request1) {
+    throw new Error('Failed to create maintenance request 1');
+  }
+
   await db.insert(statusLog).values({
     requestId: request1.id,
     fromStatus: null,
@@ -287,6 +316,10 @@ async function seed() {
       scheduledDate: new Date('2026-03-22T10:00:00'),
     })
     .returning();
+
+  if (!request2) {
+    throw new Error('Failed to create maintenance request 2');
+  }
 
   await db.insert(statusLog).values([
     {
@@ -344,6 +377,10 @@ async function seed() {
       completedAt: new Date('2026-03-15T14:30:00'),
     })
     .returning();
+
+  if (!request3) {
+    throw new Error('Failed to create maintenance request 3');
+  }
 
   await db.insert(statusLog).values([
     {
@@ -427,6 +464,10 @@ async function seed() {
       priceSar: 14900, // 149 SAR in halalas
     })
     .returning();
+
+  if (!growthPlan) {
+    throw new Error('Failed to create subscription plan');
+  }
 
   await db.insert(subscriptions).values({
     officeId: office.id,
